@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<project name="gearsBridgeJMX" default="jar">
+
+	<property name="version" value="1.00" />
+
+	<property name="gbjmx.base" value="." />
+	<property name="gbjmx.src" value="${gbjmx.base}/src" />
+	<property name="gbjmx.bin" value="${gbjmx.base}/bin" />
+	<property name="gbjmx.jars" value="${gbjmx.base}/dist" />
+	<property name="gbjmx.lib" value="${gbjmx.base}/libs" />
+	<property name="gearsBridgeJ.home" value="../gearsBridgeJ" />
+	<property name="codeEraser.home" value="../CodeEraser" />
+	
+	<property name="gbjmx.classpath" value="${gbjmx.base}"/>
+
+	<!--Check if CodeEraser project is available-->
+	<available property="test.codeEraser.home" file="${codeEraser.home}" />
+	<!--Build CodeEraser jars only if the project is available-->
+	<target name="-external.codeEraser" if="test.codeEraser.home">
+		<ant dir="${codeEraser.home}" target="jar" />
+		<copy failonerror="false" file="${codeEraser.home}/dist/eraser-runtime.jar" todir="${gbjmx.lib}" />
+	</target>
+
+	<!--Check if GearsBridgeJ project is available-->
+	<available property="test.gearsBridge.home" file="${gearsBridgeJ.home}" />
+	<!--Build GearsBridgeJ jars only if the project is available-->
+	<target name="-external.gearsBridge" if="test.gearsBridge.home">
+		<ant dir="${gearsBridgeJ.home}" target="jar" />
+		<copy failonerror="false" file="${gearsBridgeJ.home}/dist/locutor-1.00.jar" todir="${gbjmx.lib}" />
+	</target>
+
+	<!--build required jars-->
+	<target name="build external jars" 
+		description="Build external jars provided by other projects">
+		<property name="lobaris.flatBuild" value="true"/>
+		<antcall target="deep rebuild external jars" />
+	</target>
+	
+	<target name="deep rebuild external jars" 
+		depends="-external.codeEraser, -external.gearsBridge" 
+		description="Build external jars provided by other projects">
+	</target>
+
+	<!--compile project-->
+	<target name="compile" 
+		description="compiles the class files">
+		<mkdir dir="${gbjmx.bin}"/>
+		<javac 
+			srcdir="${gbjmx.src}" 
+	        includeantruntime="false"
+            compiler="modern" 
+            classpath="${gbjmx.classpath}"
+            destdir="${gbjmx.bin}"
+            excludes="bin/**"
+            debug="on" />
+	</target>
+
+	<!--build project-->
+	<target name="jar" 
+		depends="compile" 
+		unless="lobaris.flatBuild"
+		description="builds all binary distribution archives">
+		
+		<mkdir dir="${gbjmx.jars}"/>
+		
+        <delete file="${gbjmx.jars}/gearsBridgeFunctions.jar"/>
+        <jar jarfile="${gbjmx.jars}/gearsBridgeFunctions.jar" 
+            basedir="${gbjmx.bin}">
+        	<include name="de/uni_hildesheim/sse/functions/*.class"/>
+        </jar>
+		
+		<delete file="${gbjmx.jars}/gearsBridgeServiceConstants.jar"/>
+        <jar jarfile="${gbjmx.jars}/gearsBridgeServiceConstants.jar" 
+            basedir="${gbjmx.bin}">
+            <include name="de/uni_hildesheim/sse/serviceConstants/*.class"/>
+        </jar>
+		
+		<delete file="${gbjmx.jars}/gearsBridgeJMX.jar"/>
+		<jar jarfile="${gbjmx.jars}/gearsBridgeJMX.jar" manifest="${gbjmx.base}/MANIFEST.MF" 
+    		basedir="${gbjmx.bin}">
+        	<fileset dir="${gbjmx.base}" includes="locutor.dll"/>
+    	</jar>
+		
+		<delete file="${gbjmx.jars}/gearsBridgeJMX-instrumenter.jar"/>
+		<jar jarfile="${gbjmx.jars}/gearsBridgeJMX-instrumenter.jar" manifest="${gbjmx.base}/MANIFEST.MF" 
+    		basedir="${gbjmx.bin}">
+			<!-- agents -->
+			<include name="de/uni_hildesheim/sse/jmx/agents/*.class"/>
+			<!-- configuration -->
+			<include name="de/uni_hildesheim/sse/jmx/configuration/*.class"/>
+			<include name="de/uni_hildesheim/sse/jmx/configuration/configuration.xsd"/>
+			<!-- functions -->
+			<include name="de/uni_hildesheim/sse/functions/*.class"/>
+			<!-- service constants -->
+			<include name="de/uni_hildesheim/sse/serviceConstants/Data*.class"/>
+            <include name="de/uni_hildesheim/sse/serviceConstants/Memory*.class"/>
+            <include name="de/uni_hildesheim/sse/serviceConstants/Processor*.class"/>
+            <include name="de/uni_hildesheim/sse/serviceConstants/ThisProcess*.class"/>
+			<!-- services -->
+			<include name="de/uni_hildesheim/sse/jmx/services/JMXIdentity.class"/>
+			<include name="de/uni_hildesheim/sse/jmx/services/dynamic/AbstractJMXServiceData*.class"/>
+			<include name="de/uni_hildesheim/sse/jmx/services/dynamic/JMXData*.class"/>
+			<include name="de/uni_hildesheim/sse/jmx/services/dynamic/JMXMemory*.class"/>
+			<include name="de/uni_hildesheim/sse/jmx/services/dynamic/JMXProcessor*.class"/>
+			<include name="de/uni_hildesheim/sse/jmx/services/dynamic/JMXThisProcess*.class"/>
+			<include name="de/uni_hildesheim/sse/jmx/services/standard/Data*.class"/>
+			<include name="de/uni_hildesheim/sse/jmx/services/standard/Memory*.class"/>
+			<include name="de/uni_hildesheim/sse/jmx/services/standard/Processor*.class"/>
+			<include name="de/uni_hildesheim/sse/jmx/services/standard/ThisProcess*.class"/>
+			<fileset dir="${gbjmx.base}" includes="locutor.dll"/>
+    	</jar>
+	</target>
+
+</project>

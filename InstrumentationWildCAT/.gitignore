@@ -1,0 +1,8 @@
+bin/*
+dist/*
+doc/*
+.euml2
+.umlproject
+classDiagram.ucd
+log
+meter.log

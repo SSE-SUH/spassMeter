@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <functions>
+        <addedfunction name="de.uni_hildesheim.sse.functions.MySpecificFunction" displayname="MyFunc"/>
+    </functions>
+    <classes>
+        <class name="de.uni_hildesheim.sse.jmx.services.dynamic.JMXBatteryData" displayname="Battery">
+            <attribute name="BatteryLifePercent" type="int">
+                <function name="min" description="The minimal number of battery life percent."/>
+                <function name="max" description="The maximal number of battery life percent."/>
+                <function name="avg" description="The avg number of battery life percent."/>
+            </attribute>
+            <attribute name="BatteryLifeTime" type="int">
+                <function name="min" description="The minimal number of battery life time."/>
+                <function name="max" description="The maximal number of battery life time."/>
+                <function name="avg" description="The avg number of battery life time."/>
+            </attribute>
+        </class>
+        <class name="de.uni_hildesheim.sse.jmx.services.dynamic.JMXData" displayname="Data">
+        </class>
+        <class name="de.uni_hildesheim.sse.jmx.services.dynamic.JMXMemoryData" displayname="Memory">
+            <attribute name="MemoryCapacity" type="long">
+                <function name="min" description="The minimal number of memory capacity."/>
+                <function name="max" description="The maximal number of memory capacity."/>
+                <function name="avg" description="The avg number of memory capacity."/>
+            </attribute>
+            <attribute name="CurrentMemoryAvail" type="long">
+                <function name="min" description="The minimal number of current memory available."/>
+                <function name="max" description="The maximal number of current memory available."/>
+                <function name="avg" description="The avg number of current memory available."/>
+            </attribute>
+            <attribute name="CurrentMemoryUse" type="long">
+                <function name="min" description="The minimal number of current memory use."/>
+                <function name="max" description="The maximal number of current memory use."/>
+                <function name="avg" description="The avg number of current memory use."/>
+            </attribute>
+        </class>
+        <class name="de.uni_hildesheim.sse.jmx.services.dynamic.JMXNetworkData" displayname="Network">
+            <attribute name="CurrentNetSpeed" type="long">
+                <function name="min" description="The minimal number of current net speed."/>
+                <function name="max" description="The maximal number of current net speed."/>
+                <function name="avg" description="The avg number of current net speed."/>
+            </attribute>
+            <attribute name="MaxNetSpeed" type="long">
+                <function name="min" description="The minimal number of max net speed."/>
+                <function name="max" description="The maximal number of max net speed."/>
+                <function name="avg" description="The avg number of max net speed."/>
+            </attribute>
+        </class>
+        <class name="de.uni_hildesheim.sse.jmx.services.dynamic.JMXProcessorData" displayname="Processor">
+            <attribute name="NumberOfProcessors" type="int">
+                <function name="min" description="The minimal number of number of processors."/>
+                <function name="max" description="The maximal number of number of processors."/>
+                <function name="avg" description="The avg number of number of processors."/>
+            </attribute>
+            <attribute name="MaxProcessorSpeed" type="int">
+                <function name="min" description="The minimal number of max processor speed."/>
+                <function name="max" description="The maximal number of max processor speed."/>
+                <function name="avg" description="The avg number of max processor speed."/>
+            </attribute>
+            <attribute name="CurrentProcessorSpeed" type="int">
+                <function name="min" description="The minimal number of current processor speed."/>
+                <function name="max" description="The maximal number of current processor speed."/>
+                <function name="avg" description="The avg number of current processor speed."/>
+            </attribute>
+            <attribute name="CurrentSystemLoad" type="double">
+                <function name="min" description="The minimal number of current system load."/>
+                <function name="max" description="The maximal number of current system load."/>
+                <function name="avg" description="The avg number of current system load."/>
+            </attribute>
+        </class>
+        <class name="de.uni_hildesheim.sse.jmx.services.dynamic.JMXScreenData" displayname="Screen">
+            <attribute name="ScreenWidth" type="int">
+                <function name="min" description="The minimal number of screen width."/>
+                <function name="max" description="The maximal number of memory capacity."/>
+                <function name="avg" description="The avg number of memory capacity."/>
+            </attribute>
+            <attribute name="ScreenHeight" type="int">
+                <function name="min" description="The minimal number of screen height."/>
+                <function name="max" description="The maximal number of screen height."/>
+                <function name="avg" description="The avg number of screen height."/>
+            </attribute>
+            <attribute name="ScreenResolution" type="int">
+                <function name="min" description="The minimal number of screen resolution."/>
+                <function name="max" description="The maximal number of screen resolution."/>
+                <function name="avg" description="The avg number of screen resolution."/>
+            </attribute>
+        </class>
+        <class name="de.uni_hildesheim.sse.jmx.services.dynamic.JMXThisProcessData" displayname="ThisProcess">
+            <attribute name="CurrentProcessIo" type="long">
+                <function name="min" description="The minimal number of current process IO."/>
+                <function name="max" description="The maximal number of current process IO."/>
+                <function name="avg" description="The avg number of current process IO."/>
+            </attribute>
+            <attribute name="CurrentProcessMemoryUse" type="long">
+                <function name="min" description="The minimal number of current process memory use."/>
+                <function name="max" description="The maximal number of current process memory use."/>
+                <function name="avg" description="The avg number of current process memory use."/>
+            </attribute>
+            <attribute name="CurrentProcessUserTimeTicks" type="long">
+                <function name="min" description="The minimal number of current process user time ticks."/>
+                <function name="max" description="The maximal number of current process user time ticks."/>
+                <function name="avg" description="The avg number of current process user time ticks."/>
+            </attribute>
+            <attribute name="CurrentProcessKernelTimeTicks" type="long">
+                <function name="min" description="The minimal number of current process kernel time ticks."/>
+                <function name="max" description="The maximal number of current process kernel time ticks."/>
+                <function name="avg" description="The avg number of current process kernel time ticks."/>
+            </attribute>
+            <attribute name="CurrentProcessSystemTimeTicks" type="long">
+                <function name="min" description="The minimal number of current process system time ticks."/>
+                <function name="max" description="The maximal number of current process system time ticks."/>
+                <function name="avg" description="The avg number of current process system time ticks."/>
+            </attribute>
+            <attribute name="CurrentProcessProcessorLoad" type="long">
+                <function name="min" description="The minimal number of current process processor load."/>
+                <function name="max" description="The maximal number of current process processor load."/>
+                <function name="avg" description="The avg number of current process processor load."/>
+            </attribute>
+            <attribute name="AllProcessesIo" type="long">
+                <function name="min" description="The minimal number of all process io."/>
+                <function name="max" description="The maximal number of all process io."/>
+                <function name="avg" description="The avg number of all process io."/>
+            </attribute>
+        </class>
+        <class name="de.uni_hildesheim.sse.jmx.services.dynamic.JMXVolumeData" displayname="Volume">
+            <attribute name="VolumeCapacity" type="long">
+                <function name="min" description="The minimal number of volume capacity."/>
+                <function name="max" description="The maximal number of volume capacity."/>
+                <function name="avg" description="The avg number of volume capacity."/>
+            </attribute>
+            <attribute name="CurrentVolumeAvail" type="long">
+                <function name="min" description="The minimal number of current volume available."/>
+                <function name="max" description="The maximal number of current volume available."/>
+                <function name="avg" description="The avg number of current volume available."/>
+            </attribute>
+            <attribute name="CurrentVolumeUse" type="long">
+                <function name="min" description="The minimal number of current volume use."/>
+                <function name="max" description="The maximal number of current volume use."/>
+                <function name="avg" description="The avg number of current volume use."/>
+            </attribute>
+        </class>
+    </classes>
+</configuration>

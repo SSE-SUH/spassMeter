@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xmlns="http://sse.uni-hildesheim.de/instrumentation" exclusive="true">
+  <namespace name="test">
+    <module name="ValueMemTest">
+      <monitor/>
+      <behavior signature="allocate(java.lang.Object)">
+        <notifyValue expression="test.ValueMemTest.ALLOCSIZE" 
+          value="MEM_ALLOCATED" tagExpression="$1"/>
+      </behavior>
+      <behavior signature="unallocate(java.lang.Object)">
+        <notifyValue expression="test.ValueMemTest.UNALLOCSIZE" 
+          value="MEM_UNALLOCATED" tagExpression="$1"/>
+      </behavior>
+      <behavior signature="main(java.lang.String[])">
+        <startSystem/>
+        <endSystem invoke="asserts"/>
+      </behavior>
+    </module>
+  </namespace>
+</configuration>

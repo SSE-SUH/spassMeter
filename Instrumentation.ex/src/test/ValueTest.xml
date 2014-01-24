@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xmlns="http://sse.uni-hildesheim.de/instrumentation" exclusive="true">
+  <namespace name="test">
+    <module name="ValueTest">
+       <module name="MovingAverage">
+        <data name="value">
+          <valueChange id="*"/>
+        </data>
+        <data name="count">
+          <valueChange id="*-count"/>
+        </data>
+      </module>
+      <data name="myAverage">
+        <valueContext id="myAverage"/>
+      </data>
+      <behavior signature="testExternal()">
+        <notifyValue id="myDummy" expression="myDummy.getValue()" 
+          notifyDifference="false" value="VALUE"/>
+      </behavior>
+      <behavior signature="main(java.lang.String[])">
+        <startSystem/>
+        <endSystem invoke="asserts"/>
+      </behavior>
+    </module>
+  </namespace>
+</configuration>

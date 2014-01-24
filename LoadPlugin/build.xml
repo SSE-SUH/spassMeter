@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<project name="JConsole-LoadPlugin" default="jar">
+	
+	<property name="jdk" value="C:\Program Files (x86)\Java\jdk1.6.0_26" />
+
+    <property name="plugin.base" value="." />
+    <property name="plugin.src" value="${plugin.base}/src" />
+    <property name="plugin.bin" value="${plugin.base}/bin" />
+    <property name="plugin.jars" value="${plugin.base}/dist" />
+    <property name="plugin.lib" value="${plugin.base}/libs" />
+    
+    <property name="gearsBridgeJ.home" value="../gearsBridgeJ" />
+    <property name="gearsBridgeJMX.home" value="../gearsBridgeJMX" />
+    <property name="codeEraser.home" value="../CodeEraser" />
+    <property name="spass-meter.home" value="../Instrumentation.ex"/>
+    <property name="spass-meter-jmx.home" value="../InstrumentationJMX"/>
+    
+    <property name="plugin.classpath" value="${plugin.base}"/>
+
+    <!--Check if CodeEraser project is available-->
+    <available property="test.codeEraser.home" file="${codeEraser.home}" />
+    <!--Build CodeEraser jars only if the project is available-->
+    <target name="-external.codeEraser" if="test.codeEraser.home">
+        <ant dir="${codeEraser.home}" target="jar" />
+        <copy failonerror="false" file="${codeEraser.home}/dist/eraser-runtime.jar" todir="${plugin.lib}" />
+    </target>
+    
+    <!--Check if GearsBridgeJ project is available-->
+    <available property="test.gearsBridge.home" file="${gearsBridgeJ.home}" />
+    <!--Build GearsBridgeJ jars only if the project is available-->
+    <target name="-external.gearsBridge" if="test.gearsBridge.home">
+        <ant dir="${gearsBridgeJ.home}" target="jar" />
+        <copy failonerror="false" file="${gearsBridgeJ.home}/dist/locutor-1.00.jar" todir="${plugin.lib}" />
+        <copy failonerror="false" file="${gearsBridgeJ.home}/dist/locutor-instrumenter1.00.jar" todir="${plugin.lib}" />
+        <copy failonerror="false" file="${gearsBridgeJ.home}/dist/locutor-instrumenter1.00-linux.jar" todir="${plugin.lib}" />
+    </target>
+    
+    <!--Check if GearsBridgeJMX project is available-->
+    <available property="test.gearsBridgeJMX.home" file="${gearsBridgeJMX.home}" />
+    <!--Build GearsBridgeJMX jars only if the project is available-->
+    <target name="-external.gearsBridgeJMX" if="test.gearsBridgeJMX.home">
+        <ant dir="${gearsBridgeJMX.home}" target="jar" />
+        <copy failonerror="false" file="${gearsBridgeJMX.home}/dist/gearsBridgeJMX-instrumenter.jar" todir="${plugin.lib}" />
+    </target>
+    
+    <!--Check if Instrumentation project is available-->
+    <available property="test.spass-meter.home" file="${spass-meter.home}"/>
+    <!--Build Instrumentation jars only if the project is available-->
+    <target name="-external.spass-meter" if="test.spass-meter.home">
+        <ant dir="${spass-meter.home}" target="jar-testAgent"/>
+        <copy failonerror="false" file="${spass-meter.home}/dist/spass-meter-ia.jar" todir="${plugin.lib}" />
+        <copy failonerror="false" file="${spass-meter.home}/dist/spass-meter-rt.jar" todir="${plugin.lib}" />
+        <copy failonerror="false" file="${spass-meter.home}/dist/spass-meter-static.jar" todir="${plugin.lib}" />
+        <mkdir dir="${plugin.lib}/win32"/>
+        <copy failonerror="false" todir="${plugin.lib}/win32" >
+            <fileset dir="${spass-meter.home}/dist/win32" />
+        </copy>
+        <mkdir dir="${plugin.lib}/linux"/>
+        <copy failonerror="false" todir="${plugin.lib}/linux" >
+            <fileset dir="${spass-meter.home}/dist/linux" />
+        </copy>
+    </target>
+    
+    <!--Check if Instrumentation project is available-->
+    <available property="test.spass-meter-jmx.home" file="${spass-meter-jmx.home}"/>
+    <!--Build Instrumentation jars only if the project is available-->
+    <target name="-external.spass-meter-jmx" if="test.spass-meter-jmx.home">
+        <ant dir="${spass-meter-jmx.home}" target="jar"/>
+        <copy failonerror="false" file="${spass-meter-jmx.home}/dist/instrumentationJMX.jar" todir="${plugin.lib}" />
+    </target>
+    
+    <!--build required jars-->
+    <target name="build external jars" 
+        description="Build external jars provided by other projects">
+        <property name="lobaris.flatBuild" value="true"/>
+        <antcall target="deep rebuild external jars" />
+    </target>
+    
+    <target name="deep rebuild external jars" 
+        depends="-external.codeEraser, -external.gearsBridge, -external.gearsBridgeJMX, -external.spass-meter, -external.spass-meter-jmx" 
+        description="Build external jars provided by other projects">
+    </target>
+    
+    <!--compile project-->
+    <target name="compile" 
+        description="compiles the class files">
+        <mkdir dir="${plugin.bin}"/>
+        <javac 
+            srcdir="${plugin.src}" 
+            compiler="modern" 
+            classpath="${plugin.classpath}"
+            destdir="${plugin.bin}"
+            excludes="bin/**"
+            debug="on" 
+            includeantruntime="false"/>
+    </target>
+
+    <!--build project-->
+    <target name="jar" 
+        depends="compile" 
+        unless="lobaris.flatBuild"
+        description="builds all binary distribution archives">
+        
+        <delete file="${plugin.jars}/LoadPlugin.jar"/>
+        <jar jarfile="${plugin.jars}/LoadPlugin.jar" 
+            manifest="${plugin.base}/MANIFEST.MF" 
+            basedir="${plugin.bin}">
+            <fileset dir="${plugin.base}" includes="META-INF/services/** locutor.dll jcommon-1.0.10.jar jfreechart-1.0.6.jar orson-0.5.0.jar" />
+        </jar>
+       
+        <mkdir dir="${plugin.jars}/win32"/>
+        <delete file="${plugin.jars}/win32/LoadPlugin-rt.jar"/>
+        <jar jarfile="${plugin.jars}/win32/LoadPlugin-rt.jar" update="no">
+            <zipgroupfileset dir="${plugin.jars}" includes="LoadPlugin.jar"/>
+            <zipgroupfileset dir="${plugin.lib}" includes="gearsBridgeJMX-instrumenter.jar jcommon-1.0.10.jar jfreechart-1.0.6.jar orson-0.5.0.jar"/>
+            <zipgroupfileset dir="${plugin.lib}/win32" includes="spass-meter-rt.jar"/>
+        </jar>
+        <delete file="${plugin.jars}/win32/spass-meter-rt.jar"/>
+        <jar jarfile="${plugin.jars}/win32/spass-meter-rt.jar" update="no">
+            <zipgroupfileset dir="${plugin.jars}" includes="LoadPlugin.jar"/>
+            <zipgroupfileset dir="${plugin.lib}" includes="gearsBridgeJMX-instrumenter.jar jcommon-1.0.10.jar jfreechart-1.0.6.jar orson-0.5.0.jar"/>
+            <zipgroupfileset dir="${plugin.lib}/win32" includes="spass-meter-rt.jar"/>
+        </jar>
+        <delete file="${plugin.jars}/win32/spass-meter-static.jar"/>
+        <jar jarfile="${plugin.jars}/win32/spass-meter-static.jar" update="no">
+            <zipgroupfileset dir="${plugin.jars}" includes="LoadPlugin.jar"/>
+            <zipgroupfileset dir="${plugin.lib}" includes="gearsBridgeJMX-instrumenter.jar jcommon-1.0.10.jar jfreechart-1.0.6.jar orson-0.5.0.jar"/>
+            <zipgroupfileset dir="${plugin.lib}/win32" includes="spass-meter-static.jar"/>
+        </jar>
+        <copy file="${plugin.lib}/win32/spass-meter-ia.jar" todir="${plugin.jars}/win32"/>
+        <copy file="${plugin.lib}/win32/spass-meter-boot.jar" todir="${plugin.jars}/win32"/>
+        
+        <mkdir dir="${plugin.jars}/linux"/>
+        <delete file="${plugin.jars}/linux/LoadPlugin-rt.jar"/>
+        <jar jarfile="${plugin.jars}/linux/LoadPlugin-rt.jar" update="no">
+            <zipgroupfileset dir="${plugin.jars}" includes="LoadPlugin.jar"/>
+            <zipgroupfileset dir="${plugin.lib}" includes="gearsBridgeJMX-instrumenter.jar jcommon-1.0.10.jar jfreechart-1.0.6.jar orson-0.5.0.jar"/>
+            <zipgroupfileset dir="${plugin.lib}/linux" includes="spass-meter-rt.jar"/>
+        </jar>
+        
+        <delete file="${plugin.jars}/linux/spass-meter-rt.jar"/>
+        <jar jarfile="${plugin.jars}/linux/spass-meter-rt.jar" update="no">
+            <zipgroupfileset dir="${plugin.jars}" includes="LoadPlugin.jar"/>
+            <zipgroupfileset dir="${plugin.lib}" includes="gearsBridgeJMX-instrumenter.jar jcommon-1.0.10.jar jfreechart-1.0.6.jar orson-0.5.0.jar"/>
+            <zipgroupfileset dir="${plugin.lib}/linux" includes="spass-meter-rt.jar"/>
+        </jar>
+        <delete file="${plugin.jars}/linux/spass-meter-static.jar"/>
+        <jar jarfile="${plugin.jars}/linux/spass-meter-static.jar" update="no">
+            <zipgroupfileset dir="${plugin.jars}" includes="LoadPlugin.jar"/>
+            <zipgroupfileset dir="${plugin.lib}" includes="gearsBridgeJMX-instrumenter.jar jcommon-1.0.10.jar jfreechart-1.0.6.jar orson-0.5.0.jar"/>
+            <zipgroupfileset dir="${plugin.lib}/linux" includes="spass-meter-static.jar"/>
+        </jar>
+        <copy file="${plugin.lib}/linux/spass-meter-ia.jar" todir="${plugin.jars}/linux"/>
+        <copy file="${plugin.lib}/linux/spass-meter-boot.jar" todir="${plugin.jars}/linux"/>
+    </target>
+    
+    <target name="run" description="starts the jconsole with additional tabs (builds also required libs for running)">
+    	<delete file="${plugin.jars}/LoadPlugin.jar"/>
+        <jar jarfile="${plugin.jars}/LoadPlugin.jar" 
+            manifest="${plugin.base}/MANIFEST.MF" 
+            basedir="${plugin.bin}">
+            <fileset dir="${plugin.base}" includes="META-INF/services/** locutor.dll jcommon-1.0.10.jar jfreechart-1.0.6.jar orson-0.5.0.jar" />
+        </jar>
+       
+        <mkdir dir="${plugin.jars}/win32"/>
+        <delete file="${plugin.jars}/win32/LoadPlugin-rt.jar"/>
+        <jar jarfile="${plugin.jars}/win32/LoadPlugin-rt.jar" update="no">
+            <zipgroupfileset dir="${plugin.jars}" includes="LoadPlugin.jar"/>
+            <zipgroupfileset dir="${plugin.lib}" includes="gearsBridgeJMX-instrumenter.jar jcommon-1.0.10.jar jfreechart-1.0.6.jar orson-0.5.0.jar"/>
+            <zipgroupfileset dir="${plugin.lib}/win32" includes="spass-meter-rt.jar"/>
+        </jar>
+    	
+        <property name="plugin" location="${plugin.jars}/win32/LoadPlugin-rt.jar"/>
+        <exec executable="${jdk}\bin\jconsole">
+            <arg value="-pluginpath" />
+            <arg value="${plugin};" />
+        	<!--arg value="784" /-->
+        </exec>
+    </target>
+
+</project>

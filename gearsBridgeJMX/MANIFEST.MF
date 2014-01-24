@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: gearsBridgeJMX
+Bundle-SymbolicName: gearsBridgeJMX
+Bundle-Version: 1.0.0
+Export-Package: de.uni_hildesheim.sse.agents,
+ de.uni_hildesheim.sse.services.configuration,
+ de.uni_hildesheim.sse.services.functions

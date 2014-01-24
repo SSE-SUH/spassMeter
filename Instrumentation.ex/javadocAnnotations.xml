@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <target name="javadoc">
+        <javadoc access="private" author="true" classpath="lib/asm/asm-all-4.0.jar;lib/javassist.jar;lib/eraser-runtime.jar;C:\Program Files (x86)\Java\jdk1.6.0_37\lib\tools.jar;lib/testasm.jar;lib/locutor-instrumenter1.00.jar;lib/ant/ant.jar" destdir="doc" doctitle="SPASS-meter annotations" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="de.uni_hildesheim.sse.monitoring.runtime.annotations" source="1.6" sourcepath="src" splitindex="true" use="false" version="true"/>
+    </target>
+</project>

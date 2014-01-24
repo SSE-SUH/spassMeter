@@ -1,0 +1,11 @@
+<body>
+<center><h1>SPASS-Meter</h1><br/>
+a non-intrusive variant-aware monitoring framework for Java applications</center>
+<br/>
+See the {@link de.uni_hildesheim.sse.monitoring.runtime.instrumentation.Configuration arguments list} for application. <br/><br/>
+Do <b>not</b> call any method in the data gatherer before starting the Recorder. Even 
+if this may work in an usual environment, it may fail in OSGi. Furthermore, 
+<b>avoid</b> using the javassist special terms $sig, $type, $cflow and new inner 
+classes as they require Javassist runtime support which, in turn, complicate 
+using OSGi.
+</body>

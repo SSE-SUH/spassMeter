@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<project name="gearsBridgeWildCAT" default="jar">
+
+	<property name="version" value="1.00" />
+
+	<property name="gbwildcat.base" value="." />
+	<property name="gbwildcat.src" value="${gbwildcat.base}/src" />
+	<property name="gbwildcat.bin" value="${gbwildcat.base}/bin" />
+	<property name="gbwildcat.jars" value="${gbwildcat.base}/dist" />
+	<property name="gbwildcat.lib" value="${gbwildcat.base}/libs" />
+	<property name="codeEraser.home" value="../CodeEraser" />
+	<property name="gearsBridgeJ.home" value="../gearsBridgeJ" />
+	<property name="gearsBridgeJMX.home" value="../gearsBridgeJMX" />
+	
+	<property name="gbwildcat.classpath" value="${gbwildcat.base}"/>
+
+	<!--Check if CodeEraser project is available-->
+	<available property="test.codeEraser.home" file="${codeEraser.home}" />
+	<!--Build CodeEraser jars only if the project is available-->
+	<target name="-external.codeEraser" if="test.codeEraser.home">
+		<ant dir="${codeEraser.home}" target="jar" />
+		<copy failonerror="false" file="${codeEraser.home}/dist/eraser-runtime.jar" todir="${gbwildcat.lib}" />
+	</target>
+
+	<!--Check if GearsBridgeJ project is available-->
+	<available property="test.gearsBridge.home" file="${gearsBridgeJ.home}" />
+	<!--Build GearsBridgeJ jars only if the project is available-->
+	<target name="-external.gearsBridge" if="test.gearsBridge.home">
+		<ant dir="${gearsBridgeJ.home}" target="jar" />
+		<copy failonerror="false" file="${gearsBridgeJ.home}/dist/locutor-1.00.jar" todir="${gbwildcat.lib}" />
+	</target>
+	
+	<!--Check if GearsBridgeJMX project is available-->
+    <available property="test.gearsBridgeJMX.home" file="${gearsBridgeJMX.home}" />
+    <!--Build GearsBridgeJMX jars only if the project is available-->
+    <target name="-external.gearsBridgeJMX" if="test.gearsBridgeJMX.home">
+        <ant dir="${gearsBridgeJMX.home}" target="jar" />
+        <copy failonerror="false" file="${gearsBridgeJMX.home}/dist/gearsBridgeFunctions.jar" todir="${gbwildcat.lib}" />
+    	<copy failonerror="false" file="${gearsBridgeJMX.home}/dist/gearsBridgeServiceConstants.jar" todir="${gbwildcat.lib}" />
+    </target>
+
+	<!--build required jars-->
+	<target name="build external jars" 
+		description="Build external jars provided by other projects">
+		<property name="lobaris.flatBuild" value="true"/>
+		<antcall target="deep rebuild external jars" />
+	</target>
+	
+	<target name="deep rebuild external jars" 
+		depends="-external.codeEraser, -external.gearsBridge, -external.gearsBridgeJMX" 
+		description="Build external jars provided by other projects">
+	</target>
+
+	<!--compile project-->
+	<target name="compile" 
+		description="compiles the class files">
+		<mkdir dir="${gbwildcat.bin}"/>
+		<javac 
+			srcdir="${gbwildcat.src}" 
+	        includeantruntime="false"
+            compiler="modern" 
+            classpath="${gbwildcat.classpath}"
+            destdir="${gbwildcat.bin}"
+            excludes="bin/**"
+            debug="on" />
+	</target>
+
+	<!--build project-->
+	<target name="jar" 
+		depends="compile" 
+		unless="lobaris.flatBuild"
+		description="builds all binary distribution archives">
+		
+		<mkdir dir="${gbwildcat.jars}"/>
+		<delete file="${gbwildcat.jars}/gearsBridgeWildCAT.jar"/>
+		<jar jarfile="${gbwildcat.jars}/gearsBridgeWildCAT.jar" manifest="${gbwildcat.base}/MANIFEST.MF" 
+    		basedir="${gbwildcat.bin}">
+			<zipgroupfileset dir="${gbwildcat.lib}" includes="gearsBridgeFunctions.jar gearsBridgeServiceConstants.jar"/>
+        	<fileset dir="${gbwildcat.base}" includes="locutor.dll"/>
+    	</jar>
+		<delete file="${gbwildcat.jars}/gearsBridgeWildCAT-instrumenter.jar"/>
+		<jar jarfile="${gbwildcat.jars}/gearsBridgeWildCAT-instrumenter.jar" manifest="${gbwildcat.base}/MANIFEST.MF" 
+    		basedir="${gbwildcat.bin}">
+			<!-- Launcher -->
+			<include name="de/uni_hildesheim/sse/wildcat/launcher/GearsBridgeLauncher.class"/>
+			<include name="de/uni_hildesheim/sse/wildcat/launcher/GearsBridgeContextConstants.class"/>
+			<!-- configuration -->
+            <include name="de/uni_hildesheim/sse/wildcat/configuration/*.class"/>
+			<include name="de/uni_hildesheim/sse/wildcat/configuration/configuration.xsd"/>
+			<!-- sensors -->
+			<include name="de/uni_hildesheim/sse/wildcat/sensors/Sensor.class"/>
+            <!-- services -->
+			<include name="de/uni_hildesheim/sse/wildcat/services/WIdentity.class"/>
+            <include name="de/uni_hildesheim/sse/wildcat/services/Abstract*.class"/>
+            <include name="de/uni_hildesheim/sse/wildcat/services/WData*.class"/>
+            <include name="de/uni_hildesheim/sse/wildcat/services/WMemory*.class"/>
+            <include name="de/uni_hildesheim/sse/wildcat/services/WProcessor*.class"/>
+            <include name="de/uni_hildesheim/sse/wildcat/services/WThisProcess*.class"/>
+			<zipgroupfileset dir="${gbwildcat.lib}" includes="gearsBridgeFunctions.jar gearsBridgeServiceConstants.jar"/>
+			<fileset dir="${gbwildcat.base}" includes="locutor.dll"/>
+    	</jar>
+	</target>
+
+</project>

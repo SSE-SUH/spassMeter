@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CodeEraser
+Bundle-SymbolicName: CodeEraser
+Bundle-Version: 1.0.0
+Export-Package: de.uni_hildesheim.sse.codeEraser.annotations

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xmlns="http://sse.uni-hildesheim.de/instrumentation" exclusive="true">
+  <namespace name="test">
+    <module name="CloneTest">
+      <monitor id="cloneTest"/>
+      <behavior signature="clone()">
+        <monitor id="exec"/>
+      </behavior>
+      <behavior signature="execute()">
+        <monitor id="exec"/>
+      </behavior>
+      <behavior signature="main(java.lang.String[])">
+        <startSystem/>
+        <endSystem invoke="asserts"/>
+      </behavior>
+    </module>
+  </namespace>
+</configuration>

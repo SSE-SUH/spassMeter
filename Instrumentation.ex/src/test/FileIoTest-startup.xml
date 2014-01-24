@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xmlns="http://sse.uni-hildesheim.de/instrumentation" exclusive="true">
+  <namespace name="test">
+    <module name="FileIoTest">
+      <monitor id="fileIoTest"/>
+      <!--  no startSytem/endSystem here to test what happens if recording
+            is not started or started later. -->
+    </module>
+  </namespace>
+</configuration>

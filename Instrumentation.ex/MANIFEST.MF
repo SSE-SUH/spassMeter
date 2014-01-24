@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Agent-Class: de.uni_hildesheim.sse.monitoring.runtime.instrumentation.Agent
+Premain-Class: de.uni_hildesheim.sse.monitoring.runtime.instrumentation.Agent
+Can-Redefine-Classes: true
+Can-Retransform-Classes: true
+Main-Class: implementation.Program

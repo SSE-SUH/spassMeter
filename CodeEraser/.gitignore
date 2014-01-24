@@ -1,0 +1,8 @@
+bin/*
+doc/*
+dist/*
+lib/commons-cli-docs/*
+lib/javassist-tutorial/*
+lib/javassist-3.14.0.GA.zip
+tmp/*
+log

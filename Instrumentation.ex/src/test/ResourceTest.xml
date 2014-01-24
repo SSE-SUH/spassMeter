@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xmlns="http://sse.uni-hildesheim.de/instrumentation" exclusive="true"
+     memAccounting="CREATION"
+     mainDefault="START_END_SHUTDOWN"
+     localEventProcessing="true"
+     scopeType="GROUP_INHERIT"
+     accountableResources="CPU_TIME, FILE_IO, NET_IO, MEMORY"
+     sumResources="CPU_TIME, FILE_IO, NET_IO"
+     defaultGroupResources="CPU_TIME, FILE_IO, NET_IO, MEMORY">
+  <namespace name="test">
+    <module name="ResourceTest">
+      <monitor id="resourceTest"/>
+      <behavior signature="main(java.lang.String[])">
+        <startSystem/>
+        <endSystem/>
+      </behavior>
+    </module>
+  </namespace>
+</configuration>

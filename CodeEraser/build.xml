@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Code-Eraser" default="jar-annotations" basedir=".">
+
+    <property name="eraser.base" value="."/>
+    <property name="eraser.src" value="${eraser.base}/src"/>
+    <property name="eraser.bin" value="${eraser.base}/bin"/>
+    <property name="eraser.lib" value="${eraser.base}/lib"/>
+    <property name="eraser.jars" value="${eraser.base}/dist"/>
+
+    <path id="eraser.lib.classpath">
+		<pathelement location="lib/javassist.jar"/>
+		<pathelement location="lib/cli/commons-cli-1.2.jar"/>
+		<pathelement location="lib/ant/ant.jar"/>
+    </path>
+	
+    <path id="eraser.test.classpath">
+		<pathelement location="."/>
+		<pathelement location="bin"/>
+    	<path refid="eraser.lib.classpath"/>
+    </path>
+	
+	<taskdef resource="code-eraser.properties" onerror="ignore" 
+		classpath="${eraser.jars}/eraser.jar"/>
+	
+	<target name="build external jars" 
+		description="Build external jars provided by other projects">
+    </target>
+	
+    <target name="javadoc">
+        <javadoc access="private" author="true" classpathref="eraser.lib.classpath" destdir="doc" doctitle="CodeEraser" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" source="1.6" sourcepath="src" splitindex="true" use="false" version="true">
+        	<packageset dir="${eraser.src}">
+        		<include name="*"/>
+        	</packageset>
+    	</javadoc>
+    </target>
+	
+	<target name="jar" depends="jar-annotations, jar-tool" unless="lobaris.flatBuild">
+	</target>
+	
+	<target name="jar-annotations" unless="lobaris.flatBuild">
+		<mkdir dir="${eraser.jars}"/>
+    	<delete file="${eraser.jars}/eraser-runtime.jar"/>
+        <jar jarfile="${eraser.jars}/eraser-runtime.jar" manifest="${eraser.base}/MANIFEST.MF"
+            includes="de/uni_hildesheim/sse/codeEraser/annotations/**/*.class de/uni_hildesheim/sse/codeEraser/util/**/*.class" 
+        	basedir="${eraser.bin}">
+        </jar>
+    	<delete file="${eraser.jars}/eraser-annotations.jar"/>
+        <jar jarfile="${eraser.jars}/eraser-annotations.jar" manifest="${eraser.base}/MANIFEST.MF"
+            includes="de/uni_hildesheim/sse/codeEraser/annotations/**/*.class" 
+        	basedir="${eraser.bin}">
+        </jar>
+	</target>
+
+	<target name="jar-tool" unless="lobaris.flatBuild">
+		<mkdir dir="${eraser.jars}"/>
+    	<delete file="${eraser.jars}/eraser.jar" failonerror="false"/>
+        <jar jarfile="${eraser.jars}/eraser.jar"
+            includes="**/*.class" 
+        	update="no"
+        	excludes="test/**/*.class"
+        	basedir="${eraser.bin}">
+	    	<fileset dir="${eraser.base}" includes="code-eraser.properties"/> 
+        	<zipgroupfileset dir="lib" includes="javassist.jar"/>
+        	<zipgroupfileset dir="lib/cli" includes="commons-cli-1.2.jar"/>
+        </jar>
+    	<delete file="${eraser.jars}/eraser-noDep.jar"/>
+        <jar jarfile="${eraser.jars}/eraser-noDep.jar"
+            includes="**/*.class" 
+        	excludes="test/**/*.class"
+        	basedir="${eraser.bin}">
+	    	<fileset dir="${eraser.base}" includes="code-eraser.properties"/> 
+        </jar>
+	</target>
+
+	<target name="jar-test" description="helper task to build the jars for testing">
+		<mkdir dir="${eraser.jars}"/>
+    	<delete file="${eraser.jars}/RemoveAttributeTest.jar"/>
+        <jar jarfile="${eraser.jars}/RemoveAttributeTest.jar"
+            includes="test/*.class" 
+        	basedir="${eraser.bin}">
+        </jar>
+
+		<delete file="${eraser.jars}/ReplaceTest.jar"/>
+        <jar jarfile="${eraser.jars}/ReplaceTest.jar"
+            includes="test/ReplaceTest.class test/awt/Point.class" 
+        	basedir="${eraser.bin}">
+        </jar>
+
+		<delete file="${eraser.jars}/ChangePackageTest.jar"/>
+        <jar jarfile="${eraser.jars}/ChangePackageTest.jar"
+            includes="test/ChangePackageTest.class" 
+        	basedir="${eraser.bin}">
+        </jar>
+	</target>
+		
+	<target name="test-cli" depends="jar-test" description="runs tests for the command line interface">
+		<echo message="Test -list option"/>
+		<java classname="de.uni_hildesheim.sse.codeEraser.tool.CodeEraser" classpathref="eraser.test.classpath">
+		  <arg value="-list"/>
+		  <arg value="-in=${eraser.jars}/RemoveAttributeTest.jar"/>
+		</java>
+
+		<echo message="Test code eraser with -debug=true and -mem=true (cli-params)"/>
+    	<delete file="${eraser.jars}/RemoveAttributeTest-gen.jar"/>
+		<java classname="de.uni_hildesheim.sse.codeEraser.tool.CodeEraser" classpathref="eraser.test.classpath">
+		  <arg value="-in=${eraser.jars}/RemoveAttributeTest.jar"/>
+	      <arg value="-out=${eraser.jars}/RemoveAttributeTest-gen.jar"/>
+		  <arg value="-Bdebug=true"/>
+			<arg value="-Bmem=true"/>
+<!--	      <arg value="-Bmem2=true"/>
+		  <arg value="-Bio=true"/>-->
+		</java>
+		<java classname="test.RemoveAttributeTest" classpath="${eraser.jars}/RemoveAttributeTest-gen.jar"/>
+	
+		<echo message="Test class replacer with (cli-params)"/>
+    	<delete file="${eraser.jars}/ReplaceTest-gen.jar"/>
+		<java classname="de.uni_hildesheim.sse.codeEraser.replace.ClassReplacer" classpathref="eraser.test.classpath">
+		  <arg value="-in=${eraser.jars}/ReplaceTest.jar"/>
+		  <arg value="-out=${eraser.jars}/ReplaceTest-gen.jar"/>
+		  <arg value="-Mjava.awt.Point=test.awt.Point"/>
+		</java>
+		<java classname="test.ReplaceTest" classpath="${eraser.jars}/ReplaceTest-gen.jar"/>
+	</target>
+
+	<target name="test-ant" depends="jar-test" description="runs tests for ANT tasks">
+		<echo message="Test class replacer with (cli-params)"/>
+
+		<delete file="${eraser.jars}/ReplaceTest-gen.jar"/>
+		<classReplacer jarFile="${eraser.jars}/ReplaceTest.jar" outFile="${eraser.jars}/ReplaceTest-gen.jar">
+			<mapping oldName="java.awt.Point" newName="test.awt.Point"/>
+		</classReplacer>
+		<java classname="test.ReplaceTest" classpath="${eraser.jars}/ReplaceTest-gen.jar"/>
+
+		<delete file="${eraser.jars}/ChangePackageTest-gen.jar"/>
+		<classReplacer jarFile="${eraser.jars}/ChangePackageTest.jar" outFile="${eraser.jars}/ChangePackageTest-gen.jar">
+			<mapping pattern="true" oldName="test\.(.*)" newName="test1.test2.$1"/>
+		</classReplacer>
+		<java classname="test1.test2.ChangePackageTest" classpath="${eraser.jars}/ChangePackageTest-gen.jar"/>
+
+		<patchJavassist jarFile="${eraser.lib}/javassist.jar" outFile="${eraser.jars}/javassist-gen.jar"/>
+		
+		<propertyGen baseDir="src">
+			<fileset dir="src" id="id">
+    			<include name="test/awt/*.properties"/>
+			</fileset>
+		</propertyGen>
+		
+		<delete file="${eraser.jars}/ReplicatorTest-gen.jar"/>
+		<classReplicator outFile="${eraser.jars}/ReplicatorTest-gen.jar">
+			<mapping oldName="java.lang.StringBuilder" newName="test.lang.StringBuilder"/>
+			<mapping oldName="java.util.ArrayList" newName="test.util.ArrayList"/>
+			<mapping oldName="java.util.HashMap" newName="test.util.HashMap"/>
+			<mapping oldName="java.util.AbstractList" newName="test.util.AbstractList"/>
+		</classReplicator>
+	</target>
+
+	<target name="test-properties">
+		<propertyGen baseDir="src">
+			<fileset dir="src">
+    			<include name="test/awt/*.properties"/>
+			</fileset>
+		</propertyGen>
+	</target>
+
+	<target name="test-flatten">
+		<mkdir dir="tmp" />
+		<flatten baseDir="src" outDir="tmp" removeRegEx="-" caseRule="lower">
+			<fileset dir="src">
+    			<include name="test/awt/*.properties"/>
+			</fileset>
+		</flatten>
+	</target>
+	
+	<target name="test-all" depends="test-cli,test-ant" description="runs all tests"/>
+
+</project>

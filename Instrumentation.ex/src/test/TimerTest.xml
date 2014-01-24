@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xmlns="http://sse.uni-hildesheim.de/instrumentation" exclusive="true">
+  <namespace name="test">
+    <module name="TimerTest">
+      <behavior signature="timerInOneMethod()">
+        <timer id="startFinishTimer" state="START_FINISH"/>
+      </behavior>
+      <behavior signature="startProcessing()">
+        <timer id="startFinish2Method" state="START"/>
+      </behavior>
+      <behavior signature="endProcessing()">
+        <timer id="startFinish2Method" state="FINISH"/>
+      </behavior>
+      <behavior signature="interruptAndContinueProcessing()">
+        <timer id="startFinish2Method" state="SUSPEND_RESUME"/>
+      </behavior>
+      <behavior signature="interruptProcessing()">
+        <timer id="startFinish2Method" state="SUSPEND" affectAt="BEGINNING"/>
+      </behavior>
+      <behavior signature="continueProcessing()">
+        <timer id="startFinish2Method" state="RESUME" affectAt="END"/>
+      </behavior>
+      <behavior signature="main(java.lang.String[])">
+        <startSystem/>
+        <endSystem invoke = "asserts"/>
+      </behavior>
+    </module>
+  </namespace>
+</configuration>

@@ -1,0 +1,7 @@
+<body>
+Basic classes needed to instrument other classes and to be available before
+Instrumentation. The abstract RecorderFrontend
+holds an instance of itself in order to release dependencies which would break 
+the classloading cycle. For startup/runtime instrumentation, these classes are 
+packaged into a JAR file and loaded dynamically into the boot class path.
+</body>

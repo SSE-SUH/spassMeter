@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="SPASS-meter examples" default="run" basedir=".">
+
+	<property name="spass-meter.home" value="../instrumentation.ex" />
+
+	<property name="OS" value="win" />
+		
+	<property name="base" value="." />
+	<property name="src" value="${base}/src" />
+	<property name="bin" value="${base}/bin" />
+	<property name="lib" value="${base}/lib" />
+	<property name="out" value="${base}/out" />
+
+	<path id="classpath">
+		<fileset dir="${lib}">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement location="${bin}" />
+	</path>
+
+	<path id="classpath.instrumentation">
+		<fileset dir="${lib}">
+			<include name="*.jar" />
+			<include name="instrumentation/*.jar" />
+		</fileset>
+		<pathelement location="${bin}" />
+	</path>
+
+	<available property="test.spass-meter.home" file="${spass-meter.home}" />
+	<target name="-external.spass-meter" if="test.spass-meter.home">
+		<ant dir="${spass-meter.home}" target="build external jars" />
+		<ant dir="${spass-meter.home}" target="jar" />
+
+		<copy failonerror="false" file="${spass-meter.home}/dist/spass-meter-annotations.jar" todir="${lib}" />
+		<copy failonerror="false" file="${spass-meter.home}/dist/win32/spass-meter-ia.jar" todir="${lib}/spassmeter/win" />
+		<copy failonerror="false" file="${spass-meter.home}/dist/win32/spass-meter-boot.jar" todir="${lib}/spassmeter/win" />
+		<copy failonerror="false" file="${spass-meter.home}/dist/win32/spass-meter-rt.jar" todir="${lib}/spassmeter/win" />
+		<copy failonerror="false" file="${spass-meter.home}/dist/linux/spass-meter-ia.jar" todir="${lib}/spassmeter/linux" />
+		<copy failonerror="false" file="${spass-meter.home}/dist/linux/spass-meter-boot.jar" todir="${lib}/spassmeter/linux" />
+		<copy failonerror="false" file="${spass-meter.home}/dist/linux/spass-meter-rt.jar" todir="${lib}/spassmeter/linux" />
+	</target>
+
+	<target name="build external jars" description="Build external jars provided by other projects">
+		<property name="lobaris.flatBuild" value="true" />
+		<antcall target="deep rebuild external jars" />
+	</target>
+
+	<target name="deep rebuild external jars" depends="-external.spass-meter" 
+	     description="Build external jars provided by other projects (please execute from command line, not from inside Eclipse)">
+	</target>
+	
+	<target name="compile" description="Compile the sources">
+		<mkdir dir="${bin}" />
+		<javac srcdir="${src}" includeantruntime="false" compiler="modern" classpathref="classpath" destdir="${bin}" excludes="bin/**" debug="on" />
+	</target>
+
+	<target name="run" depends="compile">
+	    <mkdir dir="${out}"/>
+		<echo message="CPU time annotations" />
+		<property name="cpuTimeAnnotationsOut" value="${out}/cpuTime-annotations.log"/>
+		<java classpathref="classpath" classname="example.cpuTime.CpuTimeAnnotation" fork="true">
+			<jvmarg value="-javaagent:${lib}/spassmeter/${OS}/spass-meter-ia.jar=logLevel=OFF,out=${cpuTimeAnnotationsOut}"/>
+		</java>
+		<echo message="results in ${cpuTimeAnnotationsOut}"/>
+
+		<property name="cpuTimeXmlOut" value="${out}/cpuTime-xml.log"/>
+		<echo message="CPU time XML" />
+		<java classpathref="classpath" classname="example.cpuTime.CpuTimeXml" fork="true">
+			<jvmarg value="-javaagent:${lib}/spassmeter/${OS}/spass-meter-ia.jar=logLevel=OFF,out=${cpuTimeXmlOut},xmlconfig=src/example/cpuTime/CpuTime.xml" />
+		</java>
+		<echo message="results in ${cpuTimeXmlOut}"/>
+	</target>
+
+</project>

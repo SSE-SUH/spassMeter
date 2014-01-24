@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="libs/eraser-runtime.jar"/>
+	<classpathentry kind="lib" path="libs/locutor-1.00.jar"/>
+	<classpathentry kind="lib" path="libs/spass-meter-rt.jar"/>
+	<classpathentry kind="lib" path="libs/spass-meter-annotations.jar"/>
+	<classpathentry kind="lib" path="libs/tests.jar"/>
+	<classpathentry kind="lib" path="libs/spass-meter-ia.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk"/>
+	<classpathentry kind="lib" path="libs/gearsBridgeJMX-instrumenter.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

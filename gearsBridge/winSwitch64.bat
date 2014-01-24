@@ -1,0 +1,1 @@
+C:\Program Files\Microsoft SDKs\Windows\v7.0\Bin\setenv /x64

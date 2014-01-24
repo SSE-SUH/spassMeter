@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+	<property name="TOOLS" value="C:\Program Files (x86)\Java\jdk1.6.0_25\lib\tools.jar"/>
+    <target name="javadoc">
+        <javadoc access="private" author="true" classpath="lib/locutor-instrumenter1.00.jar;lib/eraser-runtime.jar;lib/asm-3.3.jar;${TOOLS};lib/javassist.jar" destdir="doc" doctitle="SPASS-meter" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src\de\uni_hildesheim\sse\monitoring\runtime\overview.html" packagenames="de.uni_hildesheim.sse.monitoring.runtime.recording,de.uni_hildesheim.sse.monitoring.runtime.recordingServer,implementation,de.uni_hildesheim.sse.monitoring.runtime,de.uni_hildesheim.sse.monitoring.runtime.boot,de.uni_hildesheim.sse.monitoring.runtime.instrumentation,de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements,test,de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies,de.uni_hildesheim.sse.monitoring.runtime.annotations,de.uni_hildesheim.sse.monitoring.runtime.utils" source="1.6" sourcepath="src" splitindex="true" use="false" version="true"/>
+    </target>
+</project>

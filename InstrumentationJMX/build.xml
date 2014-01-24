@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<project name="InstrumentationJMX" default="jar">
+	
+	<!-- set JAVA_HOME for your environment -->
+    <property name="JAVA_HOME" value="C:\Program Files (x86)\Java\jdk1.6.0_26"/>
+    <property name="meter.base" value="."/>
+    <property name="os" value="win32"/>
+
+	<property name="version" value="1.00" />
+
+	<property name="instrumentationjmx.base" value="." />
+	<property name="instrumentationjmx.src" value="${instrumentationjmx.base}/src" />
+	<property name="instrumentationjmx.bin" value="${instrumentationjmx.base}/bin" />
+	<property name="instrumentationjmx.jars" value="${instrumentationjmx.base}/dist" />
+	<property name="instrumentationjmx.lib" value="${instrumentationjmx.base}/libs" />
+	
+	<property name="gearsBridgeJ.home" value="../gearsBridgeJ" />
+	<property name="gearsBridgeJMX.home" value="../gearsBridgeJMX" />
+	<property name="codeEraser.home" value="../CodeEraser" />
+	<property name="spass-meter.home" value="../Instrumentation.ex"/>
+	
+	<property name="instrumentationjmx.classpath" value="${instrumentationjmx.base}"/>
+	
+	<path id="meter.test.classpath"> <!-- for monitoring test cases -->
+        <pathelement location="libs/tests.jar"/>
+        <pathelement location="dist/win32/spass-meter-rt.jar"/>
+    </path>
+
+	<!--Check if CodeEraser project is available-->
+	<available property="test.codeEraser.home" file="${codeEraser.home}" />
+	<!--Build CodeEraser jars only if the project is available-->
+	<target name="-external.codeEraser" if="test.codeEraser.home">
+		<ant dir="${codeEraser.home}" target="jar" />
+		<copy failonerror="false" file="${codeEraser.home}/dist/eraser-runtime.jar" todir="${instrumentationjmx.lib}" />
+	</target>
+
+	<!--Check if GearsBridgeJ project is available-->
+	<available property="test.gearsBridge.home" file="${gearsBridgeJ.home}" />
+	<!--Build GearsBridgeJ jars only if the project is available-->
+	<target name="-external.gearsBridge" if="test.gearsBridge.home">
+		<ant dir="${gearsBridgeJ.home}" target="jar" />
+		<copy failonerror="false" file="${gearsBridgeJ.home}/dist/locutor-1.00.jar" todir="${instrumentationjmx.lib}" />
+		<copy failonerror="false" file="${gearsBridgeJ.home}/dist/locutor-instrumenter1.00.jar" todir="${instrumentationjmx.lib}" />
+		<copy failonerror="false" file="${gearsBridgeJ.home}/dist/locutor-instrumenter1.00-linux.jar" todir="${instrumentationjmx.lib}" />
+	</target>
+	
+	<!--Check if GearsBridgeJMX project is available-->
+	<available property="test.gearsBridgeJMX.home" file="${gearsBridgeJMX.home}" />
+	<!--Build GearsBridgeJMX jars only if the project is available-->
+	<target name="-external.gearsBridgeJMX" if="test.gearsBridgeJMX.home">
+		<ant dir="${gearsBridgeJMX.home}" target="jar" />
+		<copy failonerror="false" file="${gearsBridgeJMX.home}/dist/gearsBridgeJMX.jar" todir="${instrumentationjmx.lib}" />
+		<copy failonerror="false" file="${gearsBridgeJMX.home}/dist/gearsBridgeJMX-instrumenter.jar" todir="${instrumentationjmx.lib}" />
+	</target>
+	
+	<!--Check if Instrumentation project is available-->
+	<available property="test.spass-meter.home" file="${spass-meter.home}"/>
+	<!--Build Instrumentation jars only if the project is available-->
+	<target name="-external.spass-meter" if="test.spass-meter.home">
+		<ant dir="${spass-meter.home}" target="jar-testAgent"/>
+		<copy failonerror="false" file="${spass-meter.home}/MONITORING_MANIFEST.MF" todir="${instrumentationjmx.base}" />
+		<copy failonerror="false" file="${spass-meter.home}/dist/spass-meter.jar" todir="${instrumentationjmx.lib}" />
+		<copy failonerror="false" file="${spass-meter.home}/dist/spass-meter-annotations.jar" todir="${instrumentationjmx.lib}" />
+		<copy failonerror="false" file="${spass-meter.home}/dist/spass-meter-ia.jar" todir="${instrumentationjmx.lib}" />
+		<copy failonerror="false" file="${spass-meter.home}/dist/spass-meter-rt.jar" todir="${instrumentationjmx.lib}" />
+		<copy failonerror="false" file="${spass-meter.home}/dist/spass-meter-static.jar" todir="${instrumentationjmx.lib}" />
+		<mkdir dir="${instrumentationjmx.lib}/win32"/>
+		<copy failonerror="false" todir="${instrumentationjmx.lib}/win32" >
+			<fileset dir="${spass-meter.home}/dist/win32" />
+		</copy>
+		<mkdir dir="${instrumentationjmx.lib}/linux"/>
+		<copy failonerror="false" todir="${instrumentationjmx.lib}/linux" >
+			<fileset dir="${spass-meter.home}/dist/linux" />
+		</copy>
+		<copy failonerror="false" file="${spass-meter.home}/dist/tests.jar" todir="${instrumentationjmx.lib}" />
+	</target>
+
+	<!--build required jars-->
+	<target name="build external jars" 
+		description="Build external jars provided by other projects">
+		<property name="lobaris.flatBuild" value="true"/>
+		<antcall target="deep rebuild external jars" />
+	</target>
+	
+	<target name="deep rebuild external jars" 
+		depends="-external.codeEraser, -external.gearsBridge, -external.gearsBridgeJMX, -external.spass-meter" 
+		description="Build external jars provided by other projects">
+	</target>
+
+	<!--compile project-->
+	<target name="compile" 
+		description="compiles the class files">
+		<mkdir dir="${instrumentationjmx.bin}"/>
+		<javac 
+			srcdir="${instrumentationjmx.src}" 
+            compiler="modern" 
+            classpath="${instrumentationjmx.classpath}"
+            destdir="${instrumentationjmx.bin}"
+            excludes="bin/**"
+            debug="on" 
+			includeantruntime="false"/>
+	</target>
+
+	<!--build project-->
+	<target name="jar" 
+		depends="compile" 
+		unless="lobaris.flatBuild"
+		description="builds all binary distribution archives">
+		
+		<delete file="${instrumentationjmx.jars}/instrumentationServiceConstants.jar"/>
+        <jar jarfile="${instrumentationjmx.jars}/instrumentationServiceConstants.jar" 
+            basedir="${instrumentationjmx.bin}">
+            <include name="de/uni_hildesheim/sse/serviceConstants/*.class"/>
+        </jar>
+		
+		<delete file="${instrumentationjmx.jars}/instrumentationJMX.jar"/>
+		<jar jarfile="${instrumentationjmx.jars}/instrumentationJMX.jar" manifest="${instrumentationjmx.base}/MANIFEST.MF" 
+    		basedir="${instrumentationjmx.bin}">
+        	<fileset dir="${instrumentationjmx.base}" includes="locutor.dll"/>
+			<fileset dir="${instrumentationjmx.base}" includes="plugin.lst"/>
+    	</jar>
+
+		<delete file="${instrumentationjmx.jars}/spass-meter.jar"/>
+        <jar jarfile="${instrumentationjmx.jars}/spass-meter.jar" update="no" manifest="${instrumentationjmx.base}/MONITORING_MANIFEST.MF">
+        	<zipgroupfileset dir="${instrumentationjmx.jars}" includes="instrumentationJMX.jar"/>
+	    	<zipgroupfileset dir="${instrumentationjmx.lib}" includes="gearsBridgeJMX-instrumenter.jar tests.jar"/>
+        	<zipgroupfileset dir="${instrumentationjmx.lib}" includes="spass-meter.jar"/>
+		</jar>
+		
+		<mkdir dir="${instrumentationjmx.jars}/win32"/>
+		<delete file="${instrumentationjmx.jars}/win32/spass-meter-rt.jar"/>
+        <jar jarfile="${instrumentationjmx.jars}/win32/spass-meter-rt.jar" update="no">
+        	<zipgroupfileset dir="${instrumentationjmx.jars}" includes="instrumentationJMX.jar"/>
+	    	<zipgroupfileset dir="${instrumentationjmx.lib}" includes="gearsBridgeJMX-instrumenter.jar tests.jar"/>
+        	<zipgroupfileset dir="${instrumentationjmx.lib}/win32" includes="spass-meter-rt.jar"/>
+		</jar>
+		<delete file="${instrumentationjmx.jars}/win32/spass-meter-static.jar"/>
+        <jar jarfile="${instrumentationjmx.jars}/win32/spass-meter-static.jar" update="no">
+        	<zipgroupfileset dir="${instrumentationjmx.jars}" includes="instrumentationJMX.jar"/>
+	    	<zipgroupfileset dir="${instrumentationjmx.lib}" includes="gearsBridgeJMX-instrumenter.jar tests.jar"/>
+        	<zipgroupfileset dir="${instrumentationjmx.lib}/win32" includes="spass-meter-static.jar"/>
+		</jar>
+		<copy file="${instrumentationjmx.lib}/win32/spass-meter-ia.jar" todir="${instrumentationjmx.jars}/win32"/>
+		<copy file="${instrumentationjmx.lib}/win32/spass-meter-boot.jar" todir="${instrumentationjmx.jars}/win32"/>
+		
+		<mkdir dir="${instrumentationjmx.jars}/linux"/>
+		<delete file="${instrumentationjmx.jars}/linux/spass-meter-rt.jar"/>
+        <jar jarfile="${instrumentationjmx.jars}/linux/spass-meter-rt.jar" update="no">
+        	<zipgroupfileset dir="${instrumentationjmx.jars}" includes="instrumentationJMX.jar"/>
+	    	<zipgroupfileset dir="${instrumentationjmx.lib}" includes="gearsBridgeJMX-instrumenter.jar tests.jar"/>
+        	<zipgroupfileset dir="${instrumentationjmx.lib}/linux" includes="spass-meter-rt.jar"/>
+		</jar>
+		<delete file="${instrumentationjmx.jars}/linux/spass-meter-static.jar"/>
+	    <jar jarfile="${instrumentationjmx.jars}/linux/spass-meter-static.jar" update="no">
+	    	<zipgroupfileset dir="${instrumentationjmx.jars}" includes="instrumentationJMX.jar"/>
+	    	<zipgroupfileset dir="${instrumentationjmx.lib}" includes="gearsBridgeJMX-instrumenter.jar tests.jar"/>
+	    	<zipgroupfileset dir="${instrumentationjmx.lib}/linux" includes="spass-meter-static.jar"/>
+		</jar>
+		<copy file="${instrumentationjmx.lib}/linux/spass-meter-ia.jar" todir="${instrumentationjmx.jars}/linux"/>
+		<copy file="${instrumentationjmx.lib}/linux/spass-meter-boot.jar" todir="${instrumentationjmx.jars}/linux"/>
+	</target>
+	
+	<target name="test" description="run tests" depends="jar">
+<!--		<ant dir="${spass-meter.home}" target="jar-testAgent"/>-->
+        <property name="test.jvmarg" value=",jmxConfig=../InstrumentationJMX/src/de/uni_hildesheim/sse/jmx/configuration/config.xml"/>
+		<ant dir="${spass-meter.home}" target="test-framework"/>
+        <mkdir dir="generated"/>
+		<ant dir="${spass-meter.home}" target="test-cases">
+            <reference refid="meter.test.classpath" torefid="test.cp"/>
+		</ant>
+    </target>
+	
+	<target name="test-test" description="run tests" depends="jar">
+<!--        <ant dir="${spass-meter.home}" target="jar-testAgent"/>-->
+        <property name="test.jvmarg" value=",jmxConfig=../InstrumentationJMX/src/de/uni_hildesheim/sse/jmx/configuration/config.xml"/>
+        <mkdir dir="generated"/>
+        <ant dir="${spass-meter.home}" target="test-test-case">
+            <reference refid="meter.test.classpath" torefid="test.cp"/>
+        </ant>
+    </target>
+	
+	<!-- Tests a single test from project instrumentation -->
+	<target name="test-test2" description="used tor testing tests" depends="jar">
+		<java classname="test.UDPIoTest" classpath="dist/win32/spass-meter-rt.jar" fork="true">
+            <arg value="continue" />
+            <jvmarg value="-Dcom.sun.management.jmxremote"/>
+            <jvmarg value="-javaagent:dist/win32/spass-meter-ia.jar=logLevel=OFF,out=meter.log,overhead=false,configDetect=false,varContrib=false,outInterval=4,jmxConfig=../InstrumentationJMX/src/de/uni_hildesheim/sse/jmx/configuration/config.xml"/>
+        </java>
+    </target>
+	
+	<!-- Tests the UdpIoTest, never stops -->
+	<target name="test-permanent" description="used tor testing tests" depends="jar">
+        <java classname="de.uni_hildesheim.sse.jmx.test.UdpIoTest" classpath="dist/win32/spass-meter-rt.jar" fork="true">
+            <arg value="continue" />
+            <jvmarg value="-Dcom.sun.management.jmxremote"/>
+            <jvmarg value="-javaagent:dist/win32/spass-meter-ia.jar=logLevel=OFF,out=meter.log,overhead=false,configDetect=false,varContrib=false,outInterval=4,memAccounting=CREATION_NATIVEUNALLOCATION_ARRAYS,jmxConfig=../InstrumentationJMX/src/de/uni_hildesheim/sse/jmx/configuration/config.xml"/>
+        </java>
+    </target>
+
+	<target name="test-memory-native" description="object and array allocation and unallocation using JVMTI" depends="jar">
+		<java classname="de.uni_hildesheim.sse.jmx.test.MemoryAllocationTest" classpath="dist/win32/spass-meter-rt.jar" fork="true">
+            <arg value="continue" />
+            <jvmarg value="-Dcom.sun.management.jmxremote"/>
+            <jvmarg value="-javaagent:dist/win32/spass-meter-ia.jar=logLevel=OFF,out=meter.log,overhead=false,configDetect=false,varContrib=false,outInterval=4,memAccounting=CREATION_NATIVEUNALLOCATION_ARRAYS,jmxConfig=../InstrumentationJMX/src/de/uni_hildesheim/sse/jmx/configuration/config.xml"/>
+        </java>
+    </target>
+
+	<target name="test-memory" description="object allocation, object unallocation, no arrays" depends="jar">
+		<java classname="de.uni_hildesheim.sse.jmx.test.MemoryAllocationTest" classpath="dist/win32/spass-meter-rt.jar" fork="true">
+            <arg value="continue" />
+            <jvmarg value="-Dcom.sun.management.jmxremote"/>
+            <jvmarg value="-javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,out=meter.log,overhead=false,configDetect=false,varContrib=false,outInterval=4,jmxConfig=../InstrumentationJMX/src/de/uni_hildesheim/sse/jmx/configuration/config.xml"/>
+        </java>
+    </target>
+
+</project>

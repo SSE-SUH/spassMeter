@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <functions />
+    <classes>
+        <class name="de.uni_hildesheim.sse.wildcat.services.WData" displayname="Data">
+        </class>
+        <class name="de.uni_hildesheim.sse.wildcat.services.WMemoryData" displayname="Memory">
+            <attribute name="MemoryCapacity" type="long">
+                <function name="min" description="The minimal number of memory capacity."/>
+                <function name="max" description="The maximal number of memory capacity."/>
+                <function name="avg" description="The avg number of memory capacity."/>
+            </attribute>
+            <attribute name="CurrentMemoryAvail" type="long">
+                <function name="min" description="The minimal number of current memory available."/>
+                <function name="max" description="The maximal number of current memory available."/>
+                <function name="avg" description="The avg number of current memory available."/>
+            </attribute>
+            <attribute name="CurrentMemoryUse" type="long">
+                <function name="min" description="The minimal number of current memory use."/>
+                <function name="max" description="The maximal number of current memory use."/>
+                <function name="avg" description="The avg number of current memory use."/>
+            </attribute>
+        </class>
+        <class name="de.uni_hildesheim.sse.wildcat.services.WProcessorData" displayname="Processor">
+            <attribute name="NumberOfProcessors" type="int">
+                <function name="min" description="The minimal number of number of processors."/>
+                <function name="max" description="The maximal number of number of processors."/>
+                <function name="avg" description="The avg number of number of processors."/>
+            </attribute>
+            <attribute name="MaxProcessorSpeed" type="int">
+                <function name="min" description="The minimal number of max processor speed."/>
+                <function name="max" description="The maximal number of max processor speed."/>
+                <function name="avg" description="The avg number of max processor speed."/>
+            </attribute>
+            <attribute name="CurrentProcessorSpeed" type="int">
+                <function name="min" description="The minimal number of current processor speed."/>
+                <function name="max" description="The maximal number of current processor speed."/>
+                <function name="avg" description="The avg number of current processor speed."/>
+            </attribute>
+            <attribute name="CurrentSystemLoad" type="double">
+                <function name="min" description="The minimal number of current system load."/>
+                <function name="max" description="The maximal number of current system load."/>
+                <function name="avg" description="The avg number of current system load."/>
+            </attribute>
+        </class>
+        <class name="de.uni_hildesheim.sse.wildcat.services.WThisProcessData" displayname="ThisProcess">
+            <attribute name="CurrentProcessMemoryUse" type="long">
+                <function name="min" description="The minimal number of current process memory use."/>
+                <function name="max" description="The maximal number of current process memory use."/>
+                <function name="avg" description="The avg number of current process memory use."/>
+            </attribute>
+            <attribute name="CurrentProcessUserTimeTicks" type="long">
+                <function name="min" description="The minimal number of current process user time ticks."/>
+                <function name="max" description="The maximal number of current process user time ticks."/>
+                <function name="avg" description="The avg number of current process user time ticks."/>
+            </attribute>
+            <attribute name="CurrentProcessKernelTimeTicks" type="long">
+                <function name="min" description="The minimal number of current process kernel time ticks."/>
+                <function name="max" description="The maximal number of current process kernel time ticks."/>
+                <function name="avg" description="The avg number of current process kernel time ticks."/>
+            </attribute>
+            <attribute name="CurrentProcessSystemTimeTicks" type="long">
+                <function name="min" description="The minimal number of current process system time ticks."/>
+                <function name="max" description="The maximal number of current process system time ticks."/>
+                <function name="avg" description="The avg number of current process system time ticks."/>
+            </attribute>
+            <attribute name="CurrentProcessProcessorLoad" type="long">
+                <function name="min" description="The minimal number of current process processor load."/>
+                <function name="max" description="The maximal number of current process processor load."/>
+                <function name="avg" description="The avg number of current process processor load."/>
+            </attribute>
+        </class>
+    </classes>
+</configuration>

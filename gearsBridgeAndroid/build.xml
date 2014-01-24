@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<project name="gearsBridgeAndroid" default="jar">
+
+	<property name="version" value="1.00" />
+
+	<property name="gba.base" value="." />
+	<property name="gba.src" value="${gba.base}/src" />
+	<property name="gba.bin" value="${gba.base}/bin" />
+	<property name="gba.jars" value="${gba.base}/dist" />
+	<property name="gba.lib" value="${gba.base}/libs" />
+	<property name="bridge.home" value="../GearsBridgeJ" />
+	<property name="bridgeNative.home" value="../gearsBridge" />
+
+	<available property="test.bridge.home" file="${bridge.home}"/>
+	<target name="-external.bridge" if="test.bridge.home">
+		<ant dir="${bridge.home}" target="build external jars" />
+		<ant dir="${bridge.home}" target="jar" />
+
+		<copy failonerror="false" file="${bridge.home}/libs/eraser-runtime.jar" todir="${gba.lib}" />
+		<copy failonerror="false" file="${bridge.home}/dist/locutor-androidBase1.00.jar" todir="${gba.lib}" />
+	</target>
+
+	<available property="test.bridgenative.home" file="${bridgeNative.home}"/>
+	<target name="copy.native" if="test.bridgenative.home">
+		<copy failonerror="false" todir="${gba.lib}" >
+		  <fileset dir="${bridgeNative.home}/bin/ndk/local" includes="**/*.*"/>
+		</copy>
+	</target>
+	
+	<target name="build external jars" 
+		description="Build external jars provided by other projects">
+		<property name="lobaris.flatBuild" value="true"/>
+		<antcall target="deep rebuild external jars" />	
+	</target>
+	
+	<target name="deep rebuild external jars" 
+		depends="-external.bridge"
+		description="Build external jars provided by other projects (please execute from command line, not from inside Eclipse)">
+	</target>
+
+	<target name="jar" description="builds all binary distribution archives" unless="lobaris.flatBuild">
+		<mkdir dir="${gba.jars}" />
+		<delete file="${gba.jars}/gearsBridgeAndroid.jar" />
+		<jar jarfile="${gba.jars}/gearsBridgeAndroid.jar" includes="de/uni_hildesheim/sse/system/android/**/*.class" basedir="${gba.bin}/classes">
+		</jar>
+	</target>
+
+</project>

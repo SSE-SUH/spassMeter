@@ -1,0 +1,17 @@
+.externalToolBuilders
+bin/*
+bin-dbg/*
+changes/*
+doc/*
+libs/*
+obj/*
+resources/*
+test/*
+libc.pdf
+*.obj
+SyncToy*
+t
+test.cc
+perflib_Examples.cc
+tmp.log
+win_perflib

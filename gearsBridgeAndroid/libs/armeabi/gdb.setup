@@ -1,0 +1,3 @@
+set solib-search-path /mnt/hgfs/eichelberger/LoBaRisWorkSpace/gearsBridge/bin/ndk/local/armeabi
+directory /mnt/hgfs/eichelberger/LoBaRisWorkSpace/android-ndk-r5b/android-ndk-r4/build/platforms/android-3/arch-arm/usr/include
+directory /mnt/hgfs/eichelberger/LoBaRisWorkSpace/gearsBridge/jni

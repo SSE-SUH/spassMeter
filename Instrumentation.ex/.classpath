@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JRE_TOOLS"/>
+	<classpathentry kind="lib" path="lib/eraser-runtime.jar" sourcepath="/CodeEraser"/>
+	<classpathentry kind="lib" path="lib/javassist.jar" sourcepath="/Javassist"/>
+	<classpathentry kind="lib" path="lib/ant/ant.jar" sourcepath="W:/apache-libs/apache-ant-1.8.2-src.zip"/>
+	<classpathentry kind="lib" path="lib/locutor-instrumenter1.00.jar" sourcepath="/gearsBridgeJ"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/asm/asm-all-4.0.jar" sourcepath="lib/asm/src.zip"/>
+	<classpathentry kind="lib" path="lib/testasm.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

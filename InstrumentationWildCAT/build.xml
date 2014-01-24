@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<project name="InstrumentationWildCAT" default="jar">
+
+	<!-- set JAVA_HOME for your environment -->
+    <property name="JAVA_HOME" value="C:\Program Files (x86)\Java\jdk1.6.0_26"/>
+    <property name="meter.base" value="."/>
+    <property name="os" value="win32"/>
+	
+	<property name="version" value="1.00" />
+
+	<property name="instrumentationwc.base" value="." />
+	<property name="instrumentationwc.src" value="${instrumentationwc.base}/src" />
+	<property name="instrumentationwc.bin" value="${instrumentationwc.base}/bin" />
+	<property name="instrumentationwc.jars" value="${instrumentationwc.base}/dist" />
+	<property name="instrumentationwc.lib" value="${instrumentationwc.base}/libs" />
+	
+	<property name="gearsBridgeJ.home" value="../gearsBridgeJ" />
+	<property name="gearsBridgewc.home" value="../gearsBridgeWildCAT" />
+	<property name="codeEraser.home" value="../CodeEraser" />
+	<property name="spass-meter.home" value="../Instrumentation2"/>
+	<property name="spass-meter-jmx.home" value="../InstrumentationJMX"/>
+
+	<path id="meter.test.classpath"> <!-- for monitoring test cases -->
+        <pathelement location="libs/tests.jar"/>
+        <pathelement location="dist/win32/spass-meter-rt.jar"/>
+		<path refid="classpath"/>
+    </path>
+	
+	<path id="classpath">
+        <fileset dir="${instrumentationwc.lib}">
+            <include name = "**/*.jar"/>
+        </fileset>
+        <pathelement location="${instrumentationwc.jars}/instrumentationWildCAT.jar"/>
+    </path>
+
+	<!--Check if CodeEraser project is available-->
+	<available property="test.codeEraser.home" file="${codeEraser.home}" />
+	<!--Build CodeEraser jars only if the project is available-->
+	<target name="-external.codeEraser" if="test.codeEraser.home">
+		<ant dir="${codeEraser.home}" target="jar" />
+		<copy failonerror="false" file="${codeEraser.home}/dist/eraser-runtime.jar" todir="${instrumentationwc.lib}" />
+	</target>
+
+	<!--Check if GearsBridgeJ project is available-->
+	<available property="test.gearsBridge.home" file="${gearsBridgeJ.home}" />
+	<!--Build GearsBridgeJ jars only if the project is available-->
+	<target name="-external.gearsBridge" if="test.gearsBridge.home">
+		<ant dir="${gearsBridgeJ.home}" target="jar" />
+		<copy failonerror="false" file="${gearsBridgeJ.home}/dist/locutor-1.00.jar" todir="${instrumentationwc.lib}" />
+		<copy failonerror="false" file="${gearsBridgeJ.home}/dist/locutor-instrumenter1.00.jar" todir="${instrumentationwc.lib}" />
+		<copy failonerror="false" file="${gearsBridgeJ.home}/dist/locutor-instrumenter1.00-linux.jar" todir="${instrumentationwc.lib}" />
+	</target>
+	
+	<!--Check if gearsBridgewc project is available-->
+	<available property="test.gearsBridgewc.home" file="${gearsBridgewc.home}" />
+	<!--Build gearsBridgewc jars only if the project is available-->
+	<target name="-external.gearsBridgewc" if="test.gearsBridgewc.home">
+		<ant dir="${gearsBridgewc.home}" target="jar" />
+		<copy failonerror="false" file="${gearsBridgewc.home}/dist/gearsBridgeWildCAT.jar" todir="${instrumentationwc.lib}" />
+		<copy failonerror="false" file="${gearsBridgewc.home}/dist/gearsBridgeWildCAT-instrumenter.jar" todir="${instrumentationwc.lib}" />
+	</target>
+	
+	<!--Check if Instrumentation project is available-->
+	<available property="test.spass-meter.home" file="${spass-meter.home}"/>
+	<!--Build Instrumentation jars only if the project is available-->
+	<target name="-external.spass-meter" if="test.spass-meter.home">
+		<ant dir="${spass-meter.home}" target="jar-testAgent"/>
+		<copy failonerror="false" file="${spass-meter.home}/dist/spass-meter-annotations.jar" todir="${instrumentationwc.lib}" />
+		<copy failonerror="false" file="${spass-meter.home}/dist/spass-meter-ia.jar" todir="${instrumentationwc.lib}" />
+		<copy failonerror="false" file="${spass-meter.home}/dist/spass-meter-rt.jar" todir="${instrumentationwc.lib}" />
+		<copy failonerror="false" file="${spass-meter.home}/dist/spass-meter-static.jar" todir="${instrumentationwc.lib}" />
+		<mkdir dir="${instrumentationwc.lib}/win32"/>
+		<copy failonerror="false" todir="${instrumentationwc.lib}/win32" >
+			<fileset dir="${spass-meter.home}/dist/win32" />
+		</copy>
+		<mkdir dir="${instrumentationwc.lib}/linux"/>
+		<copy failonerror="false" todir="${instrumentationwc.lib}/linux" >
+			<fileset dir="${spass-meter.home}/dist/linux" />
+		</copy>
+		<copy failonerror="false" file="${spass-meter.home}/dist/tests.jar" todir="${instrumentationwc.lib}" />
+	</target>
+	
+	<!--Check if Instrumentation project is available-->
+    <available property="test.spass-meter-jmx.home" file="${spass-meter-jmx.home}"/>
+    <!--Build Instrumentation jars only if the project is available-->
+    <target name="-external.spass-meter-jmx" if="test.spass-meter-jmx.home">
+        <copy failonerror="false" file="${spass-meter-jmx.home}/dist/instrumentationServiceConstants.jar" todir="${instrumentationwc.lib}" />
+    </target>
+
+	<!--build required jars-->
+	<target name="build external jars" 
+		description="Build external jars provided by other projects">
+		<property name="lobaris.flatBuild" value="true"/>
+		<antcall target="deep rebuild external jars" />
+	</target>
+	
+	<target name="deep rebuild external jars" 
+		depends="-external.codeEraser, -external.gearsBridge, -external.gearsBridgewc, -external.spass-meter, -external.spass-meter-jmx" 
+		description="Build external jars provided by other projects">
+	</target>
+
+	<!--compile project-->
+	<target name="compile" 
+		description="compiles the class files">
+		<mkdir dir="${instrumentationwc.bin}"/>
+		<javac 
+			srcdir="${instrumentationwc.src}" 
+            compiler="modern" 
+            classpath="${instrumentationwc.classpath}"
+            destdir="${instrumentationwc.bin}"
+            excludes="bin/**"
+            debug="on" 
+			includeantruntime="false"/>
+	</target>
+
+	<!--build project-->
+	<target name="jar" 
+		depends="compile" 
+		unless="lobaris.flatBuild"
+		description="builds all binary distribution archives">
+		
+		<delete file="${instrumentationwc.jars}/instrumentationWildCAT.jar"/>
+		<jar jarfile="${instrumentationwc.jars}/instrumentationWildCAT.jar" manifest="${instrumentationwc.base}/MANIFEST.MF" 
+    		basedir="${instrumentationwc.bin}">
+        	<fileset dir="${instrumentationwc.base}" includes="locutor.dll"/>
+			<zipgroupfileset dir="${instrumentationwc.lib}" includes="instrumentationServiceConstants.jar"/>
+			<fileset dir="${instrumentationwc.base}" includes="plugin.lst"/>
+    	</jar>
+		
+		<delete file="${instrumentationwc.jars}/spass-meter.jar"/>
+        <jar jarfile="${instrumentationwc.jars}/spass-meter.jar" update="no" manifest="${instrumentationwc.base}/MONITORING_MANIFEST.MF">
+            <zipgroupfileset dir="${instrumentationwc.jars}" includes="instrumentationWildCAT.jar"/>
+            <zipgroupfileset dir="${instrumentationwc.lib}" includes="gearsBridgeWildCAT-instrumenter.jar tests.jar"/>
+            <zipgroupfileset dir="${instrumentationwc.lib}" includes="spass-meter.jar"/>
+        </jar>
+		
+		<mkdir dir="${instrumentationwc.jars}/win32"/>
+		<delete file="${instrumentationwc.jars}/win32/spass-meter-rt.jar"/>
+        <jar jarfile="${instrumentationwc.jars}/win32/spass-meter-rt.jar" update="no">
+        	<zipgroupfileset dir="${instrumentationwc.jars}" includes="instrumentationWildCAT.jar"/>
+	    	<zipgroupfileset dir="${instrumentationwc.lib}" includes="gearsBridgeWildCAT-instrumenter.jar tests.jar"/>
+        	<zipgroupfileset dir="${instrumentationwc.lib}/win32" includes="spass-meter-rt.jar"/>
+		</jar>
+		
+		<delete file="${instrumentationwc.jars}/win32/spass-meter-static.jar"/>
+        <jar jarfile="${instrumentationwc.jars}/win32/spass-meter-static.jar" update="no">
+        	<zipgroupfileset dir="${instrumentationwc.jars}" includes="instrumentationWildCAT.jar"/>
+	    	<zipgroupfileset dir="${instrumentationwc.lib}" includes="gearsBridgeWildCAT-instrumenter.jar tests.jar"/>
+        	<zipgroupfileset dir="${instrumentationwc.lib}/win32" includes="spass-meter-static.jar"/>
+		</jar>
+		<copy file="${instrumentationwc.lib}/win32/spass-meter-ia.jar" todir="${instrumentationwc.jars}/win32"/>
+		<copy file="${instrumentationwc.lib}/win32/spass-meter-boot.jar" todir="${instrumentationwc.jars}/win32"/>
+		
+		<mkdir dir="${instrumentationwc.jars}/linux"/>
+		<delete file="${instrumentationwc.jars}/linux/spass-meter-rt.jar"/>
+        <jar jarfile="${instrumentationwc.jars}/linux/spass-meter-rt.jar" update="no">
+        	<zipgroupfileset dir="${instrumentationwc.jars}" includes="instrumentationWildCAT.jar"/>
+	    	<zipgroupfileset dir="${instrumentationwc.lib}" includes="gearsBridgeWildCAT-instrumenter.jar tests.jar"/>
+        	<zipgroupfileset dir="${instrumentationwc.lib}/linux" includes="spass-meter-rt.jar"/>
+		</jar>
+		<delete file="${instrumentationwc.jars}/linux/spass-meter-static.jar"/>
+	    <jar jarfile="${instrumentationwc.jars}/linux/spass-meter-static.jar" update="no">
+	    	<zipgroupfileset dir="${instrumentationwc.jars}" includes="instrumentationWildCAT.jar"/>
+	    	<zipgroupfileset dir="${instrumentationwc.lib}" includes="gearsBridgeWildCAT-instrumenter.jar tests.jar"/>
+	    	<zipgroupfileset dir="${instrumentationwc.lib}/linux" includes="spass-meter-static.jar"/>
+		</jar>
+		<copy file="${instrumentationwc.lib}/linux/spass-meter-ia.jar" todir="${instrumentationwc.jars}/linux"/>
+		<copy file="${instrumentationwc.lib}/linux/spass-meter-boot.jar" todir="${instrumentationwc.jars}/linux"/>
+	</target>
+	
+	<target name="run" description="runs the Plugin without SPASS-Monitor" depends="jar">
+        <java classname="de.uni_hildesheim.sse.wildcat.plugins.WildCATPlugin" 
+        	classpathref="classpath" fork="false" />
+    </target>
+
+	<target name="test" description="run tests" depends="jar">
+<!--        <ant dir="${spass-meter.home}" target="jar-testAgent"/>-->
+        <property name="test.jvmarg" value=",wildcatConfig=../InstrumentationWildCAT/src/de/uni_hildesheim/sse/wildcat/configuration/config.xml"/>
+        <ant dir="${spass-meter.home}" target="test-framework"/>
+        <mkdir dir="generated"/>
+        <ant dir="${spass-meter.home}" target="test-cases">
+            <reference refid="meter.test.classpath" torefid="test.cp"/>
+        </ant>
+    </target>
+	
+	<target name="test-test" description="tests a test" depends="jar">
+		<java classname="test.UDPIoTest" classpathref="classpath" fork="true">
+            <arg value="continue" />
+            <jvmarg value="-javaagent:dist/win32/spass-meter-ia.jar=logLevel=OFF,out=meter.log,overhead=false,configDetect=false,varContrib=false,outInterval=4,wildcatConfig=../InstrumentationWildCAT/src/de/uni_hildesheim/sse/wildcat/configuration/config.xml,wildcatGUI=true"/>
+        </java>
+	</target>
+
+	<target name="test-permanent" description="used tor testing tests" depends="jar">
+        <java classname="de.uni_hildesheim.sse.wildcat.test.UdpIoTest" classpathref="classpath" fork="true">
+            <arg value="continue" />
+            <jvmarg value="-javaagent:dist/win32/spass-meter-ia.jar=logLevel=OFF,out=meter.log,overhead=false,configDetect=false,varContrib=false,outInterval=4,memAccounting=CREATION_NATIVEUNALLOCATION_ARRAYS,wildcatConfig=../InstrumentationWildCAT/src/de/uni_hildesheim/sse/wildcat/configuration/config.xml"/>
+        </java>
+    </target>
+
+    <target name="test-memory-native" description="object and array allocation and unallocation using JVMTI" depends="jar">
+        <java classname="de.uni_hildesheim.sse.wildcat.test.MemoryAllocationTest" classpathref="classpath" fork="true">
+            <arg value="continue" />
+            <jvmarg value="-javaagent:dist/win32/spass-meter-ia.jar=logLevel=OFF,out=meter.log,overhead=false,configDetect=false,varContrib=false,outInterval=4,memAccounting=CREATION_NATIVEUNALLOCATION_ARRAYS,wildcatConfig=../InstrumentationWildCAT/src/de/uni_hildesheim/sse/wildcat/configuration/config.xml"/>
+        </java>
+    </target>
+
+    <target name="test-memory" description="object allocation, object unallocation, no arrays" depends="jar">
+        <java classname="de.uni_hildesheim.sse.wildcat.test.MemoryAllocationTest" classpathref="classpath" fork="true">
+            <arg value="continue" />
+            <jvmarg value="-javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,out=meter.log,overhead=false,configDetect=false,varContrib=false,outInterval=4,wildcatConfig=../InstrumentationWildCAT/src/de/uni_hildesheim/sse/wildcat/configuration/config.xml,wildcatGUI=true"/>
+        </java>
+    </target>
+	
+</project>

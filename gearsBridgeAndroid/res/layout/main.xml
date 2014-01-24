@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/body"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<ScrollView android:id="@+id/content"
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:layout_marginBottom="50dip">
+		<LinearLayout android:id="@+id/content"
+			xmlns:android="http://schemas.android.com/apk/res/android"
+			android:orientation="vertical" android:layout_width="fill_parent"
+			android:layout_height="fill_parent">
+
+			<TextView android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:text="BatteryDataGatherer:"
+				android:layout_marginBottom="5dp" style="@style/textTitles"
+				android:layout_marginTop="15dp" />
+			<View android:layout_width="fill_parent" android:layout_height="1dip"
+				android:background="#ababab" android:layout_marginBottom="10dp" />
+			<TextView android:id="@+id/bdg_batteryLifePercent"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/bdg_batteryLifeTime"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/bdg_powerPlugStatus"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/bdg_hasSystemBattery"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+
+			<TextView android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:text="DataGatherer:"
+				android:layout_marginBottom="5dp" style="@style/textTitles"
+				android:layout_marginTop="15dp" />
+			<View android:layout_width="fill_parent" android:layout_height="1dip"
+				android:background="#ababab" android:layout_marginBottom="10dp" />
+			<TextView android:id="@+id/dg_gatherWifiSignals"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<LinearLayout android:id="@+id/accesspoints"
+				android:orientation="vertical" android:layout_height="wrap_content"
+				android:layout_width="fill_parent">
+			</LinearLayout>
+
+
+			<TextView android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:text="MemoryDataGatherer:"
+				android:layout_marginBottom="5dp" style="@style/textTitles"
+				android:layout_marginTop="15dp" />
+			<View android:layout_width="fill_parent" android:layout_height="1dip"
+				android:background="#ababab" android:layout_marginBottom="10dp" />
+			<TextView android:id="@+id/mdg_currentMemAvail"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/mdg_currentMemUse"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/mdg_currentMemCapacity"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/mdg_ObjectSize"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+
+			<TextView android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:text="NetworkDataGatherer:"
+				android:layout_marginBottom="5dp" style="@style/textTitles"
+				android:layout_marginTop="15dp" />
+			<View android:layout_width="fill_parent" android:layout_height="1dip"
+				android:background="#ababab" android:layout_marginBottom="10dp" />
+			<TextView android:id="@+id/ndg_currentNetSpeed"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/ndg_maxNetSpeed"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/ndg_netUtilization"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+
+			<TextView android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:text="ThisProcessDataGatherer:"
+				android:layout_marginBottom="5dp" style="@style/textTitles"
+				android:layout_marginTop="15dp" />
+			<View android:layout_width="fill_parent" android:layout_height="1dip"
+				android:background="#ababab" android:layout_marginBottom="10dp" />
+			<TextView android:id="@+id/tpdg_allProcessIo"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/tpdg_currentProcessID"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/tpdg_currentProcessIo"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/tpdg_currentProcessKernelTimeTicks"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/tpdg_currentProcessMemoryUse"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/tpdg_currentProcessProcessorLoad"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/tpdg_currentProcessSystemTimeTicks"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/tpdg_currentProcessUserTimeTicks"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+
+			<TextView android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:text="ProcessorDataGatherer:"
+				android:layout_marginBottom="5dp" style="@style/textTitles"
+				android:layout_marginTop="15dp" />
+			<View android:layout_width="fill_parent" android:layout_height="1dip"
+				android:background="#ababab" android:layout_marginBottom="10dp" />
+			<TextView android:id="@+id/prdg_currentProcessorSpeed"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/prdg_currentSystemLoad"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/prdg_maxProcessorSpeed"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/prdg_numberOfProcessors"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+
+			<TextView android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:text="ScreenDataGatherer:"
+				android:layout_marginBottom="5dp" style="@style/textTitles"
+				android:layout_marginTop="15dp" />
+			<View android:layout_width="fill_parent" android:layout_height="1dip"
+				android:background="#ababab" android:layout_marginBottom="10dp" />
+			<TextView android:id="@+id/sdg_screenHeight"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/sdg_screenWidth"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/sdg_screenResolution"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+
+			<TextView android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:text="VolumeDataGatherer:"
+				android:layout_marginBottom="5dp" style="@style/textTitles"
+				android:layout_marginTop="15dp" />
+			<View android:layout_width="fill_parent" android:layout_height="1dip"
+				android:background="#ababab" android:layout_marginBottom="10dp" />
+			<TextView android:id="@+id/vdg_currentVolumeAvail"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/vdg_currentVolumeUse"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+			<TextView android:id="@+id/vdg_volumeCapacity"
+				android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+		</LinearLayout>
+	</ScrollView>
+
+	<RelativeLayout android:layout_marginTop="-50dip"
+		android:layout_height="wrap_content" android:layout_width="fill_parent">
+		<Button android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:id="@+id/refreshBtn"
+			android:text="Aktualisieren" android:layout_alignParentBottom="true"
+			android:textSize="8pt" />
+	</RelativeLayout>
+
+</LinearLayout>

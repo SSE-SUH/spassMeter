@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    
+    <!--root element-->
+    <xs:element name="configuration">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="functions"/>
+                <xs:element ref="classes"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <!--functions-->
+    <xs:element name="functions">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="addedfunction" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <!--blubb-->
+    <xs:element name="addedfunction">
+        <xs:complexType>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="displayname" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    
+    <!--classes-->
+    <xs:element name="classes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="class" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <!--class-->
+    <xs:element name="class">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="attribute" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="displayname" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    
+    <!--attribute-->
+    <xs:element name="attribute">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="function" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="type" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    
+    <!--function-->
+    <xs:element name="function">
+        <xs:complexType>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="description" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    
+</xs:schema>

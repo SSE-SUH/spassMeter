@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="SPASS-meter" default="jar" basedir=".">
+
+    <property name="tools" value="${java.home}/../lib/tools.jar"/>
+	<property name="meter.base" value="."/>
+	<property name="os" value="win32"/>
+
+	<property name="codeEraser.home" value="../CodeEraser"/>
+	<property name="bridge.home" value="../gearsBridgeJ"/>
+
+	<property name="bridge.jars" value="${bridge.home}/dist"/>
+    <property name="meter.src" value="${meter.base}/src"/>
+    <property name="meter.bin" value="${meter.base}/bin"/>
+    <property name="meter.jars" value="${meter.base}/dist"/>
+    <property name="meter.lib" value="${meter.base}/lib"/>
+    <property name="meter.tools" value="${meter.base}/tools"/>
+
+	<!-- SEVERE -->
+	<property name="iArgs.static" value= "logLevel=SEVERE,overhead=false,configDetect=false"/>
+	<property name="iArgs.generic" value= "-javaagent:dist/win32/spass-meter-ia.jar=${iArgs.static}"/>
+	<property name="test.jvmarg" value=""/> <!-- either yet present or empty -->
+
+	<path id="meter.compile.classpath">
+	    <pathelement location="${meter.lib}/ant/ant.jar"/>
+	    <pathelement location="${meter.lib}/eraser-runtime.jar"/>
+	    <pathelement location="${meter.lib}/javassist.jar"/>
+	    <pathelement location="${meter.lib}/asm/asm-all-4.0.jar"/>
+	    <pathelement location="${meter.lib}/locutor-instrumenter1.00.jar"/>
+    	<pathelement location="${tools}"/>
+	</path>
+	
+    <path id="meter.test.classpath"> <!-- for monitoring test cases -->
+		<pathelement location="dist/tests.jar"/> <!-- may be substituted by bin -->
+    	<pathelement location="dist/${os}/spass-meter-rt.jar"/>
+    </path>
+	
+    <path id="meter.test-external.classpath"> <!-- for utility test cases -->
+    	<pathelement location="dist/tests.jar"/> <!-- may be substituted by bin -->
+		<pathelement location="dist/${os}/spass-meter-boot.jar"/>
+    	<pathelement location="dist/${os}/spass-meter-annotations.jar"/>
+    	<pathelement location="dist/${os}/spass-meter-rt.jar"/>
+    	<pathelement location="dist/${os}/spass-meter-ia.jar"/>
+    </path>	
+	
+    <path id="meter.test-agent.classpath"> <!-- for agent test cases -->
+		<pathelement location="dist/spass-meter.jar"/>
+		<pathelement location="lib/javassist.jar"/>
+		<pathelement location="lib/eraser-runtime.jar"/>
+		<pathelement location="lib/locutor-instrumenter1.00.jar"/>
+    	<pathelement location="dist/test.jar"/>
+    	<pathelement location="dist/test-agent.jar"/>
+    	<pathelement location="${tools}"/>
+    </path>
+
+	<!-- for static instrumentation of test classes -->
+    <path id="meter.test-instrument.classpath"> 
+		<pathelement location="lib/locutor-instrumenter1.00.jar"/>
+    	<pathelement location="${tools}"/>
+		<pathelement location="dist/spass-meter-ant.jar"/>
+		<pathelement location="lib/javassist.jar"/>
+		<pathelement location="lib/eraser-runtime.jar"/>
+    </path>
+
+
+    <!-- for running static instrumented test classes -->
+	<path id="meter.test-static.classpath"> 
+		<pathelement location="${meter.jars}/tmp/tests.jar"/>
+		<pathelement location="bin/spass-meter-boot.jar"/>
+		<pathelement location="bin/spass-meter-rt.jar"/>
+		<pathelement location="lib/eraser-runtime.jar"/>
+    </path>
+	
+	<target name="compile">
+	    <mkdir dir="${meter.bin}"/>
+		<javac destdir="${meter.bin}"           
+			includeantruntime="false"
+            classpathref="meter.compile.classpath">
+		    <src path="${meter.src}" />
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile" unless="lobaris.flatBuild">
+		<mkdir dir="${meter.jars}"/>
+		<delete file="${meter.jars}/spass-meter-boot.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-boot.jar"
+        	includes="de/uni_hildesheim/sse/monitoring/runtime/boot/
+        	    de/uni_hildesheim/sse/monitoring/runtime/wrap/" 
+        	basedir="${meter.bin}">
+        </jar>
+		
+		<delete file="${meter.jars}/spass-meter.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter.jar"
+        	includes="de/uni_hildesheim/sse/monitoring/runtime/" 
+        	basedir="${meter.bin}" manifest="${meter.base}/MONITORING_MANIFEST.MF">
+        </jar>
+
+		<delete file="${meter.jars}/spass-meter-annotations.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-annotations.jar"
+        	includes="de/uni_hildesheim/sse/monitoring/runtime/annotations/
+        	  de/uni_hildesheim/sse/monitoring/runtime/boot/DebugState.class
+        	  de/uni_hildesheim/sse/monitoring/runtime/boot/BooleanValue.class
+        	  de/uni_hildesheim/sse/monitoring/runtime/boot/GroupAccountingType.class
+        	  de/uni_hildesheim/sse/monitoring/runtime/boot/ResourceType.class"
+        	basedir="${meter.bin}">
+        	<zipgroupfileset dir="${meter.lib}" includes="eraser-annotations.jar"/>
+        </jar>
+
+		<delete file="${meter.jars}/spass-meter-ia.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-ia.jar"
+        	includes="de/uni_hildesheim/sse/monitoring/runtime/annotations/
+        	          de/uni_hildesheim/sse/monitoring/runtime/configuration/
+        	          de/uni_hildesheim/sse/monitoring/runtime/instrumentation/" 
+        	basedir="${meter.bin}" manifest="${meter.base}/MONITORING_MANIFEST.MF">
+        </jar>
+
+		<delete file="${meter.jars}/spass-meter-rt.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-rt.jar"
+        	excludes="de/uni_hildesheim/sse/monitoring/runtime/instrumentation/
+        	    de/uni_hildesheim/sse/monitoring/runtime/configuration/
+   	            de/uni_hildesheim/sse/monitoring/runtime/boot/
+        	    de/uni_hildesheim/sse/monitoring/runtime/wrap/
+       	        de/uni_hildesheim/sse/monitoring/runtime/annotations/
+   		        de/uni_hildesheim/sse/monitoring/runtime/recordingServer/
+        		linux/** test/** win32/** **/*.jar **/*.html" 
+        	basedir="${meter.bin}">
+        </jar>
+
+		<delete file="${meter.jars}/spass-meter-static.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-static.jar"
+        	excludes="de/uni_hildesheim/sse/monitoring/runtime/instrumentation/
+		        de/uni_hildesheim/sse/monitoring/runtime/recordingServer/**/*.class
+        		linux/** test/** win32/** **/*.jar **/*.html" 
+        	basedir="${meter.bin}">
+        </jar>
+		
+		<delete file="${meter.jars}/spass-meter-ant.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-ant.jar">
+  	      <fileset dir="${meter.bin}">
+  	        <include name="de/uni_hildesheim/sse/monitoring/runtime/annotations/"/>
+  	        <include name="de/uni_hildesheim/sse/monitoring/runtime/"/>
+  	      </fileset>
+	      <fileset dir="${meter.base}">
+	        <include name="spass-meter.properties"/>
+	      </fileset>
+        </jar>
+		
+		<mkdir dir="${meter.jars}/win32"/>
+		<copy file="${meter.jars}/spass-meter-boot.jar" todir="${meter.jars}/win32"/>
+			<copy file="${meter.jars}/spass-meter-annotations.jar" todir="${meter.jars}/win32"/>
+		<delete file="${meter.jars}/win32/spass-meter.jar"/>
+        <jar jarfile="${meter.jars}/win32/spass-meter.jar"
+		   manifest="${meter.base}/MONITORING_MANIFEST.MF">
+        	<zipgroupfileset dir="${meter.jars}" includes="spass-meter.jar"/>
+        	<zipgroupfileset dir="${meter.lib}" includes="javassist.jar eraser-runtime.jar locutor-instrumenter1.00.jar"/>
+			<zipgroupfileset dir="${meter.lib}/asm" includes="asm-all-4.0.jar"/>
+		</jar>
+		<delete file="${meter.jars}/win32/spass-meter-ia.jar"/>
+        <jar jarfile="${meter.jars}/win32/spass-meter-ia.jar"
+		   manifest="${meter.base}/MONITORING_MANIFEST.MF">
+        	<zipgroupfileset dir="${meter.jars}" includes="spass-meter-ia.jar"/>
+        	<zipgroupfileset dir="${meter.lib}" includes="javassist.jar eraser-runtime.jar"/>
+			<zipgroupfileset dir="${meter.lib}/asm" includes="asm-all-4.0.jar"/>
+		</jar>
+		<delete file="${meter.jars}/win32/spass-meter-rt.jar"/>
+        <jar jarfile="${meter.jars}/win32/spass-meter-rt.jar" update="no">
+        	<zipgroupfileset dir="${meter.jars}" includes="spass-meter-rt.jar"/>
+        	<zipgroupfileset dir="${meter.lib}" includes="eraser-runtime.jar locutor-instrumenter1.00.jar"/>
+		</jar>
+		<delete file="${meter.jars}/win32/spass-meter-ant.jar"/>
+        <jar jarfile="${meter.jars}/win32/spass-meter-ant.jar" update="no">
+        	<zipgroupfileset dir="${meter.jars}" includes="spass-meter-ant.jar"/>
+        	<zipgroupfileset dir="${meter.lib}" includes="javassist.jar eraser-runtime.jar locutor-instrumenter1.00.jar"/>
+			<zipgroupfileset dir="${meter.lib}/asm" includes="asm-all-4.0.jar"/>
+		</jar>
+		<delete file="${meter.jars}/win32/spass-meter-static.jar"/>
+        <jar jarfile="${meter.jars}/win32/spass-meter-static.jar" update="no">
+        	<zipgroupfileset dir="${meter.jars}" includes="spass-meter-static.jar"/>
+        	<zipgroupfileset dir="${meter.lib}" includes="eraser-runtime.jar locutor-instrumenter1.00.jar"/>
+		</jar>
+		
+		<mkdir dir="${meter.jars}/linux"/>
+		<copy file="${meter.jars}/spass-meter-boot.jar" todir="${meter.jars}/linux"/>
+		<copy file="${meter.jars}/spass-meter-annotations.jar" todir="${meter.jars}/linux"/>
+		<delete file="${meter.jars}/linux/spass-meter.jar"/>
+        <jar jarfile="${meter.jars}/linux/spass-meter.jar"
+		   update="no" manifest="${meter.base}/MONITORING_MANIFEST.MF">
+        	<zipgroupfileset dir="${meter.jars}" includes="spass-meter.jar"/>
+        	<zipgroupfileset dir="${meter.lib}" includes="javassist.jar eraser-runtime.jar locutor-instrumenter1.00-linux.jar"/>
+			<zipgroupfileset dir="${meter.lib}/asm" includes="asm-all-4.0.jar"/>
+		</jar>
+		<delete file="${meter.jars}/linux/spass-meter-ia.jar"/>
+        <jar jarfile="${meter.jars}/linux/spass-meter-ia.jar"
+		   update="no" manifest="${meter.base}/MONITORING_MANIFEST.MF">
+        	<zipgroupfileset dir="${meter.jars}" includes="spass-meter-ia.jar"/>
+        	<zipgroupfileset dir="${meter.lib}" includes="javassist.jar eraser-runtime.jar"/>
+			<zipgroupfileset dir="${meter.lib}/asm" includes="asm-all-4.0.jar"/>
+		</jar>
+		<delete file="${meter.jars}/linux/spass-meter-rt.jar"/>
+        <jar jarfile="${meter.jars}/linux/spass-meter-rt.jar" update="no">
+        	<zipgroupfileset dir="${meter.jars}" includes="spass-meter-rt.jar"/>
+        	<zipgroupfileset dir="${meter.lib}" includes="eraser-runtime.jar locutor-instrumenter1.00-linux.jar"/>
+		</jar>
+		<delete file="${meter.jars}/linux/spass-meter-ant.jar"/>
+        <jar jarfile="${meter.jars}/linux/spass-meter-ant.jar" update="no">
+        	<zipgroupfileset dir="${meter.jars}" includes="spass-meter-ant.jar"/>
+        	<zipgroupfileset dir="${meter.lib}" includes="javassist.jar eraser-runtime.jar locutor-instrumenter1.00-linux.jar"/>
+			<zipgroupfileset dir="${meter.lib}/asm" includes="asm-all-4.0.jar"/>
+		</jar>
+		<delete file="${meter.jars}/linux/spass-meter-static.jar"/>
+        <jar jarfile="${meter.jars}/linux/spass-meter-static.jar" update="no">
+        	<zipgroupfileset dir="${meter.jars}" includes="spass-meter-static.jar"/>
+        	<zipgroupfileset dir="${meter.lib}" includes="eraser-runtime.jar locutor-instrumenter1.00-linux.jar"/>
+		</jar>
+	</target>
+
+	<target name="jars" depends="jar">
+	    <!-- just calls jar -->
+	</target>
+	
+	<target name="jar-testAgent" depends="jar">
+		<mkdir dir="${meter.jars}"/>
+		<delete file="${meter.jars}/test-agent.jar"/>
+	    <jar jarfile="${meter.jars}/test-agent.jar"
+    		includes="test/agent/**/*.class" 
+    		basedir="${meter.bin}" manifest="src/test/agent/MANIFEST.MF">
+    	</jar>
+		<delete file="${meter.jars}/test.jar"/>
+	    <jar jarfile="${meter.jars}/test.jar"
+    		includes="test/AgentTest.class test/threadedTest/Data.class" 
+    		basedir="${meter.bin}">
+    	</jar>
+		<delete file="${meter.jars}/tests.jar"/>
+	    <jar jarfile="${meter.jars}/tests.jar"
+    		includes="test/**/*.class"
+			excludes="test/asmTree/*.class"
+    		basedir="${meter.bin}">
+    	</jar>
+		<delete file="${meter.jars}/loader-test.jar"/>
+	    <jar jarfile="${meter.jars}/loader-test.jar"
+    		includes="test/classLoading/test/*.class" 
+    		basedir="${meter.bin}">
+    	</jar>
+
+		<taskdef resource="spass-meter.properties" onerror="ignore">
+			<classpath>
+				<pathelement location="${meter.jars}/spass-meter-ant.jar"/>
+			</classpath>
+		</taskdef>
+
+		<mkdir dir="${meter.jars}/tmp"/>
+		<java classpathref="meter.test-instrument.classpath"
+		      classname="de.uni_hildesheim.sse.monitoring.runtime.preprocess.Preprocess">
+		    <arg value="${meter.jars}/tests.jar"/>
+		    <arg value="${meter.jars}/tmp"/>
+		    <arg value="${iArgs.static}"/>
+		</java>
+    </target>
+
+	<available property="test.codeEraser.home" file="${codeEraser.home}"/>
+	<target name="-external.codeEraser" if="test.codeEraser.home">
+		<ant dir="${codeEraser.home}" target="build external jars"/>
+		<ant dir="${codeEraser.home}" target="jar"/>
+		<copy failonerror="false" file="${codeEraser.home}/dist/eraser.jar" todir="${meter.tools}"/>
+		
+		<!--<taskdef resource="code-eraser.properties" classpath="${meter.tools}/eraser.jar"/>
+		<patchJavassist jarFile="${codeEraser.home}/lib/javassist.jar" outFile="${meter.lib}/javassist.jar"/>-->
+		<copy failonerror="false" file="${codeEraser.home}/lib/javassist.jar" todir="${meter.lib}"/>
+
+		<copy failonerror="false" file="${codeEraser.home}/dist/eraser-runtime.jar" todir="${meter.lib}"/>
+		<copy failonerror="false" file="${codeEraser.home}/dist/eraser-annotations.jar" todir="${meter.lib}"/>
+	</target>
+
+	<available property="test.bridge.home" file="${bridge.home}"/>
+	<target name="-external.bridge" if="test.bridge.home">
+	    <ant dir="${bridge.home}" target="jar"/>
+		<copy failonerror="false" todir="${meter.lib}">
+	      <fileset dir="${bridge.jars}">
+	        <include name="locutor-instrumenter*.jar"/>
+	        <include name="locutor-jniBinding*.jar"/>
+	      </fileset>
+        </copy>
+	</target>
+	
+	<target name="build external jars" 
+		description="Build external jars provided by other projects">
+		<property name="lobaris.flatBuild" value="true"/>
+		<antcall target="deep rebuild external jars" />
+	</target>
+	
+	<target name="deep rebuild external jars" 
+		depends="-external.codeEraser, -external.bridge"
+		description="Build external jars provided by other projects (please execute from command line, not from inside Eclipse)">
+	</target>
+	
+	<target name="test" description="run tests" depends="jar-testAgent, test-framework">
+	    <mkdir dir="generated"/>
+	    <antcall target="test-cases">
+		    <reference refid="meter.test.classpath" torefid="test.cp"/>
+		</antcall>
+	</target>
+		
+	<macrodef name="plainTest">
+	    <attribute name="name" description="the unqualified name of the test class"/>
+		<attribute name="classpathref" description="the reference to the classpath"/>
+		<attribute name="filename-postfix" description="an optional part of the name in case of repeated tests" default=""/>
+		<attribute name="param" description="additional instrumenter parameter" default=""/>
+		<attribute name="jvmarg" description="additional jvm argument" default="-Dbla=x"/>
+		<sequential>
+		  <echo message="@{name}@{filename-postfix}" />
+          <property name="myclasspath" refid="@{classpathref}"/>
+		  <!-- do not call Java as ant task - this may cause unclear hangups due to number of tests -->
+		  <echo message="${iArgs.generic}@{param},out=generated/@{name}@{filename-postfix}.log${test.jvmarg} @{jvmarg} -classpath ${myclasspath} test.@{name}"/>
+		  <exec executable="java" failonerror="true">
+		    <arg line="${iArgs.generic}@{param},out=generated/@{name}@{filename-postfix}.log${test.jvmarg}"/>
+		    <arg line="@{jvmarg}"/>
+		    <arg line="-classpath ${myclasspath}"/>
+		    <arg value="test.@{name}"/>
+		  </exec>
+		  <echo message="@{name}@{filename-postfix} (indirect)" />
+		  <!-- do not call Java as ant task - this may cause unclear hangups due to number of tests -->
+		  <exec executable="java" failonerror="true">
+		    <arg line="${iArgs.generic}@{param},groupAccounting=INDIRECT,out=generated/@{name}@{filename-postfix}-overlap.log${test.jvmarg}"/>
+		    <arg line="@{jvmarg}"/>
+			<arg line="-Dindirect=true"/>
+		    <arg line="-classpath ${myclasspath}"/>
+		    <arg value="test.@{name}"/>
+		  </exec>
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="xmlTest">
+	    <attribute name="name" description="the unqualified name of the test class"/>
+		<attribute name="classpathref" description="the reference to the classpath"/>
+		<attribute name="filename-postfix" description="an optional part of the name in case of repeated tests" default=""/>
+		<attribute name="param" description="additional instrumenter parameter" default=""/>
+		<attribute name="jvmarg" description="additional jvm argument" default="-Dbla=x"/>
+		<sequential>
+		  <echo message="@{name}@{filename-postfix} (xml)" />
+		  <property name="myclasspath" refid="@{classpathref}"/>
+		  <!-- do not call Java as ant task - this may cause unclear hangups due to number of tests -->
+		  <exec executable="java" failonerror="true">
+		    <arg line="${iArgs.generic}@{param},out=generated/@{name}@{filename-postfix}-xml.log,xmlconfig=src/test/@{name}@{filename-postfix}.xml${test.jvmarg}"/>
+		    <arg line="@{jvmarg}"/>
+		    <arg line="-classpath ${myclasspath}"/>
+		    <arg value="test.@{name}"/>
+		  </exec>
+		  <echo message="@{name}@{filename-postfix} (xml, indirect)" />
+		  <!-- do not call Java as ant task - this may cause unclear hangups due to number of tests -->
+		  <exec executable="java" failonerror="true">
+			<arg line="${iArgs.generic}@{param},groupAccounting=INDIRECT,out=generated/@{name}@{filename-postfix}-overlap-xml.log,xmlconfig=src/test/@{name}@{filename-postfix}.xml${test.jvmarg}"/>
+		    <arg line="@{jvmarg}"/>
+			<arg line="-Dindirect=true"/>
+		    <arg line="-classpath ${myclasspath}"/>
+		    <arg value="test.@{name}"/>
+		  </exec>
+		</sequential>
+	</macrodef>
+
+	
+	<macrodef name="plainAndXmlTest">
+	    <attribute name="name" description="the unqualified name of the test class"/>
+		<attribute name="classpathref" description="the reference to the classpath"/>
+		<attribute name="filename-postfix" description="an optional part of the name in case of repeated tests" default=""/>
+		<attribute name="param" description="additional instrumenter parameter" default=""/>
+		<attribute name="jvmarg" description="additional jvm argument" default="-Dbla=x"/>
+		<sequential>
+		  <plainTest name="@{name}" classpathref="@{classpathref}" filename-postfix="@{filename-postfix}" param="@{param}" jvmarg="@{jvmarg}" />
+		  <xmlTest   name="@{name}" classpathref="@{classpathref}" filename-postfix="@{filename-postfix}" param="@{param}" jvmarg="@{jvmarg}" />
+		</sequential>
+	</macrodef>
+	
+	<target name="test-cases" description="run instrumenter test cases (do not call, intended for reuse)">
+	    <plainAndXmlTest name="FieldAccessTest" classpathref="test.cp" />
+		<plainAndXmlTest name="FileIoTest" classpathref="test.cp" />
+		<plainTest       name="FileIoTest" classpathref="test.cp" filename-postfix="-startup"/>
+		<plainAndXmlTest name="RandomIoTest" classpathref="test.cp" />
+		<plainAndXmlTest name="NetIoTest" classpathref="test.cp" />
+		<plainAndXmlTest name="NetIoTestAll" classpathref="test.cp" />
+		<plainAndXmlTest name="NetIoTestServer" classpathref="test.cp" />
+		<plainAndXmlTest name="IndividualMethodTest" classpathref="test.cp" />
+		<plainAndXmlTest name="ExcludedMethodTest" classpathref="test.cp" />
+		<plainAndXmlTest name="ValueTest" classpathref="test.cp" />
+		<plainAndXmlTest name="TimerTest" classpathref="test.cp" />
+		<plainAndXmlTest name="CloneTest" classpathref="test.cp" />
+		<!-- plainAndXmlTest name="ShutdownTest" classpathref="test.cp" /-->
+		<!--  plainAndXmlTest name="ShutdownTestFrame" classpathref="test.cp" /-->
+		<plainAndXmlTest name="SystemExitTest" classpathref="test.cp" />
+		<plainAndXmlTest name="UrlTest" classpathref="test.cp" />
+		<plainAndXmlTest name="UDPIoTest" classpathref="test.cp" />
+		<plainAndXmlTest name="ThreadedTest" classpathref="test.cp" filename-postfix="1" />
+		<plainAndXmlTest name="CpuTimeTest" classpathref="test.cp" />
+		<plainAndXmlTest name="ConfigurationTest" classpathref="test.cp" />
+		<plainAndXmlTest name="ValueMemTest" classpathref="test.cp" />
+
+	<!-- depends on the number collection classes being instrumented -->
+		<plainAndXmlTest name="MemoryAllocationTest" classpathref="test.cp" /> 
+		<plainTest       name="MemoryAllocationTest" classpathref="test.cp" filename-postfix="-native" param=",memAccounting=CREATION_NATIVEUNALLOCATION_ARRAYS"/>
+		<xmlTest         name="MemoryAllocationTest" classpathref="test.cp" filename-postfix="-native" /> 
+		<plainTest name="IndirectTest" classpathref="test.cp" /> <!-- andXML -->
+		<plainTest name="IndirectTestFile" classpathref="test.cp"/> <!-- andXML -->
+		<plainAndXmlTest name="MultiRecIdTest" classpathref="test.cp" />
+		<plainAndXmlTest name="InterfaceTest" classpathref="test.cp" jvmarg="-Dtype=NONE"/>
+		<plainAndXmlTest name="InterfaceTest" classpathref="test.cp" param=",annotationSearch=ALL" jvmarg="-Dtype=ALL"/>
+		<plainTest name="InterfaceTestMethod" classpathref="test.cp" jvmarg="-Dtype=NONE"/>
+		<plainTest name="InterfaceTestMethod" classpathref="test.cp" param=",annotationSearch=ALL" jvmarg="-Dtype=ALL"/>
+		
+		<!-- XML pattern tests - no annotations -->
+		<xmlTest         name="PatternTest" classpathref="test.cp" filename-postfix="1" jvmarg="-Dtype=type"/>
+		<xmlTest         name="PatternTest" classpathref="test.cp" filename-postfix="2" jvmarg="-Dtype=name"/>
+		<xmlTest name="MultiRecIdTest" classpathref="test.cp" filename-postfix="1" />
+
+		<echo message="Tests finished"/>
+	</target>
+	
+	<target name="test-framework" description="run framework tests">
+		<java classname="test.framework.AnnotationTest" classpathref="meter.test-external.classpath" fork="true"/>
+		<java classname="test.framework.UtilTests" classpathref="meter.test-external.classpath" fork="true"/>
+	</target>
+
+	<target name="test-classLoading" description="run class loading tests" depends="jar-testAgent">
+	    <mkdir dir="generated"/>
+		<!-- at load time only-->
+		<java classname="test.AgentTest" classpathref="meter.test-agent.classpath" fork="true" failonerror="true">
+			<jvmarg value="${iArgs.generic}"/>
+		</java>
+	
+		<!-- at runtime only -->
+		<java classname="test.AgentTest" classpathref="meter.test-agent.classpath" fork="true" failonerror="true">
+			<arg line="test"/>
+	    </java>
+		
+		<!-- at load and runtime -->
+		<java classname="test.AgentTest" classpathref="meter.test-agent.classpath" fork="true" failonerror="true">
+			<arg line="test"/>
+			<jvmarg value="${iArgs.generic}"/>
+	    </java>
+
+		<!-- test additional class loaders -->
+		<java classname="test.ClassLoaderTest" classpathref="meter.test.classpath" fork="true" failonerror="true">
+			<jvmarg value="${iArgs.generic},out=generated/ClassLoader.log"/>
+	    </java>
+	</target>
+
+	
+	<target name="test-test" description="used tor testing tests" depends="jar-testAgent">
+		<!-- for testing tests -->
+		<mkdir dir="generated"/>
+		<antcall target="test-test-case">
+            <reference refid="meter.test.classpath" torefid="test.cp"/>
+        </antcall>
+    </target>
+
+	<target name="test-test-case" description="the test case for test-test (in order to be reusable)">
+		<plainTest name="FileIoTest" classpathref="test.cp" />
+	</target>
+	
+    <target name="javadoc">
+        <javadoc access="private" author="true" classpath="lib/locutor-instrumenter1.00.jar;lib/eraser-runtime.jar;lib/asm-3.3.jar;${tools};lib/javassist.jar" destdir="doc" doctitle="SPASS-meter" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src\de\uni_hildesheim\sse\monitoring\runtime\overview.html" packagenames="de.uni_hildesheim.sse.monitoring.runtime.recording,de.uni_hildesheim.sse.monitoring.runtime.recordingServer,implementation,de.uni_hildesheim.sse.monitoring.runtime,de.uni_hildesheim.sse.monitoring.runtime.boot,de.uni_hildesheim.sse.monitoring.runtime.instrumentation,de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements,test,de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies,de.uni_hildesheim.sse.monitoring.runtime.annotations,de.uni_hildesheim.sse.monitoring.runtime.utils" source="1.6" sourcepath="src" splitindex="true" use="false" version="true"/>
+    </target>
+	
+	<target name="asmTest">
+	  <java classpath="${meter.bin};${meter.lib}/locutor-instrumenter1.00.jar;${meter.lib}/asm/asm-all-4.0.jar" classname="test.asmTree.Test" fork="true"/>
+	  <!-- now in code <jvmarg value="-Dspass-meter.iFactory=de.uni_hildesheim.sse.monitoring.runtime.instrumentation.asmTree.Factory"/> -->
+	</target>
+
+	<target name="asmTest-instrumented">
+	  <java classpath="${meter.bin};${meter.lib}/locutor-instrumenter1.00.jar;${meter.lib}/asm/asm-all-4.0.jar" classname="test.asmTree.TestGeneratedAsm" fork="true"/>
+	  <!-- now in code <jvmarg value="-Dspass-meter.iFactory=de.uni_hildesheim.sse.monitoring.runtime.instrumentation.asmTree.Factory"/> -->
+	</target>
+
+	<target name="jar-asmTest">
+	  <jar jarfile="${meter.lib}/testasm.jar" basedir="${meter.bin}" includes="test/asmTree/TestGeneratedAsm.class" />
+	</target>
+	
+</project>

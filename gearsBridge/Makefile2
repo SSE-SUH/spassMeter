@@ -1,0 +1,1120 @@
+# use make PRODUCT=DEMO|JNI|FF2|FF3|FF31|FF36|IE|IEMOBILE|OPERA|SF|NPAPI|NONE
+# currently DEMO and JNI need a make of PRODUCT=IE before
+# DEMO and JNI are standalone, the others require a related gears make make BROWSER=*
+
+# todo: 
+# - check VPATH
+
+#detect os.... we need this before config.mk :(
+ifeq ($(shell uname),Linux)
+MYOS = linux
+else
+ifeq ($(shell uname),Darwin)
+MYOS = osx
+else
+ifneq ($(OS),symbian)
+  IS_WIN32_OR_WINCE = 1
+  ifneq ($(OS),wince)
+  MYOS = win32
+  endif
+endif
+endif
+endif
+# for Felix
+#MYOS = osx
+
+# Set default build mode
+#   dbg = debug build
+#   opt = release build
+LOCUTOR_MODE = dbg
+ANDROID_BUILD_TOP = ..\android-ndk-r5b\android-ndk-r5b-$(MYOS)
+
+#ifndef installers
+#ifdef PRODUCT
+#  CMD_LINE_PRODUCT = $PRODUCT
+#else
+#  $(error No product specified: PRODUCT=DEMO|JNI|FF2|FF3|FF31|FF36|IE|IEMOBILE|OPERA|SF|NPAPI|NONE)
+#endif
+#endif
+
+COMMON_ROOT = ..
+GEARS_ROOT = $(COMMON_ROOT)/gears
+THIRD_PARTY_ROOT = $(COMMON_ROOT)/third_party
+MODULE = locutor
+GENDIR_NAME = genfiles
+
+include tools/version.mk
+
+OUTDIR = bin-$(LOCUTOR_MODE)
+
+GEARS_BUILD = $(GEARS_ROOT)/$(OUTDIR)/$(OS)-$(ARCH)
+GEARS_BUILD_COMMON = $(GEARS_BUILD)/common
+GEARS_BUILD_COMMON_SQLITE = $(GEARS_BUILD_COMMON)/sqlite
+GEARS_BUILD_COMMON_BREAKPAD = $(GEARS_BUILD_COMMON)/breakpad
+GEARS_BUILD_COMMON_THIRD_PARTY = $(GEARS_BUILD_COMMON)/third_party
+
+#preconfigure
+
+BROWSER=$(PRODUCT)
+BROWSER_FIREFOX = FALSE
+LINK_EXTRAS =
+
+#detect os.... we need this before config.mk :(
+ifneq ($(OS),android)
+OS = $(MYOS)
+endif
+
+ifeq ($(PRODUCT),FF2)
+	PRODUCT_DIRNAME = ff2
+	GECKO = 1.8
+	BROWSER_FIREFOX = TRUE
+endif
+ifeq ($(PRODUCT),FF3)
+    PRODUCT_DIRNAME = ff3
+    GECKO = 1.9
+	BROWSER_FIREFOX = TRUE
+endif
+ifeq ($(PRODUCT),FF31)
+    PRODUCT_DIRNAME = ff31
+	GECKO = 1.9.1
+	BROWSER_FIREFOX = TRUE
+endif
+ifeq ($(PRODUCT),FF36)
+    PRODUCT_DIRNAME = ff36
+	GECKO = 1.9.2
+	BROWSER_FIREFOX = TRUE
+endif
+ifeq ($(PRODUCT),IE)
+    PRODUCT_DIRNAME = ie
+	PRODUCT_DIR = ie
+endif
+ifeq ($(PRODUCT),IEMOBILE)
+    PRODUCT_DIRNAME = iemobile
+    BROWSER = IEMOBILE
+endif
+ifeq ($(PRODUCT),OPERA)
+    PRODUCT_DIRNAME = opera
+    BROWSER = OPERA
+endif
+ifeq ($(PRODUCT),SF)
+	PRODUCT_DIRNAME = safari
+	BROWSER = SF
+endif
+ifeq ($(PRODUCT),NPAPI)
+	PRODUCT_DIRNAME = npapi
+	PRODUCT_DIR = npapi
+	BROWSER = NPAPI
+endif
+ifeq ($(PRODUCT),NONE)
+	BROWSER = NONE
+	PRODUCT_DIRNAME = none
+endif
+GEARS_BUILD_BROWSER = $(GEARS_BUILD)/$(PRODUCT_DIRNAME)
+ifeq ($(PRODUCT),DEMO)
+  ifeq ($(OS),win32)
+	BROWSER = IE
+	GEARS_BUILD_BROWSER = $(GEARS_BUILD)/ie
+  else
+	BROWSER = NPAPI
+	GEARS_BUILD_BROWSER = $(GEARS_BUILD)/npapi
+#    BROWSER = FF36
+#	GEARS_BUILD_BROWSER = $(GEARS_BUILD)/ff36
+  endif
+	OWN_PRODUCT = TRUE
+	PRODUCT_DIRNAME = demo
+endif
+ifeq ($(PRODUCT),TEST)
+  ifeq ($(OS),win32)
+	BROWSER = IE
+	GEARS_BUILD_BROWSER = $(GEARS_BUILD)/ie
+  else
+	BROWSER = FF36
+	GEARS_BUILD_BROWSER = $(GEARS_BUILD)/ff36
+  endif
+	OWN_PRODUCT = TRUE
+	PRODUCT_DIRNAME = test
+endif
+ifeq ($(PRODUCT),JNI)
+  ifeq ($(OS),win32)
+	BROWSER = IE
+	GEARS_BUILD_BROWSER = $(GEARS_BUILD)/ie
+  else
+	BROWSER = FF36
+	GEARS_BUILD_BROWSER = $(GEARS_BUILD)/ff36
+  endif
+	OWN_PRODUCT = TRUE
+	PRODUCT_DIRNAME = jni
+endif
+
+include $(GEARS_ROOT)/tools/sanity.mk
+include tools/preconfig.mk
+
+#configure (needs BROWSER-VALUES)
+
+COMMON_OUTDIR = $(GEARS_BUILD_COMMON)
+include $(GEARS_ROOT)/tools/config.mk
+
+#PL configuration
+include tools/PLConfig.mk
+
+#post-configure
+
+FF2_OUTDIR                 = $(OUTDIR)/$(OS)-$(ARCH)/ff2
+FF3_OUTDIR                 = $(OUTDIR)/$(OS)-$(ARCH)/ff3
+FF31_OUTDIR                = $(OUTDIR)/$(OS)-$(ARCH)/ff31
+FF36_OUTDIR                = $(OUTDIR)/$(OS)-$(ARCH)/ff36
+IE_OUTDIR                  = $(OUTDIR)/$(OS)-$(ARCH)/ie
+IEMOBILE_OUTDIR            = $(OUTDIR)/$(OS)-$(ARCH)/iemobile
+NONE_OUTDIR                = $(OUTDIR)/$(OS)-$(ARCH)/none
+NPAPI_OUTDIR               = $(OUTDIR)/$(OS)-$(ARCH)/npapi
+OPERA_OUTDIR               = $(OUTDIR)/$(OS)-$(ARCH)/opera
+SF_OUTDIR                  = $(OUTDIR)/$(OS)-$(ARCH)/safari
+
+OBJ_LIST = $(OUTDIR)/obj_list.temp
+OSARCH_OUTDIR = $(OUTDIR)/$(OS)-$(ARCH)
+
+include tools/installers_postconfig.mk
+
+# adjust configured variables for use in locutor build
+
+OUTDIR_COMMON = $(OSARCH_OUTDIR)/common
+OUTDIR_COMMON_GENFILES = $(OUTDIR_COMMON)/$(GENDIR_NAME)
+
+#VPATH = $(OUTDIR_COMMON_GENFILES) 
+
+M4FLAGS += -I$(GEARS_ROOT)
+M4FLAGS := $(subst "Google Gears","SSE Locutor", $(M4FLAGS))
+M4FLAGS := $(subst "google","sse", $(M4FLAGS))
+M4FLAGS := $(subst "gears","locutor", $(M4FLAGS))
+
+I18N_INPUTS_BASEDIR=$(GEARS_ROOT)/ui/generated
+
+GGUIDGEN := $(GEARS_ROOT)/$(GGUIDGEN)
+
+# List required files (most directly taken from the related Gears build)
+DIRS += \
+		$(PRODUCT_OUTDIR) \
+		$(PRODUCT_GENDIR) \
+		$(OUTDIR_COMMON) \
+		$(OUTDIR_COMMON_GENFILES) \
+		$(INSTALLERS_OUTDIR) \
+		$(NULL)
+		
+ifeq ($(OS),linux)
+DIRS += \
+		$(PRODUCT_OUTDIR_LSHW) \
+		$(PRODUCT_OUTDIR_PROCPS) \
+		$(NULL)
+endif
+
+GEARS_COMMON_NAMES += \
+		console.html.from_bin \
+		database.html.from_bin \
+		index.html.from_bin \
+		localserver.html.from_bin \
+		alert-35.png.from_bin \
+		database.gif.from_bin \
+		error-35.png.from_bin \
+		ie6hacks.css.from_bin \
+		inspector_links.js.from_bin \
+		lightbulb-35.png.from_bin \
+		localserver.gif.from_bin \
+		question-35.png.from_bin \
+		styles.css.from_bin \
+		workerpool.gif.from_bin \
+		base.js.from_bin \
+		dom.js.from_bin \
+		icon_32x32.png.from_bin \
+		$(NULL)
+
+GEARS_BROWSER_COMMON_NAMES += \
+		event \
+		thread_locals \
+		string16 \
+		message_queue \
+		stopwatch \
+		mutex  \
+		string_utils \
+		thread \
+		file \
+		file_dialog \
+		http_constants \
+		http_utils \
+		inspector_resources \
+		base_class \
+		leak_counter \
+		js_dom_element \
+		security_model \
+		wifi_data_provider_windows_common \
+		js_runner_utils \
+		js_types \
+		js_marshal \
+		base64 \
+		html_event_monitor \
+		html_dialog \
+		drag_and_drop_utils_common \
+		permissions_manager \
+		mime_detect \
+		i18n_strings \
+		database_utils \
+		managed_resource_store \
+		blob_store \
+		file_store \
+		slice_blob \
+		byte_store \
+		localserver \
+		localserver_db \
+		paths \
+		safe_http_request \
+		wifi_data_provider_common \
+		permissions_dialog \
+		progress_event \
+		manifest \
+		url_utils \
+		async_router \
+		update_task \
+		update_task_single_process \
+		permissions_db \
+		message_service \
+		blob \
+		blob_utils \
+		blob_interface \
+		file_blob \
+		serialization \
+		memory_buffer \
+		window_utils \
+		database2 \
+		result_set2 \
+		shortcut_table \
+		database_name_table \
+		name_value_table \
+		database2_metadata \
+		commands \
+		transaction \
+		connection \
+		interpreter \
+		database2_common \
+		sqlite_wrapper \
+		statement \
+		$(NULL)
+
+GEARS_BREAKPAD_COMMON_NAMES += \
+		exception_handler \
+		guid_string \
+		$(NULL)
+
+GEARS_THIRDPARTY_COMMON_NAMES += \
+		modp_b64 \
+		utf_impl \
+		gurl \
+		url_canon_etc \
+		url_canon_fileurl \
+		url_canon_host \
+		url_canon_internal \
+		url_canon_ip \
+		url_canon_mailtourl \
+		url_canon_path \
+		url_canon_pathurl \
+		url_canon_query \
+		url_canon_relative \
+		url_canon_stdurl \
+		url_parse \
+		url_parse_file \
+		url_util \
+		ConvertUTF \
+		json_reader \
+		json_value \
+		json_writer \
+		$(NULL)
+
+GEARS_SQLITE_COMMON_NAMES += \
+		alter \
+		analyze \
+		attach \
+		auth \
+		bitvec \
+		btree \
+		btmutex \
+		build \
+		callback \
+		complete \
+		date \
+		delete \
+		expr \
+		fault \
+		func \
+		global \
+		hash \
+		insert  \
+		legacy \
+		journal \
+		loadext \
+		main \
+		malloc \
+		mem1 \
+		mem2 \
+		mem3 \
+		mem4 \
+		mem5 \
+		mem6 \
+		sqlite_mutex \
+		opcodes \
+		os \
+		pager \
+		parse \
+		pragma \
+		prepare \
+		printf \
+		random \
+		select \
+		status \
+		table \
+		tokenize \
+		trigger \
+		update \
+		utf \
+		util \
+		vacuum \
+		vdbe \
+		vdbeapi \
+		vdbeaux \
+		vdbeblob \
+		vdbefifo \
+		vdbemem \
+		vtab \
+		where \
+		fts1 \
+		fts1_hash \
+		fts1_porter \
+		fts1_tokenizer1 \
+		fts2 \
+		fts2_hash \
+		fts2_porter \
+		fts2_tokenizer1 \
+		fts2_tokenizer \
+		$(NULL)
+		
+#		db
+		#dump
+		
+LOCUTOR_COMMON_NAMES += \
+		data_gatherer_common \
+		$(NULL)
+		
+ifeq ($(OS),win32)
+GEARS_SQLITE_COMMON_NAMES += \
+		mutex_w32 \
+		os_win \
+		$(NULL)
+GEARS_BROWSER_COMMON_NAMES += \
+		file_win32 \
+		file_dialog_win32 \
+		wifi_data_provider_win32 \
+		stopwatch_win32 \
+		mutex_win32 \
+		common_win32 \
+		thread_win32 \
+		vista_utils \
+		time_utils_win32 \
+		$(NULL)
+LOCUTOR_COMMON_NAMES += \
+		data_gatherer_win32 \
+		$(NULL)
+LINK_EXTRAS += \
+		comsupp.lib \
+		Wbemuuid.lib \
+		Iphlpapi.lib \
+		psapi.lib \
+		pdh.lib \
+		$(NULL)
+endif
+ifeq ($(OS),linux)
+GEARS_SQLITE_COMMON_NAMES += \
+		mutex_unix \
+		os_unix \
+		$(NULL)
+GEARS_BROWSER_COMMON_NAMES += \
+		file_posix \
+		file_dialog_gtk \
+		wifi_data_provider_linux \
+		stopwatch_posix \
+		mutex_posix \
+		common_np_android \
+		thread_posix \
+		$(NULL)
+LOCUTOR_COMMON_NAMES += \
+		data_gatherer_posix \
+		$(NULL)
+LOCUTOR_THIRDPARTY_LSHW_NAMES += \
+		hw \
+		osutils \
+		version \
+		options \
+		heuristics \
+		cpuinfo \
+		sysfs \
+		jedec \
+		print \
+		cpuid \
+		cpufreq \
+		$(NULL)
+LOCUTOR_THIRDPARTY_PROCPS_NAMES += \
+		pwcache \
+	    readproc \
+		alloc \
+		$(NULL)
+LINK_EXTRAS += \
+		/usr/lib/libX11.so \
+		$(NULL)
+endif
+ifeq ($(OS),OSX)
+GEARS_SQLITE_COMMON_NAMES += \
+		mutex_w32 \
+		os_win \
+		$(NULL)
+
+GEARS_BROWSER_COMMON_NAMES += \
+		file_win32 \
+		file_dialog_win32 \
+		wifi_data_provider_osx \
+		stopwatch_win32 \
+		mutex_win32 \
+		common_win32 \
+		thread_win32 \
+		vista_utils \
+		time_utils_win32 \
+		$(NULL)
+endif
+
+#TBD linux, osx
+
+TARGET = $(MODULE)$(DLL_SUFFIX)
+ifeq ($(PRODUCT),IE)
+	GEARS_BROWSER_COMMON_NAMES += \
+		drag_and_drop_utils_ie \
+		file_dialog_chrome \
+		message_queue_android \
+		js_runner_ie \
+		async_task_ie \
+		html_event_monitor_ie \
+		html_dialog_ie \
+		html_dialog_host \
+		html_dialog_host_i \
+		module_wrapper \
+		activex_utils \
+		http_request_ie \
+		ipc_message_queue_win32 \
+		drag_and_drop_utils_win32 \
+		exception_handler_win32 \
+		http_intercept \
+		http_cookies \
+		settings_dialog \
+		progress_input_stream \
+		http_handler_patch \
+		http_handler_base \
+		message_queue_win32 \
+		update_task_ie \
+		dispatcher_to_idispatch \
+		urlmon_utils \
+		alert_dialog \
+		process_utils_win32 \
+		http_patches \
+		iat_patch \
+		pe_image \
+		ie_version \
+		bho \
+		tools_menu_item \
+		detect_version_collision_win32 \
+		browser_listener \
+		$(NULL)
+#		process_utils_win32 without .obj
+#		http_patches .obj
+	OUTFILES += \
+		module.res \
+		string_table.res \
+		ui_resources.res \
+		$(NULL)
+	GENFILES += \
+		interfaces.idl \
+		interfaces.h \
+		html_dialog_host.h \
+		product_version.rc \
+		product_constants.h \
+		html_dialog_bridge_iemobile.rgs \
+		bho.rgs \
+		module.rgs \
+		tools_menu_item.rgs \
+		factory_ie.rgs \
+		$(NULL)
+	LOCUTOR_PRODUCT_NAMES = \
+		factory_ie \
+		paths_ie \
+		interfaces_i \
+		$(NULL)
+	PRODUCT_DIR = ie
+	IE_DLLFLAGS := $(subst tools/mscom.def,$(GEARS_ROOT)/tools/mscom.def, $(IE_DLLFLAGS))
+endif
+ifeq ($(PRODUCT),IEMOBILE)
+	# TBD
+endif
+ifeq ($(PRODUCT),OPERA)
+	# TBD
+endif
+ifeq ($(PRODUCT),SF)
+	# TBD
+endif
+ifeq ($(PRODUCT),NPAPI)
+	GEARS_BROWSER_COMMON_NAMES += \
+		async_task_np \
+		message_queue_android \
+		ipc_message_queue_null \
+		message_queue_cr \
+		js_runner_cr \
+		http_cookies_cr \
+		browser_utils \
+		file_dialog_chrome \
+		common_np_android \
+		html_event_monitor_np \
+		v8_helpers \
+		v8_np_utils \
+		v8_npobject \
+		np_v8object \
+		desktop_cr \
+		drag_and_drop_utils_cr \
+		http_request_cr \
+		network_intercept_cr \
+		settings_dialog_cr \
+		update_task_cr \
+		npn_bindings \
+		npp_bindings \
+		png_utils \
+		module_cr \
+		np_utils \
+		npruntime \
+		desktop \
+		gears_protocol_handler \
+		plugin \
+		html_dialog_cr \
+		paths_cr \
+		detect_version_collision_win32 \
+		meta_data_extraction \
+		$(NULL)
+	LOCUTOR_PRODUCT_NAMES = \
+		factory_np \
+		$(NULL)
+	GEARS_THIRDPARTY_COMMON_NAMES += \
+		png \
+		pngerror \
+		pngget \
+		pngmem \
+		pngset \
+		pngtrans \
+		pngpread \
+		pngread \
+		pngrio \
+		pngrtran \
+		pngrutil \
+		pngwio \
+		pngwrite \
+		pngwtran \
+		pngwutil \
+		gzio \
+		inflate \
+		inffast \
+		inftrees \
+		deflate \
+		crc32 \
+		zutil \
+		adler32 \
+		compress \
+		trees \
+		jdapimin \
+		jdatasrc \
+		jdmarker \
+		jerror \
+		jdinput \
+		jcapimin \
+		jcomapi \
+		jmemmgr \
+		jmemnobs \
+		jutils \
+		jcmarker \
+		$(NULL)
+	GEARS_BREAKPAD_COMMON_NAMES += \
+		exception_handler_stub \
+		$(NULL)
+ifeq ($(OS),win32)
+	GEARS_BROWSER_COMMON_NAMES += \
+		desktop_win32 \
+		shortcut_utils_win32 \
+		process_utils_win32 \
+		$(NULL)
+endif
+	OUTFILES += \
+		module.res \
+		ui_resources.res \
+		$(NULL)
+	GENFILES += \
+		product_version.rc \
+		$(NULL)
+	NPAPI_LIBS += $(THIRD_PARTY_ROOT)/v8/bin-dbg/v8_base.lib $(THIRD_PARTY_ROOT)/v8/bin-dbg/v8_snapshot.lib delayimp.lib comdlg32.lib urlmon.lib $(OSARCH_OUTDIR)/$(PRODUCT_DIRNAME)/module.res $(OSARCH_OUTDIR)/$(PRODUCT_DIRNAME)/ui_resources.res
+endif
+ifeq ($(PRODUCT),DEMO)
+	LOCUTOR_COMMON_NAMES += \
+		de_uni_hildesheim_sse_system_DataGatherer \
+		$(NULL)
+	TARGET = $(MODULE)$(EXE_SUFFIX)
+	TOP_DEP = $(OSARCH_OUTDIR)/demo/locutor$(OBJ_SUFFIX) 
+  ifeq ($(OS),win32)
+	IE_DLLFLAGS := 
+	DLLFLAGS := $(subst /DLL,,$(DLLFLAGS))
+	#CPPFLAGS := $(subst -DWINVER=0x0500, -DWINVER=0x0601, $(CPPFLAGS))
+	#CPPFLAGS := $(subst -D_WIN32_WINNT=0x0500, -D_WIN32_WINNT=0x0601, $(CPPFLAGS))
+  endif
+  ifeq ($(OS),linux)
+	
+    DLLFLAGS := -lresolv $(subst -lxpcom,,$(DLLFLAGS))
+	DLLFLAGS := $(subst -lxpcomglue_s,,$(DLLFLAGS))
+	DLLFLAGS := $(subst -lxul,,$(DLLFLAGS))
+    DLLFLAGS := $(subst -shared,,$(DLLFLAGS))
+    # -o $@ is replaced by -o as no target is known here, reinsert $@
+    TMP_DLLFLAGS := $(subst -o,,$(DLLFLAGS))
+    DLLFLAGS = -o $@ $(TMP_DLLFLAGS)
+  endif
+endif
+ifeq ($(PRODUCT),TEST)
+	TARGET = $(MODULE)$(EXE_SUFFIX)
+	TOP_DEP = $(OSARCH_OUTDIR)/test/test$(OBJ_SUFFIX) 
+  ifeq ($(OS),win32)
+	IE_DLLFLAGS := 
+	DLLFLAGS := $(subst /DLL,,$(DLLFLAGS))
+	#CPPFLAGS := $(subst -DWINVER=0x0500, -DWINVER=0x0601, $(CPPFLAGS))
+	#CPPFLAGS := $(subst -D_WIN32_WINNT=0x0500, -D_WIN32_WINNT=0x0601, $(CPPFLAGS))
+  endif
+  ifeq ($(OS),linux)
+    FF36_LIBS += -lmozjs -L$(THIRD_PARTY_ROOT)/sqlite_vendor/bld/.libs/ -lsqlite3
+    DLLFLAGS := $(subst -shared,,$(DLLFLAGS))
+    # -o $@ is replaced by -o as no target is known, reinsert $@
+    TMP_DLLFLAGS := $(subst -o,,$(DLLFLAGS))
+    DLLFLAGS = -o $@ $(TMP_DLLFLAGS)
+  endif
+endif
+ifeq ($(PRODUCT),JNI)
+	TARGET = $(MODULE)$(DLL_SUFFIX)
+	#.dll
+	TOP_DEP = $(OSARCH_OUTDIR)/jni/de_uni_hildesheim_sse_system_DataGatherer$(OBJ_SUFFIX) 
+	ifeq ($(OS),win32)
+	  IE_DLLFLAGS := 
+	  #CPPFLAGS := $(subst -DWINVER=0x0500, -DWINVER=0x0601, $(CPPFLAGS))
+	  #CPPFLAGS := $(subst -D_WIN32_WINNT=0x0500, -D_WIN32_WINNT=0x0601, $(CPPFLAGS))
+	endif
+	ifeq ($(OS),linux)
+      FF36_LIBS += -lsqlite3 -lmozjs
+	endif
+endif
+
+PRODUCT_OUTDIR = $(OSARCH_OUTDIR)/$(PRODUCT_DIRNAME)
+PRODUCT_OUTDIR_LSHW = $(OSARCH_OUTDIR)/$(PRODUCT_DIRNAME)/lshw
+PRODUCT_OUTDIR_PROCPS = $(OSARCH_OUTDIR)/$(PRODUCT_DIRNAME)/procps
+MAKE_TARGET = $(PRODUCT_OUTDIR)/$(TARGET)
+PRODUCT_GENDIR = $(PRODUCT_OUTDIR)/$(GENDIR_NAME)
+
+ifeq ($(OWN_PRODUCT),TRUE)
+	# workaround
+	GECKO = 1.9.2
+	# clear those objects we do not need here
+	GEARS_COMMON_NAMES =
+	GEARS_BROWSER_COMMON_NAMES = 
+	GEARS_BREAKPAD_COMMON_NAMES =
+	GEARS_THIRDPARTY_COMMON_NAMES =
+	GEARS_SQLITE_COMMON_NAMES =
+	#specific settings
+  ifeq ($(OS),win32)
+    # check browser if needed
+	BROWSER = IE
+	ifeq ($(findstring -DVAR_WIFI_DATA=1,$($(BROWSER)_CPPFLAGS)),-DVAR_WIFI_DATA=1)
+      LOCUTOR_OS_NAMES = \
+		mutex_win32 \
+		thread_win32 \
+		wifi_data_provider_windows_common \
+		stopwatch_win32 \
+		common_win32 \
+		message_queue_win32 \
+		time_utils_win32 \
+		wifi_data_provider_win32 \
+		$(NULL)
+     endif
+  else
+    # message_queue_android \
+    # check browser if needed
+    LOCUTOR_OS_NAMES = \
+		mutex_posix \
+		thread_posix \
+		wifi_data_provider_windows_common \
+		stopwatch_posix \
+		wifi_data_provider_linux \
+		$(NULL)
+  endif		
+	LOCUTOR_PRODUCT_NAMES += \
+		$(NULL)
+    ifeq ($(findstring -DVAR_WIFI_DATA=1,$($(BROWSER)_CPPFLAGS)),-DVAR_WIFI_DATA=1)
+	  LOCUTOR_COMMON_NAMES += \
+		string16 \
+		string_utils \
+		vista_utils \
+		mutex \
+		thread \
+		wifi_data_provider_common \
+		stopwatch \
+		event \
+		message_queue \
+		thread_locals \
+		ConvertUTF \
+		$(NULL)
+	endif
+  ifeq ($(OS),win32)
+	DLLFLAGS := $(subst /DEBUG,,$(DLLFLAGS))
+	DLLFLAGS := $(subst /DYNAMICBASE,,$(DLLFLAGS))
+	DLLFLAGS := $(subst /NODEFAULTLIB:msvcrt,,$(DLLFLAGS))
+	DLLFLAGS := $(subst /SAFESEH,,$(DLLFLAGS))
+	DLLFLAGS := $(subst /SUBSYSTEM:WINDOWS,,$(DLLFLAGS))
+	DLLFLAGS := $(subst /NXCOMPAT,,$(DLLFLAGS))
+	DLLFLAGS := $(subst /OUT:,/OUT:$(PRODUCT_OUTDIR)/$(TARGET),$(DLLFLAGS))
+	DLLFLAGS := $(subst /PDB:"/locutor.pdb",/PDB:"$(PRODUCT_OUTDIR)/locutor.pdb",$(DLLFLAGS))
+	DLLFLAGS += /INCREMENTAL:NO /OPT:REF /OPT:ICF 
+  endif
+else
+	LOCUTOR_OS_NAMES = \
+		$(NULL)
+	LOCUTOR_COMMON_NAMES += \
+		factory_impl \
+		factory_utils \
+		module \
+		locutor_init.js.from_bin \
+		$(NULL)
+	GENFILES += \
+		alert_dialog.js \
+		alert_dialog.html \
+		shortcuts_dialog.js \
+		shortcuts_dialog.html \
+		permissions_dialog.js \
+		permissions_dialog.html \
+		settings_dialog.js \
+		settings_dialog.html \
+		$(NULL)
+	TOP_DEP = $(PRODUCT_OUTDIR)/js_data_gatherer$(OBJ_SUFFIX)
+endif
+
+ifeq ($(OS),win32)
+	MKDEP = python $(GEARS_ROOT)/tools/mkdepend.py $< $@ > $(@D)/$(*F).pp
+endif
+INCLUDES += -I. -I$(GEARS_BUILD_BROWSER) -I$(GEARS_BUILD_COMMON)
+		
+ifeq ($(BROWSER_FIREFOX),TRUE)
+	GEARS_BROWSER_COMMON_NAMES += \
+		drag_and_drop_utils_ff \
+		ns_file_utils \
+		file_dialog_chrome \
+		message_queue_ff \
+		js_runner_ff \
+		progress_input_stream \
+		http_cookies \
+		settings_dialog \
+		async_task_ff \
+		blob_input_stream_ff \
+		js_runner_ff_marshaling \
+		html_event_monitor_ff \
+		html_dialog_ff \
+		http_request_ff \
+		dom_utils \
+		cache_intercept \
+		ipc_message_queue_null \
+		$(NULL)
+	OUTFILES += \
+		$(MODULE).xpt \
+		$(NULL)
+	GENFILES += \
+		product_constants.h \
+		interfaces.h \
+		interfaces.xpt \
+		ui_utils.xpt \
+		product_constants.h \
+		install.rdf \
+		browser-overlay.js \
+		browser-overlay.xul \
+		chrome.manifest \
+		locutor_init.js.from_bin.cc \
+		$(NULL)
+ifeq ($(PRODUCT),FF2)
+	GEARS_BROWSER_COMMON_NAMES += \
+		workerpool \
+		workerpool_utils \
+		location \
+		$(NULL)
+	LOCUTOR_COMMON_NAMES += \
+		pool_threads_manager \
+		$(NULL)
+endif
+	LOCUTOR_NAMES += \
+		factory_ff \
+		paths_ff \
+		ui_utils \
+		$(NULL)
+	PRODUCT_DIR = firefox
+	GECKO_LIB = $(THIRD_PARTY_ROOT)/gecko_$(GECKO)/$(OS)/gecko_sdk/lib/
+ifeq ($(OS),win32)
+	GEARS_BROWSER_COMMON_NAMES += \
+		drag_and_drop_utils_win32 \
+		exception_handler_win32 \
+		$(NULL)
+endif
+	LOCUTOR_PRODUCT_NAMES = \
+		factory_ff \
+		paths_ff \
+		$(NULL)
+	LOCUTOR_COMMON_NAMES += \
+		ui_utils \
+		$(NULL)
+endif
+
+# consider COMMON_ROOT!
+
+GEARS_COMMON_OBJ = $(addsuffix $(OBJ_SUFFIX), $(addprefix $(GEARS_BUILD_COMMON)/, $(GEARS_COMMON_NAMES)))
+GEARS_BROWSER_COMMON_OBJ = $(addsuffix $(OBJ_SUFFIX), $(addprefix $(GEARS_BUILD_BROWSER)/, $(GEARS_BROWSER_COMMON_NAMES)))
+GEARS_BREAKPAD_COMMON_OBJ = $(addsuffix $(OBJ_SUFFIX), $(addprefix $(GEARS_BUILD_COMMON_BREAKPAD)/, $(GEARS_BREAKPAD_COMMON_NAMES)))
+GEARS_THIRDPARTY_COMMON_OBJ = $(addsuffix $(OBJ_SUFFIX), $(addprefix $(GEARS_BUILD_COMMON_THIRD_PARTY)/, $(GEARS_THIRDPARTY_COMMON_NAMES)))
+GEARS_SQLITE_COMMON_OBJ = $(addsuffix $(OBJ_SUFFIX), $(addprefix $(GEARS_BUILD_COMMON_SQLITE)/, $(GEARS_SQLITE_COMMON_NAMES)))
+LOCUTOR_OBJ = $(addsuffix $(OBJ_SUFFIX), $(addprefix $(PRODUCT_OUTDIR)/, $(LOCUTOR_NAMES)))
+LOCUTOR_OS_OBJ = $(addsuffix $(OBJ_SUFFIX), $(addprefix $(PRODUCT_OUTDIR)/, $(LOCUTOR_OS_NAMES)))
+LOCUTOR_PRODUCT_OBJ = $(addsuffix $(OBJ_SUFFIX), $(addprefix $(PRODUCT_OUTDIR)/, $(LOCUTOR_PRODUCT_NAMES)))
+LOCUTOR_COMMON_OBJ = $(addsuffix $(OBJ_SUFFIX), $(addprefix $(PRODUCT_OUTDIR)/, $(LOCUTOR_COMMON_NAMES)))
+LOCUTOR_THIRDPARTY_LSHW_OBJ = $(addsuffix $(OBJ_SUFFIX), $(addprefix $(PRODUCT_OUTDIR_LSHW)/, $(LOCUTOR_THIRDPARTY_LSHW_NAMES)))
+LOCUTOR_THIRDPARTY_PROCPS_OBJ = $(addsuffix $(OBJ_SUFFIX), $(addprefix $(PRODUCT_OUTDIR_PROCPS)/, $(LOCUTOR_THIRDPARTY_PROCPS_NAMES)))
+GENFILES_PATHS = $(addprefix $(PRODUCT_GENDIR)/, $(GENFILES))
+OUTFILES_PATHS = $(addprefix $(PRODUCT_OUTDIR)/, $(OUTFILES))
+
+################################### RULES ########################################
+
+all: $(DIRS) $(GENFILES_PATHS) $(OUTFILES_PATHS) $(LOCUTOR_OS_OBJ) $(LOCUTOR_PRODUCT_OBJ) $(LOCUTOR_COMMON_OBJ) $(LOCUTOR_THIRDPARTY_OBJ) $(LOCUTOR_THIRDPARTY_LSHW_OBJ) $(LOCUTOR_THIRDPARTY_PROCPS_OBJ) $(MAKE_TARGET) 
+
+.PHONY : all clean help test
+
+# outdir
+clean:
+	rm -rf $(OUTDIR)/*
+
+$(PRODUCT_OUTDIR):
+	"mkdir" -p $@
+$(PRODUCT_OUTDIR_LSHW):
+	"mkdir" -p $@
+$(PRODUCT_OUTDIR_PROCPS):
+	"mkdir" -p $@
+$(PRODUCT_GENDIR):
+	"mkdir" -p $@
+$(OUTDIR_COMMON):
+	"mkdir" -p $@
+$(OUTDIR_COMMON_GENFILES):
+	"mkdir" -p $@
+$(INSTALLERS_OUTDIR):
+	"mkdir" -p $@
+
+help::
+	$(ECHO) "Usage: make [MODE=dbg|opt] [PRODUCT=TEST|DEMO|JNI|FF2|FF3|FF31|FF36|IE|IEMOBILE|OPERA|SF|NPAPI|NONE] [installers] [OS=wince]"
+	$(ECHO)
+	$(ECHO) "  If you omit MODE, the default is dbg."
+	$(ECHO) "  If you omit BROWSER, all browsers available on the current OS are built."
+
+test::
+	@echo HERE $(LINK_EXTRAS)
+	
+# link targets
+	
+$(PRODUCT_OUTDIR)/$(TARGET): $(TOP_DEP)
+  ifeq ($(OS),linux)
+	$(MKDLL) $(DLLFLAGS) $($(BROWSER)_DLLFLAGS) $(TOP_DEP) $(LOCUTOR_OBJ) $(LOCUTOR_COMMON_OBJ) $(LOCUTOR_OS_OBJ) $(LOCUTOR_PRODUCT_OBJ) $(LOCUTOR_THIRDPARTY_OBJ) $(LOCUTOR_THIRDPARTY_PROCPS_OBJ) $(LOCUTOR_THIRDPARTY_LSHW_OBJ) $(GEARS_BROWSER_COMMON_OBJ) $(GEARS_COMMON_OBJ) $(GEARS_BREAKPAD_COMMON_OBJ) $(GEARS_THIRDPARTY_COMMON_OBJ) $(GEARS_SQLITE_COMMON_OBJ) $($(BROWSER)_LINK_EXTRAS) $($(BROWSER)_LIBS) $(LINK_EXTRAS)
+	#$(MKDLL) $(DLLFLAGS) $($(BROWSER)_DLLFLAGS) $($(BROWSER)_OBJS) $(BREAKPAD_OBJS) $(COMMON_OBJS) $(SQLITE_OBJS) $(THIRD_PARTY_OBJS) $($(BROWSER)_LINK_EXTRAS) $($(BROWSER)_LIBS)
+  else
+	ls -1 $(PRODUCT_OUTDIR)/*.obj > $(OBJ_LIST)
+	@echo $(GEARS_BROWSER_COMMON_OBJ) >> $(OBJ_LIST)
+	@echo $(GEARS_COMMON_OBJ) >> $(OBJ_LIST)
+	@echo $(GEARS_BREAKPAD_COMMON_OBJ) >> $(OBJ_LIST)
+	@echo $(GEARS_THIRDPARTY_COMMON_OBJ) >> $(OBJ_LIST)
+	@echo $(GEARS_SQLITE_COMMON_OBJ) >> $(OBJ_LIST)
+	@echo $(LOCUTOR_OBJ) >> $(OBJ_LIST)
+	$(MKDLL) $(DLLFLAGS) $($(BROWSER)_DLLFLAGS) $($(BROWSER)_LINK_EXTRAS) $(LINK_EXTRAS) $($(BROWSER)_LIBS) $(EXT_LINKER_CMD_FLAG)$(OBJ_LIST) > $(OUTDIR)/log
+  endif	
+
+# compile targets
+
+$(PRODUCT_OUTDIR)/%$(OBJ_SUFFIX): %.cc
+	@$(MKDEP)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $($(BROWSER)_CPPFLAGS) $($(BROWSER)_CXXFLAGS) $<
+$(PRODUCT_OUTDIR)/%$(OBJ_SUFFIX): base/$(PRODUCT_DIR)/%.cc
+	@$(MKDEP)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $($(BROWSER)_CPPFLAGS) $($(BROWSER)_CXXFLAGS) $<
+$(PRODUCT_OUTDIR)/%$(OBJ_SUFFIX): $(PRODUCT_GENDIR)/%.cc
+	@$(MKDEP)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $($(BROWSER)_CPPFLAGS) $($(BROWSER)_CXXFLAGS) $<
+$(PRODUCT_OUTDIR)/%$(OBJ_SUFFIX): $(PRODUCT_GENDIR)/%.c
+	@$(MKDEP)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $($(BROWSER)_CPPFLAGS) $($(BROWSER)_CFLAGS) $<
+$(PRODUCT_OUTDIR)/%$(OBJ_SUFFIX): $(PRODUCT_OUTDIR)/%.c
+	@$(MKDEP)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $($(BROWSER)_CPPFLAGS) $($(BROWSER)_CFLAGS) $<
+$(PRODUCT_OUTDIR)/%$(OBJ_SUFFIX): base/common/%.cc
+	@$(MKDEP)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $($(BROWSER)_CPPFLAGS) $($(BROWSER)_CXXFLAGS) $<
+$(PRODUCT_OUTDIR)/%$(OBJ_SUFFIX): factory/%.cc
+	@$(MKDEP)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $($(BROWSER)_CPPFLAGS) $($(BROWSER)_CXXFLAGS) $<
+$(PRODUCT_OUTDIR)/%$(OBJ_SUFFIX): ui/firefox/%.cc
+	@$(MKDEP)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $($(BROWSER)_CPPFLAGS) $($(BROWSER)_CXXFLAGS) $<
+$(PRODUCT_OUTDIR)/%$(OBJ_SUFFIX): workerpool/firefox/%.cc
+	@$(MKDEP)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $($(BROWSER)_CPPFLAGS) $($(BROWSER)_CXXFLAGS) $<
+$(PRODUCT_OUTDIR)/%$(OBJ_SUFFIX): $(GEARS_ROOT)/base/common/%.cc
+	@$(MKDEP)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $($(BROWSER)_CPPFLAGS) $($(BROWSER)_CXXFLAGS) $<
+$(PRODUCT_OUTDIR)/%$(OBJ_SUFFIX): $(GEARS_ROOT)/geolocation/%.cc
+	@$(MKDEP)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $($(BROWSER)_CPPFLAGS) $($(BROWSER)_CXXFLAGS) $<
+$(PRODUCT_OUTDIR)/%$(OBJ_SUFFIX): $(THIRD_PARTY_ROOT)/convert_utf/%.c
+	@$(MKDEP)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $($(BROWSER)_CPPFLAGS) $($(BROWSER)_CFLAGS) $<
+$(PRODUCT_OUTDIR_PROCPS)/%$(OBJ_SUFFIX): $(THIRD_PARTY_ROOT)/procps-3.2.8/proc/%.c
+	@$(MKDEP)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $($(BROWSER)_CPPFLAGS) $($(BROWSER)_CFLAGS) $<
+$(PRODUCT_OUTDIR_LSHW)/%$(OBJ_SUFFIX): $(THIRD_PARTY_ROOT)/lshw/src/core/%.cc
+	@$(MKDEP)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $($(BROWSER)_CPPFLAGS) $($(BROWSER)_CXXFLAGS) $<
+
+# I18N M4 (GENERIC PREPROCESSOR) TARGETS
+
+$(PRODUCT_GENDIR)/%: base/firefox/%.m4
+	m4 $(M4FLAGS) $< > $@
+$(PRODUCT_GENDIR)/%: base/ie/%.m4
+	m4 $(M4FLAGS) $< > $@
+$(PRODUCT_GENDIR)/%: base/common/%.m4
+	m4 $(M4FLAGS) $< > $@
+$(OUTDIR_COMMON_GENFILES)/%: installer/%.m4
+	m4 $(M4FLAGS) $< > $@
+$(PRODUCT_GENDIR)/%: factory/%.m4
+	m4 $(M4FLAGS) $< > $@
+$(PRODUCT_GENDIR)/%: $(GEARS_ROOT)/ui/firefox/%.m4
+	m4 $(M4FLAGS) $< > $@
+$(PRODUCT_GENDIR)/%: $(GEARS_ROOT)/ui/ie/%.m4
+	m4 $(M4FLAGS) $< > $@
+$(PRODUCT_GENDIR)/%: $(GEARS_ROOT)/ui/common/%.m4
+	m4 $(M4FLAGS) $< > $@
+$(PRODUCT_GENDIR)/%.html: $(GEARS_ROOT)/ui/common/%.html_m4 $(PRODUCT_GENDIR)/%.js
+	m4 $(M4FLAGS) $< > $@
+$(PRODUCT_GENDIR)/%: $(GEARS_ROOT)/base/common/%.m4
+	m4 $(M4FLAGS) $< > $@
+$(PRODUCT_GENDIR)/%: $(GEARS_ROOT)/base/ie/%.m4
+	m4 $(M4FLAGS) $< > $@
+$(OUTDIR_COMMON_GENFILES)/%: $(GEARS_ROOT)/installer/%.m4
+	m4 $(M4FLAGS) $< > $@
+
+# GENERATED CPPSRCS FROM BINARIES (.from_bin.cc)
+
+$(PRODUCT_GENDIR)/locutor_init.js.from_bin.cc: sdk/locutor_init.js
+	cp sdk/locutor_init.js sdk/gears_init.js
+	python $(GEARS_ROOT)/tools/bin2cpp.py sdk/gears_init.js > $(PRODUCT_GENDIR)/locutor_init.js.from_bin.cc
+	rm sdk/gears_init.js
+
+# STAB (String Table) TARGETS
+
+$(PRODUCT_GENDIR)/%: $(GEARS_ROOT)/ui/common/%.stab
+	python $(GEARS_ROOT)/tools/parse_stab.py $(M4FLAGS) $@ $< $(I18N_INPUTS_BASEDIR)
+$(PRODUCT_GENDIR)/%: $(GEARS_ROOT)/ui/ie/%.stab
+	python $(GEARS_ROOT)/tools/parse_stab.py $(M4FLAGS) $@ $< $(I18N_INPUTS_BASEDIR)
+
+# IDL TARGETS
+
+$(FF2_OUTDIR)/genfiles/%.h: base/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m header -o $(FF2_OUTDIR)/genfiles/$* $<
+$(FF2_OUTDIR)/genfiles/%.xpt: base/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m typelib -o $(FF2_OUTDIR)/genfiles/$* $<
+$(FF2_OUTDIR)/genfiles/%.h: $(GEARS_ROOT)/ui/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m header -o $(FF2_OUTDIR)/genfiles/$* $<
+$(FF2_OUTDIR)/genfiles/%.xpt: $(GEARS_ROOT)/ui/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m typelib -o $(FF2_OUTDIR)/genfiles/$* $<
+
+$(FF3_OUTDIR)/genfiles/%.h: base/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m header -o $(FF3_OUTDIR)/genfiles/$* $<
+$(FF3_OUTDIR)/genfiles/%.xpt: base/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m typelib -o $(FF3_OUTDIR)/genfiles/$* $<
+$(FF3_OUTDIR)/genfiles/%.h: $(GEARS_ROOT)/ui/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m header -o $(FF3_OUTDIR)/genfiles/$* $<
+$(FF3_OUTDIR)/genfiles/%.xpt: $(GEARS_ROOT)/ui/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m typelib -o $(FF3_OUTDIR)/genfiles/$* $<
+
+$(FF31_OUTDIR)/genfiles/%.h: base/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m header -o $(FF31_OUTDIR)/genfiles/$* $<
+$(FF31_OUTDIR)/genfiles/%.xpt: base/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m typelib -o $(FF31_OUTDIR)/genfiles/$* $<
+$(FF31_OUTDIR)/genfiles/%.h: $(GEARS_ROOT)/ui/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m header -o $(FF31_OUTDIR)/genfiles/$* $<
+$(FF31_OUTDIR)/genfiles/%.xpt: $(GEARS_ROOT)/ui/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m typelib -o $(FF31_OUTDIR)/genfiles/$* $<
+
+$(FF36_OUTDIR)/genfiles/%.h: base/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m header -o $(FF36_OUTDIR)/genfiles/$* $<
+$(FF36_OUTDIR)/genfiles/%.xpt: base/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m typelib -o $(FF36_OUTDIR)/genfiles/$* $<
+$(FF36_OUTDIR)/genfiles/%.h: $(GEARS_ROOT)/ui/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m header -o $(FF36_OUTDIR)/genfiles/$* $<
+$(FF36_OUTDIR)/genfiles/%.xpt: $(GEARS_ROOT)/ui/firefox/%.idl
+	$(GECKO_BIN)/xpidl -I $(GECKO_SDK)/gecko_sdk/idl -I $(GECKO_BASE) -m typelib -o $(FF36_OUTDIR)/genfiles/$* $<
+
+# FF only!
+$(PRODUCT_OUTDIR)/locutor.xpt: $(PRODUCT_GENDIR)/interfaces.xpt $(PRODUCT_GENDIR)/ui_utils.xpt
+	$(GECKO_BIN)/xpt_link $@ $^
+
+$(IE_OUTDIR)/genfiles/%.h: $(PRODUCT_GENDIR)/%.idl
+	midl $(CPPFLAGS) -env win32 -Oicf -tlb "$(@D)/$*.tlb" -h "$(@D)/$*.h" -iid "$(IE_OUTDIR)/$*_i.c" -proxy "$(IE_OUTDIR)/$*_p.c" -dlldata "$(IE_OUTDIR)/$*_d.c" $<
+$(IE_OUTDIR)/genfiles/%.h: $(GEARS_ROOT)/ui/ie/%.idl
+	midl $(CPPFLAGS) -env win32 -Oicf -tlb "$(@D)/$*.tlb" -h "$(@D)/$*.h" -iid "$(IE_OUTDIR)/$*_i.c" -proxy "$(IE_OUTDIR)/$*_p.c" -dlldata "$(IE_OUTDIR)/$*_d.c" $<
+
+$(IEMOBILE_OUTDIR)/genfiles/%.h: $(PRODUCT_GENDIR)/%.idl
+	midl $(CPPFLAGS) -env win32 -Oicf -tlb "$(@D)/$*.tlb" -h "$(@D)/$*.h" -iid "$(IEMOBILE_OUTDIR)/$*_i.c" -proxy "$(IEMOBILE_OUTDIR)/$*_p.c" -dlldata "$(IEMOBILE_OUTDIR)/$*_d.c" $<
+$(IEMOBILE_OUTDIR)/genfiles/%.h: $(GEARS_ROOT)/ui/ie/%.idl
+	midl $(CPPFLAGS) -env win32 -Oicf -tlb "$(@D)/$*.tlb" -h "$(@D)/$*.h" -iid "$(IEMOBILE_OUTDIR)/$*_i.c" -proxy "$(IEMOBILE_OUTDIR)/$*_p.c" -dlldata "$(IEMOBILE_OUTDIR)/$*_d.c" $<
+
+# RESOURCE TARGETS
+
+# from gears source dir (only IE)
+$(IE_OUTDIR)/%.res: $(GEARS_ROOT)/base/ie/%.rc
+	$(RC) $(RCFLAGS) /DBROWSER_IE=1 $<
+$(IEMOBILE_OUTDIR)/%.res: $(GEARS_ROOT)/base/ie/%.rc
+	$(RC) $(RCFLAGS) /DBROWSER_IEMOBILE=1 $<
+$(NPAPI_OUTDIR)/%.res: $(GEARS_ROOT)/base/npapi/%.rc
+	$(RC) $(RCFLAGS) /DBROWSER_NPAPI=1 $<
+
+# from generated sources (all)
+$(IE_OUTDIR)/%.res: $(IE_OUTDIR)/$(GENDIR_NAME)/%.rc
+	$(RC) $(RCFLAGS) -I$(GEARS_ROOT) /DBROWSER_IE=1 $<
+$(IEMOBILE_OUTDIR)/%.res: $(IEMOBILE_OUTDIR)/$(GENDIR_NAME)/%.rc
+	$(RC) $(RCFLAGS) -I$(GEARS_ROOT) /DBROWSER_IEMOBILE=1 $<
+$(FF2_OUTDIR)/%.res: $(FF2_OUTDIR)/$(GENDIR_NAME)/%.rc 
+	$(RC) $(RCFLAGS) -I$(GEARS_ROOT) /DBROWSER_FF2=1 $<
+$(FF3_OUTDIR)/%.res: $(FF3_OUTDIR)/$(GENDIR_NAME)/%.rc
+	$(RC) $(RCFLAGS) -I$(GEARS_ROOT) /DBROWSER_FF3=1 $<
+$(FF31_OUTDIR)/%.res: $(FF31_OUTDIR)/$(GENDIR_NAME)/%.rc
+	$(RC) $(RCFLAGS) -I$(GEARS_ROOT) /DBROWSER_FF3=1 $<
+$(FF36_OUTDIR)/%.res: $(FF36_OUTDIR)/$(GENDIR_NAME)/%.rc
+	$(RC) $(RCFLAGS) -I$(GEARS_ROOT) /DBROWSER_FF3=1 $<
+$(NPAPI_OUTDIR)/%.res: $(NPAPI_OUTDIR)/$(GENDIR_NAME)/%.rc
+	$(RC) $(RCFLAGS) -I$(GEARS_ROOT) /DBROWSER_NPAPI=1 $<
+$(OPERA_OUTDIR)/%.res: $(OPERA_OUTDIR)/$(GENDIR_NAME)/%.rc
+	$(RC) $(RCFLAGS) -I$(GEARS_ROOT) /DBROWSER_OPERA=1 $<
+$(OPERA_OUTDIR)/$(GENDIR_NAME)/%.gif: $(GEARS_ROOT)/ui/common/%.gif
+	cp $< $@
+	chmod 600 $(OPERA_OUTDIR)/$(GENDIR_NAME)/*.gif
+$(OPERA_OUTDIR)/$(GENDIR_NAME)/%.png: $(GEARS_ROOT)/ui/common/%.png
+	cp $< $@
+	chmod 600 $(OPERA_OUTDIR)/$(GENDIR_NAME)/*.png
+
+include tools/installers.mk
+	

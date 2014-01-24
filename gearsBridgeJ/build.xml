@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<project name="gearsBridgeJ" default="jar">
+    
+    <property name="version" value="1.00"/>
+    
+    <property name="gbj.base" value="."/>
+    <property name="gbj.src" value="${gbj.base}/src"/>
+    <property name="gbj.bin" value="${gbj.base}/bin"/>
+    <property name="gbj.jars" value="${gbj.base}/dist"/>
+    <property name="gbj.tools" value="${gbj.base}/tools"/>
+    <property name="gbj.lib" value="${gbj.base}/libs"/>
+    <property name="gbj.lib-orig" value="${gbj.base}/libs-orig"/>
+	<property name="gearsBridge.home" value="../gearsBridge"/>
+	<property name="codeEraser.home" value="../CodeEraser"/>
+	
+    <property name="gbj.classpath" value="${gbj.base}"/>
+
+	<taskdef resource="code-eraser.properties" 
+		classpath="${gbj.tools}/eraser.jar"/>
+	
+	<!-- build external jars but only if the projects are available -->
+	<available property="test.codeEraser.home" file="${codeEraser.home}"/>
+	<target name="-external.codeEraser" if="test.codeEraser.home">
+		<ant dir="${codeEraser.home}" target="build external jars"/>
+		<ant dir="${codeEraser.home}" target="jar"/>
+		<copy failonerror="false" file="${codeEraser.home}/dist/eraser-runtime.jar" todir="${gbj.lib}"/>
+		<copy failonerror="false" file="${codeEraser.home}/dist/eraser.jar" todir="${gbj.tools}"/>
+    </target>
+
+	<target name="build external jars"
+		description="Build external jars provided by other projects">
+		<property name="lobaris.flatBuild" value="true"/>
+		<antcall target="deep rebuild external jars" />		
+    </target>
+
+	<target name="deep rebuild external jars" 
+		depends="-external.codeEraser"
+		description="Build external jars provided by other projects (please execute from command line, not from inside Eclipse)">
+        <!-- do not copy native lib by default here at the moment -->
+	</target>
+
+    <target name="compile"
+       unless="lobaris.flatBuild"
+       description="compiles the class files">
+       <mkdir dir="${gbj.bin}"/>
+       <javac           
+          srcdir="${gbj.src}" 
+          includeantruntime="false"
+              compiler="modern" 
+              classpath="${gbj.classpath}"
+              destdir="${gbj.bin}"
+              excludes="bin/**"
+          debug="on" />
+    </target>
+
+    <target name="jar" 
+    	depends="compile"
+    	unless="lobaris.flatBuild"
+        description="builds all binary distribution archives">
+
+    	<mkdir dir="${gbj.jars}" />
+    	<delete file="${gbj.jars}/locutor-${version}.jar"/>
+        <jar jarfile="${gbj.jars}/locutor-${version}.jar" manifest="${gbj.base}/MANIFEST.MF"
+            excludes="test/**.class *.jar *.zip **/*.html" 
+        	basedir="${gbj.bin}">
+            <fileset dir="${gbj.base}" includes="locutor.dll"/>
+        </jar>
+
+    	<delete file="${gbj.jars}/locutorServer-${version}.jar"/>
+        <jar jarfile="${gbj.jars}/locutorServer-${version}.jar"
+            includes="de/uni_hildesheim/sse/util/*.class de/uni_hildesheim/sse/system/**/*.class"
+        	basedir="${gbj.bin}">
+        </jar>
+
+    	<delete file="${gbj.jars}/wifiApplet-${version}.jar"/>
+        <jar jarfile="${gbj.jars}/wifiApplet-${version}.jar"
+            excludes="test/*.class *.dll *.jar de/uni_hildesheim/sse/system/*DataGatherer* de/uni_hildesheim/sse/system/deflt/*DataGatherer*" 
+        	basedir="${gbj.bin}">
+        </jar>
+    	<copy failonerror="false" file="${gbj.jars}/wifiApplet-${version}.jar" todir="../gearsBridge/test"/>
+
+    	<delete file="${gbj.jars}/gearsBridgeJ-${version}.zip"/>
+        <zip zipfile="${gbj.jars}/gearsBridgeJ-${version}.zip">
+            <fileset dir="${gbj.base}" excludes="bin/*.jar" includes="bin/* src/* README.txt build.xml"/>
+        </zip>
+
+    	<delete file="${gbj.jars}/locutorUtils-${version}.jar"/>
+        <jar jarfile="${gbj.jars}/locutorUtils-${version}.jar"
+            includes="de/uni_hildesheim/sse/util/*.class"
+        	basedir="${gbj.bin}">
+        </jar>
+
+    	<delete file="${gbj.jars}/locutor-jniBinding${version}.jar"/>
+        <jar jarfile="${gbj.jars}/locutor-jniBinding${version}.jar"
+        	includes="locutor.dll de/uni_hildesheim/sse/system/I*DataGatherer*.class de/uni_hildesheim/sse/system/deflt/*DataGatherer*.class"
+        	basedir="${gbj.bin}">
+            <fileset dir="${gbj.base}" includes="locutor.dll"/>
+            <fileset dir="${gbj.base}" includes="locutor_64.dll"/>
+            <fileset dir="${gbj.base}" includes="locutor.so"/>
+            <fileset dir="${gbj.base}" includes="locutor_64.so"/>
+        </jar>
+
+    	<delete file="${gbj.jars}/locutor-androidBase${version}.jar"/>
+        <jar jarfile="${gbj.jars}/locutor-androidBase${version}.jar"
+        	includes="de/uni_hildesheim/sse/system/*.class de/uni_hildesheim/sse/io/*.class de/uni_hildesheim/sse/util/*.class"
+        	basedir="${gbj.bin}">
+        </jar>
+    	
+    	<copy file="locutor-instrumenter.dll" tofile="${gbj.bin}/locutor.dll"/>
+    	<copy file="locutor-instrumenter_64.dll" tofile="${gbj.bin}/locutor_64.dll"/>
+    	<delete file="${gbj.jars}/locutor-instrumenter${version}.jar"/>
+        <jar jarfile="${gbj.jars}/locutor-instrumenter${version}.jar"
+        	includes="
+        	de/uni_hildesheim/sse/io/ServerResponseException*.class
+        	de/uni_hildesheim/sse/system/*.class
+        	de/uni_hildesheim/sse/system/deflt/DataGatherer*.class
+        	de/uni_hildesheim/sse/system/deflt/DefaultGathererFactory*.class
+        	de/uni_hildesheim/sse/system/deflt/MemoryDataGatherer*.class 
+        	de/uni_hildesheim/sse/system/deflt/ProcessorDataGatherer*.class 
+        	de/uni_hildesheim/sse/system/deflt/ThisProcessDataGatherer*.class 
+        	de/uni_hildesheim/sse/system/deflt/ProcessDataGatherer*.class
+        	de/uni_hildesheim/sse/system/deflt/ThreadDataGatherer*.class"
+        	basedir="${gbj.bin}">
+            <fileset dir="${gbj.bin}" includes="locutor.dll"/>
+            <fileset dir="${gbj.bin}" includes="locutor_64.dll"/>
+        </jar>
+    	<delete file="${gbj.bin}/locutor.dll"/>
+    	
+    	<copy file="locutor-instrumenter.so" tofile="${gbj.bin}/locutor.so"/>
+		<copy file="locutor-instrumenter_64.so" tofile="${gbj.bin}/locutor_64.so"/>
+    	<delete file="${gbj.jars}/locutor-instrumenter${version}-linux.jar"/>
+        <jar jarfile="${gbj.jars}/locutor-instrumenter${version}-linux.jar"
+        	includes="
+        	de/uni_hildesheim/sse/io/ServerResponseException*.class
+        	de/uni_hildesheim/sse/system/*.class
+        	de/uni_hildesheim/sse/system/deflt/DataGatherer*.class
+        	de/uni_hildesheim/sse/system/deflt/DefaultGathererFactory*.class
+        	de/uni_hildesheim/sse/system/deflt/MemoryDataGatherer*.class 
+        	de/uni_hildesheim/sse/system/deflt/ProcessorDataGatherer*.class 
+        	de/uni_hildesheim/sse/system/deflt/ThisProcessDataGatherer*.class 
+        	de/uni_hildesheim/sse/system/deflt/ProcessDataGatherer*.class
+        	de/uni_hildesheim/sse/system/deflt/ThreadDataGatherer*.class"
+        	basedir="${gbj.bin}">
+            <fileset dir="${gbj.bin}" includes="locutor.so"/>
+			<fileset dir="${gbj.bin}" includes="locutor_64.so"/>
+        </jar>
+    	<delete file="${gbj.bin}/locutor.so"/>
+		<delete file="${gbj.bin}/locutor_64.so"/>
+    </target>
+
+    <target name="test" 
+    	depends="jar"
+        description="runs the tests">
+    	<mkdir dir="test-run/test"/>
+    	<copy todir="test-run/test">
+		   <fileset dir="${gbj.bin}/test">
+		       <include name="Test*.class"/>
+		   </fileset>
+		</copy>
+    	<java classpath="${gbj.jars}/locutor-1.00.jar;test-run"
+    	      classname="test.Test" fork="true"/>
+    </target>
+	
+	<target name="copy-jni">
+	   <copy file="../gearsBridge/bin-dbg/win32-i386/jni/locutor.dll" tofile="./locutor.dll"/>
+	   <copy file="../gearsBridge/bin-dbg/win32-i386/jni/locutor.dll" tofile="./locutor-instrumenter.dll"/>
+	</target>
+	
+</project>

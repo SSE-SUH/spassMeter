@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  test whether starting the recorder without annotation works -->
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xmlns="http://sse.uni-hildesheim.de/instrumentation" exclusive="true"
+     mainDefault="START">
+  <namespace name="test">
+    <module name="MultiRecIdTest">
+      <module name="Part1">
+        <monitor id="multi1"/>
+      </module>
+      <module name="Part2">
+        <monitor id="multi2"/>
+      </module>
+      <module name="Part3">
+        <monitor id="multi1, multi2"/>
+      </module>
+      <!--  no start - test this -->
+      <behavior signature="main(java.lang.String[])">
+        <endSystem invoke="asserts"/>
+      </behavior>
+    </module>
+  </namespace>
+</configuration>

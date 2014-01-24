@@ -1,0 +1,400 @@
+Apache Ant version 1.8.1 compiled on April 30 2010
+Trying the default build file: build.xml
+Buildfile: W:\LoBaRisWorkSpace\gearsBridgeJ\build.xml
+Detected Java version: 1.6 in: C:\Program Files (x86)\Java\jdk1.6.0_25\jre
+Detected OS: Windows 7
+parsing buildfile W:\LoBaRisWorkSpace\gearsBridgeJ\build.xml with URI = file:/W:/LoBaRisWorkSpace/gearsBridgeJ/build.xml
+Project base dir set to: W:\LoBaRisWorkSpace\gearsBridgeJ
+parsing buildfile jar:file:/C:/Program%20Files/apache-ant-1.8.1/lib/ant.jar!/org/apache/tools/ant/antlib.xml with URI = jar:file:/C:/Program%20Files/apache-ant-1.8.1/lib/ant.jar!/org/apache/tools/ant/antlib.xml from a zip file
+[available] Found: W:\LoBaRisWorkSpace\CodeEraser
+Build sequence for target(s) `test' is [compile, jar, test]
+Complete build sequence is [compile, jar, test, -external.codeEraser, build external jars, ]
+
+compile:
+    [mkdir] Skipping W:\LoBaRisWorkSpace\gearsBridgeJ\bin because it already exists.
+    [javac] W:\LoBaRisWorkSpace\gearsBridgeJ\src\de\package.html skipped - don't know how to handle it
+    [javac] de\uni_hildesheim\sse\system\AccessPointData.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\AccessPointData.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\AnnotationConstants.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\AnnotationConstants.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\GathererFactory.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\GathererFactory.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\IBatteryDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\IBatteryDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\IDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\IDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\IMemoryDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\IMemoryDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\INetworkDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\INetworkDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\IObjectSizeDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\IObjectSizeDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\IProcessDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\IProcessDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\IProcessorDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\IProcessorDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\IScreenDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\IScreenDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\IThisProcessDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\IThisProcessDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\IThreadDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\IThreadDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\IVolumeDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\IVolumeDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\IoStatistics.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\IoStatistics.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\ObjectSizeEstimator.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\ObjectSizeEstimator.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\ObjectUnallocationInfo.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\ObjectUnallocationInfo.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\deflt\BatteryDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\deflt\BatteryDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\deflt\DataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\deflt\DataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\deflt\DefaultGathererFactory.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\deflt\DefaultGathererFactory.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\deflt\MemoryDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\deflt\MemoryDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\deflt\NetworkDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\deflt\NetworkDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\deflt\ProcessDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\deflt\ProcessDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\deflt\ProcessorDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\deflt\ProcessorDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\deflt\ScreenDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\deflt\ScreenDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\deflt\ThisProcessDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\deflt\ThisProcessDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\deflt\ThreadDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\deflt\ThreadDataGatherer.class is up to date.
+    [javac] de\uni_hildesheim\sse\system\deflt\VolumeDataGatherer.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\system\deflt\VolumeDataGatherer.class is up to date.
+    [javac] W:\LoBaRisWorkSpace\gearsBridgeJ\src\de\uni_hildesheim\sse\system\deflt\package.html skipped - don't know how to handle it
+    [javac] W:\LoBaRisWorkSpace\gearsBridgeJ\src\de\uni_hildesheim\sse\system\package.html skipped - don't know how to handle it
+    [javac] de\uni_hildesheim\sse\util\ArrayIterator.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\de\uni_hildesheim\sse\util\ArrayIterator.class is up to date.
+    [javac] W:\LoBaRisWorkSpace\gearsBridgeJ\src\de\uni_hildesheim\sse\util\package.html skipped - don't know how to handle it
+    [javac] W:\LoBaRisWorkSpace\gearsBridgeJ\src\overview.html skipped - don't know how to handle it
+    [javac] test\ObjectSizeTest.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\test\ObjectSizeTest.class is up to date.
+    [javac] test\ProcessMonitor.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\test\ProcessMonitor.class is up to date.
+    [javac] test\Test.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\test\Test.class is up to date.
+    [javac] test\TestSwing.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\test\TestSwing.class is up to date.
+    [javac] test\TimerTest.java omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\bin\test\TimerTest.class is up to date.
+    [javac] W:\LoBaRisWorkSpace\gearsBridgeJ\src\test\package.html skipped - don't know how to handle it
+
+jar:
+    [mkdir] Skipping W:\LoBaRisWorkSpace\gearsBridgeJ\dist because it already exists.
+   [delete] Deleting: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\locutor-1.00.jar
+      [jar] Building jar: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\locutor-1.00.jar
+      [jar] adding directory META-INF/
+      [jar] adding entry META-INF/MANIFEST.MF
+      [jar] adding directory de/
+      [jar] adding directory de/uni_hildesheim/
+      [jar] adding directory de/uni_hildesheim/sse/
+      [jar] adding directory de/uni_hildesheim/sse/system/
+      [jar] adding directory de/uni_hildesheim/sse/system/deflt/
+      [jar] adding directory de/uni_hildesheim/sse/util/
+      [jar] adding directory test/
+      [jar] adding entry de/uni_hildesheim/sse/system/AccessPointData.class
+      [jar] adding entry de/uni_hildesheim/sse/system/AnnotationConstants.class
+      [jar] adding entry de/uni_hildesheim/sse/system/GathererFactory.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IBatteryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IMemoryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/INetworkDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IObjectSizeDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IProcessorDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IScreenDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IThisProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IThreadDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IVolumeDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IoStatistics.class
+      [jar] adding entry de/uni_hildesheim/sse/system/ObjectSizeEstimator.class
+      [jar] adding entry de/uni_hildesheim/sse/system/ObjectUnallocationInfo.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/BatteryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/DataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/DefaultGathererFactory.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/MemoryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/NetworkDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ProcessorDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ScreenDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ThisProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ThreadDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/VolumeDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/util/ArrayIterator.class
+      [jar] adding entry locutor.dll
+      [jar] No Implementation-Title set.No Implementation-Version set.No Implementation-Vendor set.
+      [jar] Location: W:\LoBaRisWorkSpace\gearsBridgeJ\build.xml:60: 
+   [delete] Deleting: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\locutorServer-1.00.jar
+      [jar] Building jar: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\locutorServer-1.00.jar
+      [jar] adding directory META-INF/
+      [jar] adding entry META-INF/MANIFEST.MF
+      [jar] adding directory de/
+      [jar] adding directory de/uni_hildesheim/
+      [jar] adding directory de/uni_hildesheim/sse/
+      [jar] adding directory de/uni_hildesheim/sse/system/
+      [jar] adding entry de/uni_hildesheim/sse/system/AccessPointData.class
+      [jar] adding entry de/uni_hildesheim/sse/system/AnnotationConstants.class
+      [jar] adding entry de/uni_hildesheim/sse/system/GathererFactory.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IBatteryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IMemoryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/INetworkDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IObjectSizeDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IProcessorDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IScreenDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IThisProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IThreadDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IVolumeDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IoStatistics.class
+      [jar] adding entry de/uni_hildesheim/sse/system/ObjectSizeEstimator.class
+      [jar] adding entry de/uni_hildesheim/sse/system/ObjectUnallocationInfo.class
+      [jar] adding directory de/uni_hildesheim/sse/system/deflt/
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/BatteryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/DataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/DefaultGathererFactory.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/MemoryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/NetworkDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ProcessorDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ScreenDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ThisProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ThreadDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/VolumeDataGatherer.class
+      [jar] adding directory de/uni_hildesheim/sse/util/
+      [jar] adding entry de/uni_hildesheim/sse/util/ArrayIterator.class
+      [jar] No Implementation-Title set.No Implementation-Version set.No Implementation-Vendor set.
+      [jar] Location: W:\LoBaRisWorkSpace\gearsBridgeJ\build.xml:67: 
+   [delete] Deleting: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\wifiApplet-1.00.jar
+      [jar] Building jar: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\wifiApplet-1.00.jar
+      [jar] adding directory META-INF/
+      [jar] adding entry META-INF/MANIFEST.MF
+      [jar] adding directory de/
+      [jar] adding directory de/uni_hildesheim/
+      [jar] adding directory de/uni_hildesheim/sse/
+      [jar] adding directory de/uni_hildesheim/sse/system/
+      [jar] adding directory de/uni_hildesheim/sse/system/deflt/
+      [jar] adding directory de/uni_hildesheim/sse/util/
+      [jar] adding directory test/
+      [jar] adding entry de/package.html
+      [jar] adding entry de/uni_hildesheim/sse/system/AccessPointData.class
+      [jar] adding entry de/uni_hildesheim/sse/system/AnnotationConstants.class
+      [jar] adding entry de/uni_hildesheim/sse/system/GathererFactory.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IoStatistics.class
+      [jar] adding entry de/uni_hildesheim/sse/system/ObjectSizeEstimator.class
+      [jar] adding entry de/uni_hildesheim/sse/system/ObjectUnallocationInfo.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/DefaultGathererFactory.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/package.html
+      [jar] adding entry de/uni_hildesheim/sse/system/package.html
+      [jar] adding entry de/uni_hildesheim/sse/util/ArrayIterator.class
+      [jar] adding entry de/uni_hildesheim/sse/util/package.html
+      [jar] adding entry gearsBridgeJ-1.00.zip
+      [jar] adding entry overview.html
+      [jar] adding entry test/package.html
+      [jar] No Implementation-Title set.No Implementation-Version set.No Implementation-Vendor set.
+      [jar] Location: W:\LoBaRisWorkSpace\gearsBridgeJ\build.xml:73: 
+     [copy] Copying 1 file to W:\LoBaRisWorkSpace\gearsBridge\test
+     [copy] Copying W:\LoBaRisWorkSpace\gearsBridgeJ\dist\wifiApplet-1.00.jar to W:\LoBaRisWorkSpace\gearsBridge\test\wifiApplet-1.00.jar
+   [delete] Deleting: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\gearsBridgeJ-1.00.zip
+      [zip] Building zip: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\gearsBridgeJ-1.00.zip
+      [zip] adding directory bin/
+      [zip] adding directory bin/de/
+      [zip] adding directory bin/test/
+      [zip] adding directory src/
+      [zip] adding directory src/de/
+      [zip] adding directory src/test/
+      [zip] adding entry README.txt
+      [zip] adding entry bin/gearsBridgeJ-1.00.zip
+      [zip] adding entry bin/overview.html
+      [zip] adding entry build.xml
+      [zip] adding entry src/overview.html
+   [delete] Deleting: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\locutorUtils-1.00.jar
+      [jar] Building jar: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\locutorUtils-1.00.jar
+      [jar] adding directory META-INF/
+      [jar] adding entry META-INF/MANIFEST.MF
+      [jar] adding directory de/
+      [jar] adding directory de/uni_hildesheim/
+      [jar] adding directory de/uni_hildesheim/sse/
+      [jar] adding directory de/uni_hildesheim/sse/util/
+      [jar] adding entry de/uni_hildesheim/sse/util/ArrayIterator.class
+      [jar] No Implementation-Title set.No Implementation-Version set.No Implementation-Vendor set.
+      [jar] Location: W:\LoBaRisWorkSpace\gearsBridgeJ\build.xml:85: 
+   [delete] Deleting: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\locutor-jniBinding1.00.jar
+      [jar] Building jar: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\locutor-jniBinding1.00.jar
+      [jar] adding directory META-INF/
+      [jar] adding entry META-INF/MANIFEST.MF
+      [jar] adding directory de/
+      [jar] adding directory de/uni_hildesheim/
+      [jar] adding directory de/uni_hildesheim/sse/
+      [jar] adding directory de/uni_hildesheim/sse/system/
+      [jar] adding entry de/uni_hildesheim/sse/system/IBatteryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IMemoryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/INetworkDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IObjectSizeDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IProcessorDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IScreenDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IThisProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IThreadDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IVolumeDataGatherer.class
+      [jar] adding directory de/uni_hildesheim/sse/system/deflt/
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/BatteryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/DataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/MemoryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/NetworkDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ProcessorDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ScreenDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ThisProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ThreadDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/VolumeDataGatherer.class
+      [jar] adding entry locutor.dll
+      [jar] No Implementation-Title set.No Implementation-Version set.No Implementation-Vendor set.
+      [jar] Location: W:\LoBaRisWorkSpace\gearsBridgeJ\build.xml:91: 
+   [delete] Deleting: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\locutor-androidBase1.00.jar
+      [jar] Building jar: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\locutor-androidBase1.00.jar
+      [jar] adding directory META-INF/
+      [jar] adding entry META-INF/MANIFEST.MF
+      [jar] adding directory de/
+      [jar] adding directory de/uni_hildesheim/
+      [jar] adding directory de/uni_hildesheim/sse/
+      [jar] adding directory de/uni_hildesheim/sse/system/
+      [jar] adding entry de/uni_hildesheim/sse/system/AccessPointData.class
+      [jar] adding entry de/uni_hildesheim/sse/system/AnnotationConstants.class
+      [jar] adding entry de/uni_hildesheim/sse/system/GathererFactory.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IBatteryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IMemoryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/INetworkDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IObjectSizeDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IProcessorDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IScreenDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IThisProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IThreadDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IVolumeDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IoStatistics.class
+      [jar] adding entry de/uni_hildesheim/sse/system/ObjectSizeEstimator.class
+      [jar] adding entry de/uni_hildesheim/sse/system/ObjectUnallocationInfo.class
+      [jar] adding directory de/uni_hildesheim/sse/util/
+      [jar] adding entry de/uni_hildesheim/sse/util/ArrayIterator.class
+      [jar] No Implementation-Title set.No Implementation-Version set.No Implementation-Vendor set.
+      [jar] Location: W:\LoBaRisWorkSpace\gearsBridgeJ\build.xml:98: 
+     [copy] Copying 1 file to W:\LoBaRisWorkSpace\gearsBridgeJ\bin
+     [copy] Copying W:\LoBaRisWorkSpace\gearsBridgeJ\locutor-instrumenter.dll to W:\LoBaRisWorkSpace\gearsBridgeJ\bin\locutor.dll
+   [delete] Deleting: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\locutor-instrumenter1.00.jar
+      [jar] Building jar: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\locutor-instrumenter1.00.jar
+      [jar] adding directory META-INF/
+      [jar] adding entry META-INF/MANIFEST.MF
+      [jar] adding directory de/
+      [jar] adding directory de/uni_hildesheim/
+      [jar] adding directory de/uni_hildesheim/sse/
+      [jar] adding directory de/uni_hildesheim/sse/system/
+      [jar] adding entry de/uni_hildesheim/sse/system/AccessPointData.class
+      [jar] adding entry de/uni_hildesheim/sse/system/AnnotationConstants.class
+      [jar] adding entry de/uni_hildesheim/sse/system/GathererFactory.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IBatteryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IMemoryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/INetworkDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IObjectSizeDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IProcessorDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IScreenDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IThisProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IThreadDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IVolumeDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IoStatistics.class
+      [jar] adding entry de/uni_hildesheim/sse/system/ObjectSizeEstimator.class
+      [jar] adding entry de/uni_hildesheim/sse/system/ObjectUnallocationInfo.class
+      [jar] adding directory de/uni_hildesheim/sse/system/deflt/
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/DataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/DefaultGathererFactory.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/MemoryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ProcessorDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ThisProcessDataGatherer.class
+      [jar] adding entry locutor.dll
+      [jar] No Implementation-Title set.No Implementation-Version set.No Implementation-Vendor set.
+      [jar] Location: W:\LoBaRisWorkSpace\gearsBridgeJ\build.xml:113: 
+   [delete] Deleting: W:\LoBaRisWorkSpace\gearsBridgeJ\bin\locutor.dll
+     [copy] Copying 1 file to W:\LoBaRisWorkSpace\gearsBridgeJ\bin
+     [copy] Copying W:\LoBaRisWorkSpace\gearsBridgeJ\locutor-instrumenter.so to W:\LoBaRisWorkSpace\gearsBridgeJ\bin\locutor.so
+   [delete] Deleting: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\locutor-instrumenter1.00-linux.jar
+      [jar] Building jar: W:\LoBaRisWorkSpace\gearsBridgeJ\dist\locutor-instrumenter1.00-linux.jar
+      [jar] adding directory META-INF/
+      [jar] adding entry META-INF/MANIFEST.MF
+      [jar] adding directory de/
+      [jar] adding directory de/uni_hildesheim/
+      [jar] adding directory de/uni_hildesheim/sse/
+      [jar] adding directory de/uni_hildesheim/sse/system/
+      [jar] adding entry de/uni_hildesheim/sse/system/AccessPointData.class
+      [jar] adding entry de/uni_hildesheim/sse/system/AnnotationConstants.class
+      [jar] adding entry de/uni_hildesheim/sse/system/GathererFactory.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IBatteryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IMemoryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/INetworkDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IObjectSizeDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IProcessorDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IScreenDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IThisProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IThreadDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IVolumeDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/IoStatistics.class
+      [jar] adding entry de/uni_hildesheim/sse/system/ObjectSizeEstimator.class
+      [jar] adding entry de/uni_hildesheim/sse/system/ObjectUnallocationInfo.class
+      [jar] adding directory de/uni_hildesheim/sse/system/deflt/
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/DataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/DefaultGathererFactory.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/MemoryDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ProcessDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ProcessorDataGatherer.class
+      [jar] adding entry de/uni_hildesheim/sse/system/deflt/ThisProcessDataGatherer.class
+      [jar] adding entry locutor.so
+      [jar] No Implementation-Title set.No Implementation-Version set.No Implementation-Vendor set.
+      [jar] Location: W:\LoBaRisWorkSpace\gearsBridgeJ\build.xml:130: 
+   [delete] Deleting: W:\LoBaRisWorkSpace\gearsBridgeJ\bin\locutor.so
+
+test:
+    [mkdir] Skipping W:\LoBaRisWorkSpace\gearsBridgeJ\test-run\test because it already exists.
+     [copy] Test$TestTask.class omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\test-run\test\Test$TestTask.class is up to date.
+     [copy] Test.class omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\test-run\test\Test.class is up to date.
+     [copy] TestSwing$1.class omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\test-run\test\TestSwing$1.class is up to date.
+     [copy] TestSwing.class omitted as W:\LoBaRisWorkSpace\gearsBridgeJ\test-run\test\TestSwing.class is up to date.
+     [copy] No sources found.
+     [java] Executing 'C:\Program Files (x86)\Java\jdk1.6.0_25\jre\bin\java.exe' with arguments:
+     [java] '-classpath'
+     [java] 'W:\LoBaRisWorkSpace\gearsBridgeJ\bin\locutor-1.00.jar;W:\LoBaRisWorkSpace\gearsBridgeJ\test-run'
+     [java] 'test.Test'
+     [java] 
+     [java] The ' characters around the executable and arguments are
+     [java] not part of the command.
+     [java] initial process load
+     [java] gathering data ...
+     [java] ssid Arcor-CC2207 mac 00-1d-19-cc-22-71 s/n -2147483648 channel -2147483648 age -2147483648 strength -80
+     [java] ssid KATZENNETZ mac 00-1e-40-da-2a-6f s/n -2147483648 channel -2147483648 age -2147483648 strength -64
+     [java] ssid FRITZ!Box Fon WLAN 7113 mac 00-1f-3f-46-3e-76 s/n -2147483648 channel -2147483648 age -2147483648 strength -77
+     [java] ssid EasyBox-54C857 mac 00-26-4d-54-c8-bb s/n -2147483648 channel -2147483648 age -2147483648 strength -70
+     [java] ssid SETUP mac 4a-3b-6c-46-9d-c8 s/n -2147483648 channel -2147483648 age -2147483648 strength -66
+     [java] 
+     [java] jvm read   1840773
+     [java] jvm write  578
+     [java] jvm user   62400400
+     [java] jvm kernel 15600100
+     [java] jvm mem    15577088
+     [java] jvm system 108346200
+     [java] 
+     [java] battery life percent 97
+     [java] battery life time 17577
+     [java] battery power plug 0
+     [java] battery present? true
+     [java] 
+     [java] cur mem use 2960560128
+     [java] cur mem avail 1122443264
+     [java] mem capacity 4083003392
+     [java] object size 8
+     [java] 
+     [java] cur net speed 0
+     [java] max net speed 54000000
+     [java] 
+     [java] cur processor speed 2534
+     [java] sys load 0.0
+     [java] max processor speed 2527
+     [java] processor number 4
+     [java] 
+     [java] screen resolution 96
+     [java] screen resolution 1600
+     [java] screen resolution 900
+     [java] 
+     [java] volume use 201584304128
+     [java] volume avail 298191933440
+     [java] volume capacity 499776237568
+     [java] 
+     [java] vm kernel time 296401900
+     [java] vm mem 19668992
+     [java] vm load 22.727272727272727
+     [java] vm sys time 431346200
+     [java] vm sys time 93600600
+     [java] vm in 3403485 out 1292 incl file true incl net true
+     [java] all in 3486220972 out 9019972101 incl file true incl net true
+     [java] [5, 4, 3, 2, 1]
+
+BUILD SUCCESSFUL
+Total time: 1 second
