@@ -101,11 +101,13 @@ public class DefaultGathererFactory
         if (libName.length() > 0) {
             boolean loadIt = true;
             File f = new File(libName);
+            // for development - just try the direct file
             if (!f.exists()) {
-                // for Eclipse
+                // for development under Eclipse - try bin
                 f = new File("bin" + File.separator + libName);
             }
             if (!f.exists()) {
+                // try to unpack and load from tmp
                 ClassLoader loader = DataGatherer.class.getClassLoader();
                 if (null == loader) {
                     loader = ClassLoader.getSystemClassLoader();
@@ -121,7 +123,7 @@ public class DefaultGathererFactory
                     File tmpFile = new File(
                         System.getProperty("java.io.tmpdir"),
                         libName);
-                    FileOutputStream fos;
+                    FileOutputStream fos = null;
                     try {
                         fos = new FileOutputStream(tmpFile);
                         int read = 0;
@@ -134,9 +136,14 @@ public class DefaultGathererFactory
                         fos.close();
                         f = tmpFile;
                     } catch (IOException e) {
-                        loadIt = false;
-                        error = "Error while extracting " + libName 
-                            + " from jar: " + e.getMessage();                
+                        if (null == fos && tmpFile.exists()) {
+                            // while opening - assume other JVM uses lib
+                            f = tmpFile;
+                        } else {
+                            loadIt = false;
+                            error = "Error while extracting " + libName 
+                                + " from jar: " + e.getMessage();
+                        }
                     }
                 }
             }

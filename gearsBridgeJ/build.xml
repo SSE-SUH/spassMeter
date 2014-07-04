@@ -147,6 +147,18 @@
     	<delete file="${gbj.bin}/locutor.so"/>
 		<delete file="${gbj.bin}/locutor_64.so"/>
     </target>
+	
+    <target name="jarHold" depends="jar" 
+	    description="builds a jar with the test classes for the hold test">
+		<!-- hold test: execute the jar with tests.UseAndHold in the test-run directory in two JVMs -->
+    	<mkdir dir="test-run/test"/>
+		<property name="jarFile" value="${gbj.jars}/locutor-${version}.jar"/>
+		<property name="outFile" value="test-run/locutor-${version}-hold.jar"/>
+    	<copy file="${jarFile}" tofile="${outFile}"/>
+	    <jar jarfile="${outFile}" update="true" basedir="${gbj.bin}">
+		    <include name="test/*.class"/>
+		</jar>
+	</target>
 
     <target name="test" 
     	depends="jar"
