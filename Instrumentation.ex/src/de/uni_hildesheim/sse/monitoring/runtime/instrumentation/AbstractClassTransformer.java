@@ -294,6 +294,32 @@ public class AbstractClassTransformer implements ISemanticsCollector {
         }
         return result;
     }
+
+    // below:
+    /*        if (!mayAlterStructure) {
+    CtConstructor[] methods = cl.getDeclaredConstructors();
+    for (int i = 0; i < methods.length; i++) {
+        methods[i].insertAfter("System.out.println(\"**\");");
+    }
+    /*
+    MemoryAccountingType memAccounting = Configuration.INSTANCE
+        .getMemoryAccountingType(); 
+    if (memAccounting.atFinalizer()) {
+        CtMethod[] methods = cl.getMethods();
+        boolean hasFinalize = false;
+        for (int m = 0; m < methods.length; m++) {
+            CtMethod method = methods[m];
+            if (InstrumentationFragments.isFinalize(method)) {
+                hasFinalize = true;
+                InstrumentationFragments.instrumentFinalize(method);
+            }
+        }
+        if (!hasFinalize) {
+            InstrumentationFragments.addFinalizer(cl, false);
+        }
+    }
+    return;
+}*/
     
     /**
      * Processes a class of the system under monitoring.
@@ -304,14 +330,17 @@ public class AbstractClassTransformer implements ISemanticsCollector {
      *   "java/util/List".
      * @param cl the class
      * @param type the type of the transformation
+     * @return <code>true</code> if the class was modified, 
+     *   <code>false</code> else
      *
      * @throws InstrumenterException in case that any error occurs 
      *   while processing bytecode
      * 
      * @since 1.00
      */
-    public final void transform(String name, IClass cl, 
+    public final boolean transform(String name, IClass cl, 
         TransformationType type) throws InstrumenterException {
+        boolean transformed = false;
         HashMap<String, Monitor> assignedSemantics;
         Configuration config = Configuration.INSTANCE;
         if (ScopeType.GROUP_INHERIT == config.getScopeType()) { 
@@ -320,30 +349,6 @@ public class AbstractClassTransformer implements ISemanticsCollector {
             assignedSemantics = null;
         }
         boolean mayAlterStructure = type.mayAlterStructure();
-/*        if (!mayAlterStructure) {
-            CtConstructor[] methods = cl.getDeclaredConstructors();
-            for (int i = 0; i < methods.length; i++) {
-                methods[i].insertAfter("System.out.println(\"**\");");
-            }
-            /*
-            MemoryAccountingType memAccounting = Configuration.INSTANCE
-                .getMemoryAccountingType(); 
-            if (memAccounting.atFinalizer()) {
-                CtMethod[] methods = cl.getMethods();
-                boolean hasFinalize = false;
-                for (int m = 0; m < methods.length; m++) {
-                    CtMethod method = methods[m];
-                    if (InstrumentationFragments.isFinalize(method)) {
-                        hasFinalize = true;
-                        InstrumentationFragments.instrumentFinalize(method);
-                    }
-                }
-                if (!hasFinalize) {
-                    InstrumentationFragments.addFinalizer(cl, false);
-                }
-            }
-            return;
-        }*/
         ICodeModifier modifier = IFactory.getInstance().getCodeModifier();
         if (null == getAnnotation(cl, Instrumented.class, 
             AnnotationSearchType.NONE)) {
@@ -351,14 +356,17 @@ public class AbstractClassTransformer implements ISemanticsCollector {
             if (isSocketInputStream(name) && ResourceType.contains(
                 config.getAccountableResources(), ResourceType.NET_IO)) {
                 modifier.instrumentSocketInputStream(cl);
+                transformed = true;
                 done = true;
             } else if (isSocketOutputStream(name) && ResourceType.contains(
                 config.getAccountableResources(), ResourceType.NET_IO)) {
                 modifier.instrumentSocketOutputStream(cl);
+                transformed = true;
                 done = true;
             } else if (isRandomAccessFile(name) && ResourceType.contains(
                 config.getAccountableResources(), ResourceType.FILE_IO)) {
                 modifier.instrumentRandomAccessFile(cl);
+                transformed = true;
                 done = true;
             } else if (isRecorderClass(name)) {
                 done = true;
@@ -405,15 +413,16 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                             methodEditor.setGroup(mSem, false, this, inherited);
                         }
                         try {
-                            doMethod(behavior, mSem, inherited, 
+                            transformed |= doMethod(behavior, mSem, inherited, 
                                 type, methodEditor);
                             if (0 == mainCount && "main".equals(
                                 behavior.getName())) {
                                 int pCount = behavior.getParameterCount();
                                 if (pCount == 1 
-                                    && "java.lang.String[]".equals(
+                                    && Constants.JAVA_LANG_STRING_ARRAY1.equals(
                                         behavior.getParameterTypeName(0))) {
-                                    doFirstMain(cl, behavior, mSem, type);
+                                    transformed |= doFirstMain(cl, behavior, 
+                                        mSem, type);
                                     mainCount++;
                                 }
                             }
@@ -433,16 +442,17 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 if (mayAlterStructure && !hasFinalizer && Configuration.
                     INSTANCE.getMemoryAccountingType().atFinalizer()) {
                     modifier.addFinalizer(cl, false);
+                    transformed = true;
                 }
                 // nested classes are considered by default
             }
             if (!done) {
-                if (cl.isInstanceOf("java.lang.Thread") 
-                    || cl.isInstanceOf("java.lang.Runnable")) {
-                    instrumentThreadRun(cl, type);
+                if (cl.isInstanceOf(Constants.JAVA_LANG_THREAD) 
+                    || cl.isInstanceOf(Constants.JAVA_LANG_RUNNABLE)) {
+                    transformed |= instrumentThreadRun(cl, type);
                 }
                 if (!cl.isInterface() && null == assignedSemantics) {
-                    registerRecorderId(mGroup, cl);
+                    transformed |= registerRecorderId(mGroup, cl);
                 }
             }
         } // has Instrumented annotation
@@ -460,6 +470,7 @@ public class AbstractClassTransformer implements ISemanticsCollector {
             }
         }
         //assignments.clear();
+        return transformed;
     }
     
     /**
@@ -478,14 +489,19 @@ public class AbstractClassTransformer implements ISemanticsCollector {
      * 
      * @param cl the class to analyze
      * @param type the type of the transformation
+     * @return <code>true</code> if the class was modified, 
+     *   <code>false</code> else
      * @throws InstrumenterException in case that the new code cannot be 
      *   compiled
      * 
      * @since 1.00
      */
-    private final void instrumentThreadRun(IClass cl, TransformationType type) 
-        throws InstrumenterException {
-        if (!cl.isInterface()) {
+    private final boolean instrumentThreadRun(IClass cl, 
+        TransformationType type) throws InstrumenterException {
+        boolean modified = false;
+        if (!cl.isInterface() && !cl.isAbstract()) {
+            // sufficient for instantiable classes, avoid problems with 
+            // TODO serializable classes without SerialVersionUID
             int bCount = cl.getDeclaredBehaviorCount();
             boolean found = false;
             for (int m = 0; m < bCount; m++) {
@@ -495,6 +511,7 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                         if (!behavior.isAbstract()) {
                             IFactory.getInstance().getCodeModifier().
                                 notifyRegisterThread(cl, behavior, false);
+                            modified = true;
                         }
                         found = true;
                     }
@@ -502,10 +519,26 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 behavior.release();
             }
             if (!found && type.mayAlterStructure()) {
-                IFactory.getInstance().getCodeModifier().
-                    notifyRegisterThread(cl, null, false);
+                boolean doit = true;
+                if (cl.isInstanceOf(Constants.JAVA_IO_SERIALIZABLE)) {
+                    // this is a fix... alternative - calculate original uid
+                    doit = false;
+                    for (int f = 0; !doit && f < cl.getDeclaredFieldCount(); 
+                        f++) {
+                        IField field = cl.getDeclaredField(f);
+                        doit = "long".equals(field.getTypeName()) 
+                            && Constants.SERIAL_VERSION_FIELD_NAME.equals(
+                                field.getName());
+                    }
+                }
+                if (doit) {
+                    IFactory.getInstance().getCodeModifier().
+                        notifyRegisterThread(cl, null, false);
+                    modified = true;
+                }
             }
         }
+        return modified;
     }
     
     /**
@@ -513,12 +546,15 @@ public class AbstractClassTransformer implements ISemanticsCollector {
      * 
      * @param mGroup the monitoring annotation
      * @param cl the containing class
+     * @return <code>true</code> if the class was modified, 
+     *   <code>false</code> else
      * @throws InstrumenterException in case of any byte code error
      * 
      * @since 1.00
      */
-    private final synchronized void registerRecorderId(
+    private final synchronized boolean registerRecorderId(
         Monitor mGroup, IClass cl) throws InstrumenterException {
+        boolean modified = false;
         if (null != mGroup) {
             if (Helper.isId(mGroup, Helper.PROGRAM_ID) 
                 || Helper.isId(mGroup, Helper.RECORDER_ID)) {
@@ -532,6 +568,7 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                         IFactory.getInstance().getCodeModifier().
                             addRegisteringInitializer(cl, mGroup);
                         registeredClasses.add(className);
+                        modified = true;
                     }
                 } else {
                     MonitoringGroupSettings settings 
@@ -560,6 +597,7 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 }
             }
         }
+        return modified;
     }
         
     /**
@@ -791,14 +829,17 @@ public class AbstractClassTransformer implements ISemanticsCollector {
      * @param mGroupClass the annotation on class level as cause for 
      *     instrumenting this method (may be <b>null</b>)
      * @param type the type of the transformation
+     * @return <code>true</code> if the class was modified, 
+     *   <code>false</code> else
      * @throws InstrumenterException in case that the code added by 
      *     instrumentation does not compile
      * 
      * @since 1.00
      */
-    private final void doFirstMain(IClass cls, IBehavior behavior, 
+    private final boolean doFirstMain(IClass cls, IBehavior behavior, 
         Monitor mGroupClass, TransformationType type) 
         throws InstrumenterException {
+        boolean modified = false;
         MainDefaultType dType = Configuration.INSTANCE.getMainDefault();
         ICodeModifier modifier = IFactory.getInstance().getCodeModifier();
         if (MainDefaultType.NONE != dType) { 
@@ -808,6 +849,7 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 if (null == startSystem) {
                     modifier.instrumentStartSystem(behavior, 
                         dType.atShutdown(), "");
+                    modified = true;
                 }
             }
             if (dType.atStop()) {
@@ -815,14 +857,17 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                     EndSystem.class, AnnotationSearchType.NONE);
                 if (null == endSystem) {
                     modifier.instrumentEndSystem(behavior, true, "");
+                    modified = true;
                 }
             }
         }
-        if (cls.isInstanceOf("java.lang.Thread")) {
+        if (cls.isInstanceOf(Constants.JAVA_LANG_THREAD)) {
             modifier.notifyRegisterThread(cls, null, false);
+            modified = true;
         }
+        return modified;
     }
-    
+
     /**
      * Processes a method of a regular class (system under measurement).
      * 
@@ -832,15 +877,18 @@ public class AbstractClassTransformer implements ISemanticsCollector {
      * @param inherited whether <code>mGroupClass</code> is inherited
      * @param type the type of the transformation
      * @param editor the editor for modifications
+     * @return <code>true</code> if the behavior was modified, 
+     *   <code>false</code> else
      * @throws InstrumenterException in case that the code added by 
      *     instrumentation does not compile
      * 
      * @since 1.00
      */
-    private final void doMethod(IBehavior behavior, Monitor mGroupClass, 
+    private final boolean doMethod(IBehavior behavior, Monitor mGroupClass, 
         boolean inherited, TransformationType type, MethodEditor editor)
         throws InstrumenterException {
 
+        boolean modified = true;
         ICodeModifier modifier = IFactory.getInstance().getCodeModifier();
         AnnotationSearchType asType = Configuration.INSTANCE.
             getAnnotationSearchType();
@@ -870,19 +918,22 @@ public class AbstractClassTransformer implements ISemanticsCollector {
             StartSystem.class, AnnotationSearchType.NONE);
 
         if (null != notifyTimer && !inherited) {
-            instrumentNotifyTimer(behavior, notifyTimer);
+            modified |= instrumentNotifyTimer(behavior, notifyTimer);
         }
         MemoryAccountingType memAccounting = editor.getMemoryAccountingType(); 
         if (memAccounting.atFinalizer()) {
             modifier.instrumentFinalize(behavior);
+            modified = true;
         }
         if (memAccounting.atConstructor() && behavior.isConstructor()) {
-            modifier.instrumentConstructor(behavior);   
+            modifier.instrumentConstructor(behavior);
+            modified = true;
         }
         if (!isExcluded) {
             if (null != mGroupClass && !inherited) {
                 modifier.instrumentTiming(behavior, mGroupClass, false, 
                     null != mGroup);
+                modified = true;
             }
             boolean configLocal = (GroupAccountingType.LOCAL 
                 == editor.getGroupAccountingType());
@@ -907,6 +958,7 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                         map.put("mem", record);
                         modifier.addAnnotation(behavior, 
                             MethodInstrumented.class, map);
+                        modified = true;
                     }
                     editor.setInstrumentationRecord(null);
                 }
@@ -914,29 +966,35 @@ public class AbstractClassTransformer implements ISemanticsCollector {
             if (null != varHandler && !inherited 
                 && !manualDetectionWithConfigChange) {
                 modifier.instrumentVariabilityHandler(behavior);
+                modified = true;
             }
         } else {
             if (null != mGroupClass && !inherited) {
                 modifier.instrumentTiming(behavior, mGroupClass, true, true);
+                modified = true;
             }
         }
         
         if (null != configurationChangeAnnotation && !inherited) {
             modifier.instrumentConfigurationChange(behavior, 
                 configurationChangeAnnotation);
+            modified = true;
         }
 
-        processNotifications(behavior, mGroupClass);
+        modified |= processNotifications(behavior, mGroupClass, modifier);
         if (null != startSystem) {
             modifier.notifyRegisterThread(behavior.getDeclaringClass(), 
                 behavior, true);
             modifier.instrumentStartSystem(behavior, 
                 startSystem.shutdownHook(), startSystem.invoke());
+            modified = true;
         } 
         if (null != endSystem) {
             modifier.instrumentEndSystem(behavior, true, 
                 endSystem.invoke());
+            modified = true;
         }
+        return modified;
     }
     
     /**
@@ -945,12 +1003,16 @@ public class AbstractClassTransformer implements ISemanticsCollector {
      * @param behavior the method to be changed
      * @param mGroup the annotation which indicated recording (may be 
      *     <b>null</b>)
+     * @param modifier the code modifier to be used
+     * @return <code>true</code> if the behavior was modified, 
+     *   <code>false</code> else
      * @throws InstrumenterException if any instrumented code is not valid
      * 
      * @since 1.00
      */
-    private void processNotifications(IBehavior behavior, 
-        Monitor mGroup) throws InstrumenterException {
+    private boolean processNotifications(IBehavior behavior, 
+        Monitor mGroup, ICodeModifier modifier) throws InstrumenterException {
+        boolean modified = false;
         NotifyValue ann = getAnnotation(behavior, 
             NotifyValue.class, AnnotationSearchType.NONE);
         if (null != ann) {
@@ -961,9 +1023,10 @@ public class AbstractClassTransformer implements ISemanticsCollector {
             } else if (null != mGroup) {
                 recId = Configuration.INSTANCE.getRecId(mGroup.id());
             }
-            IFactory.getInstance().getCodeModifier().valueNotification(
-                behavior, recId, ann);
+            modifier.valueNotification(behavior, recId, ann);
+            modified = true;
         }
+        return modified;
     }
 
     /**
@@ -975,14 +1038,17 @@ public class AbstractClassTransformer implements ISemanticsCollector {
      * @param behavior the method / constructor being processed
      * @param notifyTimer the timer annotation appended to 
      *     <code>behaviorInfo</code>
+     * @return <code>true</code> if the behavior was modified, 
+     *   <code>false</code> else
      * @throws InstrumenterException in case that new code cannot be compiled
      * 
      * @since 1.00
      */
     @Variability(id = AnnotationConstants.MONITOR_TIMERS)
-    private void instrumentNotifyTimer(
+    private boolean instrumentNotifyTimer(
         IBehavior behavior, Timer notifyTimer) 
         throws InstrumenterException {
+        boolean modified = false;
         TimerPosition position = notifyTimer.affectAt();
         if (TimerPosition.DEFAULT == position 
             || TimerPosition.BOTH == notifyTimer.state().getDefaultPosition()) {
@@ -1019,11 +1085,14 @@ public class AbstractClassTransformer implements ISemanticsCollector {
         if (null != beginningState) {
             IFactory.getInstance().getCodeModifier().notifyTimerCall(behavior, 
                 beginningState, notifyTimer, true);
+            modified = true;
         }
         if (null != endState) {
             IFactory.getInstance().getCodeModifier().notifyTimerCall(behavior, 
                 endState, notifyTimer, false);
+            modified = true;
         }
+        return modified;
     }
     
     /**

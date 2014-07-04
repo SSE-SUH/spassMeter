@@ -5,6 +5,7 @@ import java.lang.annotation.Annotation;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtField;
+import javassist.Modifier;
 import javassist.NotFoundException;
 import de.uni_hildesheim.sse.codeEraser.util.Annotations;
 import de.uni_hildesheim.sse.codeEraser.util.ClassPool;
@@ -443,6 +444,11 @@ public class JAClass extends IClass {
     @Override
     public boolean isInterface() {
         return cl.isInterface();
+    }
+    
+    @Override
+    public boolean isAbstract() {
+        return Modifier.isAbstract(cl.getModifiers());
     }
 
     /**

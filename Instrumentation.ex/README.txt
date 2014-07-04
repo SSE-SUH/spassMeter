@@ -1,10 +1,8 @@
 Instrumentation: The implementation of SPASS-meter.
 
 Compatibility:
-- Even if SPASS-meter runs under Java 7 there is currently a problem instrumenting Swing 
-  Programs (caused by javassist).
 - The libraries provided with this project are prepared for
-  - Windows x86 32 bit (currently no 64 bit version)
+  - Windows x86 32 bit and 64 bit version
   - Linux
 
 SVN updating and Eclipse
@@ -37,16 +35,10 @@ Implementation hints:
   as they require Javassist runtime support which, in turn, increases runtime and 
   complicates using OSGi. 
 
-Stable versions (SVN)
-- before introducing ASM: 
-  - Adaptivity 1493
-  - CodeEraser 1396
-  - gearsBridge 1396
-  - gearsBridgeAndroid 1355
-  - gearsBridgeJ 1835
-  - Instrumentation 1882
-  - InstrumentationJMX 1883
-  - InstrumentationWildCAT 1883
-  - LoBaRIS 392
-  - LoBaRIS_Android 1835
-  - LoBaRISv2 1887
+Release history
+- version 1.0
+  released to GITHUB at the end of FP7 INDENICA
+- version 1.1 (Apache STORM contributions for FP7 QualiMaster)
+  - monitoring of multiple JVMs on the same machine
+  - relaxed thread monitoring for serialized runnables (preliminary)
+  - spass-meter-rt.jar not required anymore in classpath (packaging changed)

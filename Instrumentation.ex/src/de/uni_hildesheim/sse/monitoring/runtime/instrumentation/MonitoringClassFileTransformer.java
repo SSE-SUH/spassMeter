@@ -135,8 +135,9 @@ public class MonitoringClassFileTransformer extends AbstractClassTransformer
     private byte[] transform0(String name, IClass cl, TransformationType type) {
         byte[] result = null;
         try {
-            transform(name, cl, type);
-            result = cl.toBytecode();
+            if (transform(name, cl, type)) {
+                result = cl.toBytecode();
+            }
         } catch (InstrumenterException e) {
             log("Cannot instrument " + name, e, Level.SEVERE);
         } catch (Throwable e) {

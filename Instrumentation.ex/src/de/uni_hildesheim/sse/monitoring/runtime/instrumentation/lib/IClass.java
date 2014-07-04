@@ -134,6 +134,16 @@ public abstract class IClass {
     public abstract boolean isInterface();
     
     /**
+     * Returns whether this class is an abstract class.
+     * 
+     * @return <code>true</code> if it is an abstract class, <code>false</code> 
+     * else
+     * 
+     * @since 1.00
+     */
+    public abstract boolean isAbstract();
+    
+    /**
      * Returns the annotation of the specified <code>annotation</code> type
      * if it is defined for <code>cls</code>.
      * 
@@ -266,6 +276,5 @@ public abstract class IClass {
         }
         return result;
     }
-
 
 }

@@ -1,5 +1,7 @@
 package de.uni_hildesheim.sse.monitoring.runtime.plugins.internal;
 
+import de.uni_hildesheim.sse.monitoring.runtime.configuration
+    .IRecordingEndListener;
 
 /**
  * Stores the central cleanup instance. Needed to decouple the recorder from

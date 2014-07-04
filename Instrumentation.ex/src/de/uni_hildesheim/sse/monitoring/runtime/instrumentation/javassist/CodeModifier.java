@@ -247,8 +247,9 @@ public class CodeModifier implements ICodeModifier {
     public void notifyRegisterThread(IClass cls, IBehavior behavior, 
         boolean isMain) throws InstrumenterException {
         try {
+            boolean register = Configuration.INSTANCE.registerThreads();
             if (isMain) {
-                if (Configuration.INSTANCE.registerThreads()) {
+                if (register) {
                     CtBehavior beh = ((JABehavior) behavior).getBehavior();
                     String call = getRegisterThreadCall(null, true).toString();
                     beh.insertBefore(call);
@@ -257,14 +258,14 @@ public class CodeModifier implements ICodeModifier {
                 if (null == behavior) {
                     StringBuilder call = new StringBuilder(
                         "public void run() {");
-                    if (Configuration.INSTANCE.registerThreads()) {
+                    if (register) {
                         getRegisterThreadCall(call, true);
                     }
                     if (null != cls
                         .findSuperclassWithMethodWoParameter("run")) {
                         call.append("super.run();");
                     }
-                    if (Configuration.INSTANCE.registerThreads()) {
+                    if (register) {
                         getRegisterThreadCall(call, false);
                     }
                     appendThreadEndCall(call);
@@ -274,12 +275,12 @@ public class CodeModifier implements ICodeModifier {
                     cl.addMethod(m);
                 } else {
                     CtBehavior beh = ((JABehavior) behavior).getBehavior();
-                    if (Configuration.INSTANCE.registerThreads()) {
+                    if (register) {
                         beh.insertBefore(
                             getRegisterThreadCall(null, true).toString());
                     }
                     StringBuilder call = new StringBuilder();
-                    if (Configuration.INSTANCE.registerThreads()) {
+                    if (register) {
                         getRegisterThreadCall(call, false);
                     }
                     appendThreadEndCall(call);

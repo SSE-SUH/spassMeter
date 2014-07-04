@@ -17,7 +17,7 @@
 	<property name="gearsBridgeJ.home" value="../gearsBridgeJ" />
 	<property name="gearsBridgewc.home" value="../gearsBridgeWildCAT" />
 	<property name="codeEraser.home" value="../CodeEraser" />
-	<property name="spass-meter.home" value="../Instrumentation2"/>
+	<property name="spass-meter.home" value="../Instrumentation.ex"/>
 	<property name="spass-meter-jmx.home" value="../InstrumentationJMX"/>
 
 	<path id="meter.test.classpath"> <!-- for monitoring test cases -->

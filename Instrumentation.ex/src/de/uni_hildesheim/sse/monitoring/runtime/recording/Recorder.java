@@ -20,13 +20,13 @@ import de.uni_hildesheim.sse.monitoring.runtime.boot.RecorderFrontend;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.StreamType;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.Configuration;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.
+    IRecordingEndListener;
+import de.uni_hildesheim.sse.monitoring.runtime.configuration.
     MonitoringGroupConfiguration;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.ObjectSizeCache;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.IPluginParameter;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.Plugin;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.ValueType;
-import de.uni_hildesheim.sse.monitoring.runtime.plugins.internal.
-    IRecordingEndListener;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.internal.
     InternalPluginRegistry;
 import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.*;

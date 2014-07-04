@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xmlns="http://sse.uni-hildesheim.de/instrumentation" 
+     exclusive="true" 
+     memAccounting="NONE"
+     mainDefault="START_END_SHUTDOWN"
+     localEventProcessing="true"
+     scopeType="SUM"
+     accountableResources="CPU_TIME"
+     sumResources="CPU_TIME"
+     defaultGroupResources="CPU_TIME"> <!-- , MEMORY; CONSTRUCTION retransformJavaLib instrumentJavaLib-->
+    <namespace name="" typeOf="test.manual.T1"/>
+    <namespace name="" typeOf="test.manual.T2"/>
+</configuration>

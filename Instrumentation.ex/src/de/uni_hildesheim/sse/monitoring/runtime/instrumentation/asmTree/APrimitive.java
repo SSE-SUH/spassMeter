@@ -292,4 +292,9 @@ public class APrimitive extends AType {
         return false;
     }
 
+    @Override
+    public boolean isAbstract() {
+        return false;
+    }
+
 }

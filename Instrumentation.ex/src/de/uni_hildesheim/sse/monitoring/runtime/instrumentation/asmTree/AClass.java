@@ -378,32 +378,16 @@ public class AClass extends AType {
         return result;
     }
 
-    /**
-     * Returns whether this class is an interface.
-     * 
-     * @return <code>true</code> if it is an interface, <code>false</code> else
-     * 
-     * @since 1.00
-     */
     @Override
     public boolean isInterface() {
         return Flags.isSet(node.access, Opcodes.ACC_INTERFACE);
     }
+    
+    @Override
+    public boolean isAbstract() {
+        return Flags.isSet(node.access, Opcodes.ACC_ABSTRACT);
+    }
 
-    /**
-     * Returns the annotation of the specified <code>annotation</code> type
-     * if it is defined for this class.
-     * 
-     * @param <T> the type of the annotation
-     * @param annotation the type of the annotation to be searched for (meta 
-     *     class)
-     * @param remove if <code>true</code> remove the found annotation as a 
-     *   side effect, <code>false</code> do not modify anything
-     * @return the instance of the annotation if it is defined on 
-     *     <code>method</code>, <b>null</b> otherwise
-     * 
-     * @since 1.00
-     */
     @Override
     public <T extends Annotation> T getAnnotation(Class<T> annotation,
         boolean remove) {
@@ -411,12 +395,6 @@ public class AClass extends AType {
             annotation, remove, loader);
     }
 
-    /**
-     * Returns the compiled bytecode for this class.
-     * 
-     * @return the bytecode
-     * @throws InstrumenterException in case that bytecode cannot be produced
-     */
     @Override
     public byte[] toBytecode() throws InstrumenterException {
         // ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS

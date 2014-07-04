@@ -10,9 +10,9 @@ import de.uni_hildesheim.sse.codeEraser.util.OnCreationJarProvider;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.Configuration;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration
     .IObjectSizeProvider;
+import de.uni_hildesheim.sse.monitoring.runtime.configuration
+    .IRecordingEndListener;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.ScopeType;
-import de.uni_hildesheim.sse.monitoring.runtime.plugins.internal.
-    IRecordingEndListener;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.internal.
     InternalPluginRegistry;
 import de.uni_hildesheim.sse.monitoring.runtime.recording.ObjectSizeProvider;

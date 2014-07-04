@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.rmi.dgc.VMID;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -325,7 +326,13 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
                         fos = new InstrumentedFileOutputStream(outFile, 
                             Helper.RECORDER_ID);
                     } else {
-                        fos = new FileOutputStream(outFile);
+                        if (outFile.isDirectory()) {
+                            VMID id = new VMID();
+                            fos = new FileOutputStream(new File(outFile, 
+                                "spass" + id.hashCode() + ".log"));
+                        } else {
+                            fos = new FileOutputStream(outFile);
+                        }
                     }
                     logStream = new BufferedOutputStream(fos);
                     out = new PrintStream(logStream);
