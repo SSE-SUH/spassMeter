@@ -7,6 +7,7 @@
 
 #include <jni.h>
 #include <string.h>
+#include "defs.h"
 
 // K AND V REQUIREMENTS:
 //
@@ -162,11 +163,13 @@ hashcode(jlong l)
   return l < 0 ? -l : l;
 }
 
+#ifndef ENVIRONMENT64
 inline long int
 hashcode(long int i)
 {
   return i < 0 ? -i : i;
 }
+#endif
 
 inline int
 hashcode(int i)
@@ -199,11 +202,13 @@ equals(jlong i1, jlong i2)
   return i1 == i2;
 }
 
+#if ENVIRONMENT64
 inline bool
 equals(long int i1, long int i2)
 {
   return i1 == i2;
 }
+#endif
 
 inline bool
 equals(int i1, int i2)

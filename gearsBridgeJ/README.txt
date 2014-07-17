@@ -2,7 +2,7 @@ Links gearsBridge (locutor.dll) to Java, i.e. provides a class with native metho
 
 The libraries provided with this project are prepared for
   - Windows x86 32 bit (currently no 64 bit version)
-  - Linux
+  - Linux (at least GLIBC 2.7)
 
 The dll must be copied from gearsBridge (after building the dll) - this is done by the ANT script.
 
