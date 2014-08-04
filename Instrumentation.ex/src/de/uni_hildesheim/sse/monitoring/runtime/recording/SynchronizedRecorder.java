@@ -272,7 +272,7 @@ public class SynchronizedRecorder extends Recorder {
                 while (isRecording) {
                     Unallocation u;
                     synchronized (unallocationLock) {
-                        while (unallocations.isEmpty()) {
+                        while (unallocations.isEmpty() && isRecording) {
                             unallocationLock.wait(200);
                         }
                         if (!unallocations.isEmpty()) {

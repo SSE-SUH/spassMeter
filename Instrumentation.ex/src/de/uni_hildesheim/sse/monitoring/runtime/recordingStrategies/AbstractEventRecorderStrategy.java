@@ -180,6 +180,13 @@ public abstract class AbstractEventRecorderStrategy
     @Override
     public void endSystem() {
         add(new EndSystemElement());
+        // wait for end of event processing
+        while (isRecording()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+            }
+        }
     }
 
     /**
@@ -300,7 +307,7 @@ public abstract class AbstractEventRecorderStrategy
             if (null != elt) { // shall not be null
                 elements.addLast(elt);
                 lock.notify();
-            }            
+            }
         }
     }
  

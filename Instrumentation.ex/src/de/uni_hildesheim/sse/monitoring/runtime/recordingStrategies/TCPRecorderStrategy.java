@@ -111,9 +111,7 @@ public class TCPRecorderStrategy extends AbstractEventRecorderStrategy {
     protected void handleEvent(RecordingStrategiesElement event) 
         throws HandleException {
         try {
-            if (Constants.CLEARTEMPORARYDATA == event.getIdentification()) {
-                processEvent(event);
-            } else {
+            if (Constants.CLEARTEMPORARYDATA != event.getIdentification()) {
                 out.writeInt(event.getIdentification());
                 // Sends the element to the server
                 event.send(out);

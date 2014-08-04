@@ -237,6 +237,7 @@ public class TCPRecordingServer {
                     }
                 }
             }
+            serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

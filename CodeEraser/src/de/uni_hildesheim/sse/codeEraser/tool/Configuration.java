@@ -209,7 +209,7 @@ public class Configuration
      * @since 1.00
      */
     public boolean readBindingsFromProperties(File file) {
-        return readBindingsFromProperties(file.getAbsoluteFile());
+        return readBindingsFromProperties(file.getAbsolutePath());
     }
     
     /**

@@ -398,10 +398,8 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
                     String expr;
                     if (null != annotation && annotation.value().length() > 0) {
                         expr = annotation.value() + " $1";
-                    } else {
-                        expr = "";
+                        handler.replace(expr);
                     }
-                    handler.replace(expr);
                 }
             } catch (NotFoundException ex) {
                 throw new CannotCompileException(ex);

@@ -74,6 +74,10 @@ public abstract class AbstractResultFormatter implements ResultFormatter {
      * Clears all basic data for reuse of this instance.
      */
     public void clear() {
+        if (null != this.out) {
+            out.flush();
+            out.close();
+        }
         this.out = null;
         this.total = null;
         this.showPercentages = false;

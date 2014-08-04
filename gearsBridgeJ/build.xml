@@ -92,7 +92,7 @@
 
     	<delete file="${gbj.jars}/locutor-jniBinding${version}.jar"/>
         <jar jarfile="${gbj.jars}/locutor-jniBinding${version}.jar"
-        	includes="locutor.dll de/uni_hildesheim/sse/system/I*DataGatherer*.class de/uni_hildesheim/sse/system/deflt/*DataGatherer*.class"
+        	includes="locutor.dll de/uni_hildesheim/sse/system/I*DataGatherer*.class de/uni_hildesheim/sse/system/IoStatistics.class de/uni_hildesheim/sse/system/deflt/*DataGatherer*.class"
         	basedir="${gbj.bin}">
             <fileset dir="${gbj.base}" includes="locutor.dll"/>
             <fileset dir="${gbj.base}" includes="locutor_64.dll"/>
@@ -176,6 +176,12 @@
 	<target name="copy-jni">
 	   <copy file="../gearsBridge/bin-dbg/win32-i386/jni/locutor.dll" tofile="./locutor.dll"/>
 	   <copy file="../gearsBridge/bin-dbg/win32-i386/jni/locutor.dll" tofile="./locutor-instrumenter.dll"/>
+	</target>
+	
+	<target name="erase">
+	   <codeEraser bindingsfile="${gbj.base}/EraserConfig.full.properties" 
+	   	  jarfile="${gbj.jars}/locutor-jniBinding1.00.jar" 
+	   	  outfile="tmp/locutor-jniBinding1.00-gen.jar"/>
 	</target>
 	
 </project>

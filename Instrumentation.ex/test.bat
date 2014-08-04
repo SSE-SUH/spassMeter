@@ -7,10 +7,11 @@ REM bypass individual tests
 GOTO all
 REM check need for -rt.jar
 
-set TEST=ValueMemTest
+set TEST=SystemExitTest
+REM java -classpath dist/win32/spass-meter-ant.jar de.uni_hildesheim.sse.monitoring.runtime.preprocess.Preprocess dist/tests.jar generated/tests-static.jar logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,out=generated/test.log
 REM java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,out=generated/test.log -Dbla=x -classpath %CP_TESTS% test.%TEST%
-java -Xverify:all -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,groupAccounting=INDIRECT,out=generated/test.log,iFactory=de.uni_hildesheim.sse.monitoring.runtime.instrumentation.asmTree.Factory -Dbla=x -Dindirect=true -classpath %CP_TESTS% test.%TEST%
-REM java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,out=generated/test.log,xmlconfig=src/test/%TEST%.xml -Dbla=x -classpath %CP_TESTS% test.%TEST%
+REM java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,groupAccounting=INDIRECT,out=generated/test.log,iFactory=de.uni_hildesheim.sse.monitoring.runtime.instrumentation.asmTree.Factory -Dbla=x -Dindirect=true -classpath %CP_TESTS% test.%TEST%
+java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,out=generated/test.log,xmlconfig=src/test/%TEST%.xml -Dbla=x -classpath %CP_TESTS% test.%TEST%
 REM java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,groupAccounting=INDIRECT,out=generated/test.log,xmlconfig=src/test/%TEST%.xml -Dbla=x -Dindirect=true -classpath %CP_TESTS% test.%TEST%
 REM java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,out=generated/test.log,xmlconfig=src/test/%TEST%-native.xml -Dbla=x -classpath %CP_TESTS% test.%TEST%
 
@@ -41,7 +42,7 @@ FOR /F %%f in (src/test/tests) do (
   java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=false,groupAccounting=INDIRECT,out=generated/test.log,xmlconfig=src/test/%%~nf.xml -Dbla=x -Dindirect=true -classpath %CP_TESTS% test.%%~nf
 )
 
-:end
-
 java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=false,out=generated/test.log,xmlconfig=src/test/manual/Serialization.xml -Dbla=x -classpath %CP_BIN% test.manual.SerializationTest write
 java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=false,out=generated/test.log,xmlconfig=src/test/manual/Serialization.xml -Dbla=x -classpath %CP_BIN% test.manual.SerializationTest read
+
+:end
