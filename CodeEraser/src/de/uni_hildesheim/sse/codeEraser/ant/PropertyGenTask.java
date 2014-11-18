@@ -84,8 +84,6 @@ public class PropertyGenTask extends MatchingTask {
                             .generateClass(baseDir, file);
                         if (null != className) {
                             System.out.println("generated " + className);
-                        } else {
-                            System.out.println("cannot generate for " + file);
                         }
                     } catch (IOException e) {
                         throw new BuildException(e.getMessage());

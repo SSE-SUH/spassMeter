@@ -86,6 +86,18 @@
         	basedir="${eraser.bin}">
         </jar>
 
+		<delete file="${eraser.jars}/ReplaceTest2.jar"/>
+        <jar jarfile="${eraser.jars}/ReplaceTest2.jar"
+            includes="test/ReplaceTest2.class test/awt/Dimension.class" 
+        	basedir="${eraser.bin}">
+        </jar>
+
+		<delete file="${eraser.jars}/dependent.jar"/>
+        <jar jarfile="${eraser.jars}/dependent.jar"
+            includes="test/dependent/DependentClass.class" 
+        	basedir="${eraser.bin}">
+        </jar>
+
 		<delete file="${eraser.jars}/ChangePackageTest.jar"/>
         <jar jarfile="${eraser.jars}/ChangePackageTest.jar"
             includes="test/ChangePackageTest.class" 
@@ -123,7 +135,7 @@
 	</target>
 
 	<target name="test-ant" depends="jar-test" description="runs tests for ANT tasks">
-		<echo message="Test class replacer with (cli-params)"/>
+		<echo message="Test class replacer with (ant)"/>
 
 		<delete file="${eraser.jars}/ReplaceTest-gen.jar"/>
 		<classReplacer jarFile="${eraser.jars}/ReplaceTest.jar" outFile="${eraser.jars}/ReplaceTest-gen.jar">
@@ -131,6 +143,15 @@
 		</classReplacer>
 		<java classname="test.ReplaceTest" classpath="${eraser.jars}/ReplaceTest-gen.jar"/>
 
+		<delete file="${eraser.jars}/ReplaceTest-gen.jar"/>
+		<classReplacer jarFile="${eraser.jars}/ReplaceTest2.jar" outFile="${eraser.jars}/ReplaceTest2-gen.jar">
+			<mapping oldName="java.awt.Dimension" newName="test.awt.Dimension"/>
+			<classpath path="${eraser.jars}/dependent.jar"/>
+		</classReplacer>
+		<java classname="test.ReplaceTest2" classpath="${eraser.jars}/ReplaceTest2-gen.jar">
+			<classpath path="${eraser.jars}/dependent.jar"/>
+		</java>
+		
 		<delete file="${eraser.jars}/ChangePackageTest-gen.jar"/>
 		<classReplacer jarFile="${eraser.jars}/ChangePackageTest.jar" outFile="${eraser.jars}/ChangePackageTest-gen.jar">
 			<mapping pattern="true" oldName="test\.(.*)" newName="test1.test2.$1"/>

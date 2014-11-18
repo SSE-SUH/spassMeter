@@ -1,6 +1,8 @@
 package de.uni_hildesheim.sse.codeEraser.tool;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.text.Collator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,7 +18,6 @@ import de.uni_hildesheim.sse.codeEraser.util.Annotations;
 import de.uni_hildesheim.sse.codeEraser.util.ClassPool;
 import de.uni_hildesheim.sse.codeEraser.util.OnTheFlyJarProcessor;
 import de.uni_hildesheim.sse.codeEraser.util.Types;
-
 import javassist.CannotCompileException;
 import javassist.CtBehavior;
 import javassist.CtClass;
@@ -84,6 +85,11 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
 
         // needed, otherways javassist will not find the annotations
         ClassPool.addClassLoader(CodeProcessor.class.getClassLoader());
+        URL[] classpath = config.getClasspath();
+        if (null != classpath) {
+            URLClassLoader loader = new URLClassLoader(classpath);
+            ClassPool.addClassLoader(loader);
+        }
     }
     
     /**

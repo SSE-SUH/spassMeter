@@ -1,8 +1,15 @@
 package de.uni_hildesheim.sse.codeEraser.ant;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.Reference;
 
 import de.uni_hildesheim.sse.codeEraser.Configuration;
 
@@ -31,6 +38,11 @@ public abstract class AbstractTask extends Task {
      * Stores the (usually relative) path of the output jar file.
      */
     private File outFile = null;
+
+    /**
+     * Stores the classpath.
+     */
+    private Path classpath;
 
     /**
      * Changes the base directory (used for deriving the 
@@ -106,6 +118,49 @@ public abstract class AbstractTask extends Task {
     }
     
     /**
+     * Set the classpath to be used for this modification.
+     *
+     * @param classpath an Ant Path object containing the compilation classpath.
+     */
+    public void setClasspath(Path classpath) {
+        if (classpath == null) {
+            this.classpath = classpath;
+        } else {
+            this.classpath.append(classpath);
+        }
+    }
+
+    /**
+     * Gets the classpath to be used for this modification.
+     * 
+     * @return the class path
+     */
+    public Path getClasspath() {
+        return classpath;
+    }
+
+    /**
+     * Adds a path to the classpath.
+     * 
+     * @return a class path to be configured
+     */
+    public Path createClasspath() {
+        if (classpath == null) {
+            classpath = new Path(getProject());
+        }
+        return classpath.createPath();
+    }
+
+    /**
+     * Adds a reference to a classpath defined elsewhere.
+     * 
+     * @param ref a reference to a classpath
+     */
+    public void setClasspathRef(Reference ref) {
+        createClasspath().setRefid(ref);
+    }
+    
+    /**
      * Initializes this task.
      * 
      * @since 1.00
@@ -125,7 +180,21 @@ public abstract class AbstractTask extends Task {
     protected void initConfiguration(Configuration config) {
         config.setJar(getAbsoluteFile(jarFile));
         config.setOut(getAbsoluteFile(outFile));
+        if (null != classpath) {
+            List<URL> urls = new ArrayList<URL>();
+            String[] paths = classpath.list();
+            for (String path : paths) {
+                try {
+                    File tmp = new File(path);
+                    urls.add(tmp.toURI().toURL());
+                } catch (MalformedURLException e) {
+                    throw new BuildException(path 
+                        + " cannot be turned into a classpath URL!",
+                        getLocation());
+                }
+            }
+            config.setClasspath(urls);
+        }
     }
-
 
 }

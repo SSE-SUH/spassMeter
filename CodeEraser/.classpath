@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/javassist.jar" sourcepath="/Javassist"/>
 	<classpathentry kind="lib" path="lib/cli/commons-cli-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/ant/ant.jar" sourcepath="C:/Users/eichelberger/.m2/repository/org/apache/ant/ant/1.7.0/ant-1.7.0-sources.jar"/>
+	<classpathentry kind="lib" path="lib/ant/ant.jar" sourcepath="W:/apache-ant-1.8.3/apache-ant-1.8.1-src.zip"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

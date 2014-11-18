@@ -1,6 +1,8 @@
 package de.uni_hildesheim.sse.codeEraser;
 
 import java.io.File;
+import java.net.URL;
+import java.util.List;
 
 /**
  * Realizes the configuration of the code eraser and the interpretation
@@ -28,6 +30,11 @@ public class Configuration {
      * error message(s).
      */
     private String errorMsg = null;
+    
+    /**
+     * Stores the classpath, <b>null</b> if none is configured.
+     */
+    private URL[] classpath = null;
     
     /**
      * Changes the input JAR file name.
@@ -84,6 +91,32 @@ public class Configuration {
      */
     public void setOut(File out) {
         this.out = out.getAbsolutePath();
+    }
+    
+    /**
+     * Stores the given <code>urls</code> as classpath. Overwrites an 
+     * existing classpath.
+     * 
+     * @param urls the URLs to be used as classpath
+     * 
+     * @since 1.00
+     */
+    public void setClasspath(List<URL> urls) {
+        if (null != urls && !urls.isEmpty()) {
+            URL[] classpath = new URL[urls.size()];
+            urls.toArray(classpath);
+        }
+    }
+    
+    /**
+     * Returns the actual classpath.
+     * 
+     * @return the actual classpath, may be <b>null</b> if none is configured
+     * 
+     * @since 1.00
+     */
+    public URL[] getClasspath() {
+        return classpath;
     }
 
     /**
