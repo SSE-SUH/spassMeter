@@ -19,6 +19,10 @@
     	<path refid="eraser.lib.classpath"/>
     </path>
 	
+	<path id="eraser.test.dependent">
+		<pathelement location="${eraser.jars}/dependent.jar"/>
+	</path>
+	
 	<taskdef resource="code-eraser.properties" onerror="ignore" 
 		classpath="${eraser.jars}/eraser.jar"/>
 	
@@ -143,7 +147,7 @@
 		</classReplacer>
 		<java classname="test.ReplaceTest" classpath="${eraser.jars}/ReplaceTest-gen.jar"/>
 
-		<delete file="${eraser.jars}/ReplaceTest-gen.jar"/>
+		<delete file="${eraser.jars}/ReplaceTest2-gen.jar"/>
 		<classReplacer jarFile="${eraser.jars}/ReplaceTest2.jar" outFile="${eraser.jars}/ReplaceTest2-gen.jar">
 			<mapping oldName="java.awt.Dimension" newName="test.awt.Dimension"/>
 			<classpath path="${eraser.jars}/dependent.jar"/>
@@ -175,6 +179,19 @@
 		</classReplicator>
 	</target>
 
+	<target name="test-ant2" depends="jar-test" description="runs tests for ANT tasks">
+		<echo message="Test class replacer with (ant)"/>
+
+		<!-- extra due to class overlaps -->
+		<delete file="${eraser.jars}/ReplaceTest2-gen.jar"/>
+		<classReplacer jarFile="${eraser.jars}/ReplaceTest2.jar" outFile="${eraser.jars}/ReplaceTest2-gen.jar" classpathref="eraser.test.dependent">
+			<mapping oldName="java.awt.Dimension" newName="test.awt.Dimension"/>
+		</classReplacer>
+		<java classname="test.ReplaceTest2" classpath="${eraser.jars}/ReplaceTest2-gen.jar">
+			<classpath path="${eraser.jars}/dependent.jar"/>
+		</java>
+	</target>
+	
 	<target name="test-properties">
 		<propertyGen baseDir="src">
 			<fileset dir="src">

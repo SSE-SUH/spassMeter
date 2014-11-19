@@ -50,7 +50,7 @@ public class ReplaceTest2 {
     public static void main(String[] args) {
         ReplaceTest2 test = new ReplaceTest2();
         Dimension dimension = test.createDimension();
-        System.out.println(dimension);
+        System.out.println(dimension.getClass() + " " + dimension);
     }
 
 }

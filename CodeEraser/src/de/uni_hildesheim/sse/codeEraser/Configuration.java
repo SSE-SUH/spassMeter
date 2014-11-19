@@ -103,7 +103,7 @@ public class Configuration {
      */
     public void setClasspath(List<URL> urls) {
         if (null != urls && !urls.isEmpty()) {
-            URL[] classpath = new URL[urls.size()];
+            classpath = new URL[urls.size()];
             urls.toArray(classpath);
         }
     }

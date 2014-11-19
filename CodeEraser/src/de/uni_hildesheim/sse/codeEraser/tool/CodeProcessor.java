@@ -56,10 +56,9 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
     
     /**
      * Stores the elements being scheduled for removal. However, 
-     * the javassist elements cannot be hashed directly. Therefore, 
-     * we rely on the system identity hashcode.
+     * the javassist elements cannot be hashed directly.
      */
-    private Map<Integer, ElementForRemoval> removals;
+    private Map<String, ElementForRemoval> removals;
     
     /**
      * Stores the configuration read from the ANT file or the command line.
@@ -80,7 +79,7 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
         this.bindings = this.config.getBindings();
 
         javassist.ClassPool.doPruning = true;
-        removals = new HashMap<Integer, ElementForRemoval>();
+        removals = new HashMap<String, ElementForRemoval>();
         classesForRemoval = new HashSet<CtClass>();
 
         // needed, otherways javassist will not find the annotations
@@ -127,6 +126,18 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
                 + e.getMessage());
         }
     }
+
+    /**
+     * Returns the "signature" of <code>field</code>.
+     * 
+     * @param field the field to return the signature for
+     * @return the signature
+     * 
+     * @since 1.00
+     */
+    private String getSignature(CtField field) {
+        return field.getDeclaringClass().getName() + "." + field.getName();
+    }
     
     /**
      * Removes bound elements.
@@ -147,21 +158,21 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
                 for (CtField field : cl.getDeclaredFields()) {
                     if (shouldRemove(Annotations.getAnnotationRec(field, 
                         Variability.class, config.checkRecursively()))) {
-                        removals.put(System.identityHashCode(field), 
+                        removals.put(getSignature(field), 
                             new FieldForRemoval(field));
                     }
                 }
                 for (CtConstructor cons : cl.getDeclaredConstructors()) {
                     if (shouldRemove(Annotations.getAnnotationRec(cons, 
                         Variability.class, config.checkRecursively()))) {
-                        removals.put(System.identityHashCode(cons), 
+                        removals.put(cons.getLongName(), 
                             new ConstructorForRemoval(cons));
                     }
                 }
                 for (CtMethod method : cl.getDeclaredMethods()) {
                     if (shouldRemove(Annotations.getAnnotationRec(method, 
                         Variability.class, config.checkRecursively()))) {
-                        removals.put(System.identityHashCode(method), 
+                        removals.put(method.getLongName(), 
                             new MethodForRemoval(method));
                     }
                 }
@@ -173,7 +184,7 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
                 beh.instrument(remEd);
             }            
         }
-        for (Map.Entry<Integer, ElementForRemoval> entry 
+        for (Map.Entry<String, ElementForRemoval> entry 
             : removals.entrySet()) {
             entry.getValue().remove();
         }
@@ -232,9 +243,8 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
         public void edit(ConstructorCall call) throws CannotCompileException {
             try {
                 CtConstructor constructor = call.getConstructor();
-                if (removals.containsKey(
-                    System.identityHashCode(constructor))) {
-                    call.replace("");
+                if (removals.containsKey(constructor.getLongName())) {
+                    call.replace(";");
                 }
             } catch (NotFoundException ex) {
                 throw new CannotCompileException(ex);
@@ -255,12 +265,14 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
         public void edit(FieldAccess access) throws CannotCompileException {
             try {
                 CtField field = access.getField();
-                if (removals.containsKey(System.identityHashCode(field)) 
-                    || classesForRemoval.contains(field.getDeclaringClass())) {
+                if ((removals.containsKey(getSignature(field)) 
+                    || classesForRemoval.contains(field.getDeclaringClass()))
+                    && !access.getEnclosingClass().equals(
+                        field.getDeclaringClass())) { // do not delete in self
                     Variability var = Annotations.getAnnotationRec(field, 
                         Variability.class, config.checkRecursively());
                     if (access.isWriter()) {
-                        access.replace("");
+                        access.replace(";");
                     } else {
                         String override = null;
                         if (null != var) {
@@ -333,10 +345,10 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
         public void edit(MethodCall call) throws CannotCompileException {
             try {
                 CtMethod method = call.getMethod();
-                if (removals.containsKey(System.identityHashCode(method))
+                if (removals.containsKey(method.getLongName())
                     || classesForRemoval.contains(method.getDeclaringClass())) {
                     if (CtClass.voidType == method.getReturnType()) {
-                        call.replace("");
+                        call.replace(";");
                     } else {
                         Variability var = Annotations.getAnnotationRec(method, 
                             Variability.class, config.checkRecursively());
@@ -367,7 +379,7 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
             try {
                 CtConstructor cons  = expression.getConstructor();
                 CtClass declaring = cons.getDeclaringClass();
-                if (removals.containsKey(System.identityHashCode(cons)) 
+                if (removals.containsKey(cons.getLongName()) 
                     || classesForRemoval.contains(declaring)) {
                     Variability annotation = Annotations.getAnnotationRec(
                         declaring, Variability.class, 
@@ -428,7 +440,6 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
                 if (!classesForRemoval.contains(type)) {
                     Variability annotation = Annotations.getAnnotationRec(type, 
                         Variability.class, config.checkRecursively());
-                    String expression;
                     if (null != annotation && annotation.value().length() > 0) {
                         StringBuilder buf = new StringBuilder("$_ = new ");
                         buf.append(annotation.value());
@@ -438,11 +449,9 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
                             buf.append(i);
                             buf.append("]");
                         }
-                        expression = buf.toString();
-                    } else {
-                        expression = "";
-                    }
-                    arrayCreation.replace(expression);
+                        String expression = buf.toString();
+                        arrayCreation.replace(expression);
+                    } 
                 }
             } catch (NotFoundException ex) {
                 throw new CannotCompileException(ex);

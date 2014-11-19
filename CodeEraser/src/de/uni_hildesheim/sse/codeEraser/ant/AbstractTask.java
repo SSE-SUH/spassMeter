@@ -123,7 +123,7 @@ public abstract class AbstractTask extends Task {
      * @param classpath an Ant Path object containing the compilation classpath.
      */
     public void setClasspath(Path classpath) {
-        if (classpath == null) {
+        if (this.classpath == null) {
             this.classpath = classpath;
         } else {
             this.classpath.append(classpath);
