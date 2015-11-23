@@ -239,13 +239,15 @@ public class CodeModifier implements ICodeModifier {
      * @param behavior the behavior to modify (may be <b>null</b> in case of
      *     a not found <code>run</code> method)
      * @param isMain is this the registration call for the main method
+     * @return <code>true</code> if modifications took place
      * @throws InstrumenterException in case of byte code problems
      * 
      * @since 1.00
      */
     @Override
-    public void notifyRegisterThread(IClass cls, IBehavior behavior, 
+    public boolean notifyRegisterThread(IClass cls, IBehavior behavior, 
         boolean isMain) throws InstrumenterException {
+        boolean modified = false;
         try {
             boolean register = Configuration.INSTANCE.registerThreads();
             if (isMain) {
@@ -253,6 +255,7 @@ public class CodeModifier implements ICodeModifier {
                     CtBehavior beh = ((JABehavior) behavior).getBehavior();
                     String call = getRegisterThreadCall(null, true).toString();
                     beh.insertBefore(call);
+                    modified = true;
                 }
             } else {
                 if (null == behavior) {
@@ -273,6 +276,7 @@ public class CodeModifier implements ICodeModifier {
                     CtClass cl = ((JAClass) cls).getCtClass();
                     CtMethod m = CtNewMethod.make(call.toString(), cl);
                     cl.addMethod(m);
+                    modified = true;
                 } else {
                     CtBehavior beh = ((JABehavior) behavior).getBehavior();
                     if (register) {
@@ -285,11 +289,13 @@ public class CodeModifier implements ICodeModifier {
                     }
                     appendThreadEndCall(call);
                     beh.insertAfter(call.toString());
+                    modified = true;
                 }
             }
         } catch (CannotCompileException e) {
             throw new InstrumenterException(cls.getName(), e);
         }
+        return modified;
     }
 
     /**
@@ -630,7 +636,9 @@ public class CodeModifier implements ICodeModifier {
             startCode.append(RECORDER);
             startCode.append(".notifyProgramStart();");
             if (shutdownHook) {
-                startCode.insert(0, "\"));");
+                startCode.insert(0, "));");
+                startCode.insert(0, Configuration.INSTANCE.printStatistics());
+                startCode.insert(0, "\",");
                 startCode.insert(0, jaBehavior.expandInvoke(invoke));
                 startCode.insert(0, ",\"");
                 startCode.insert(0, jaBehavior.getClassLoaderExpression(false));

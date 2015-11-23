@@ -32,6 +32,11 @@ public class ShutdownMonitor extends Thread {
     private ClassLoader loader;
     
     /**
+     * Whether final statistics shall be printed.
+     */
+    private boolean printStatistics;
+    
+    /**
      * Creates a new monitor.
      * 
      * @param invoke the static method to be invoked
@@ -40,10 +45,25 @@ public class ShutdownMonitor extends Thread {
      * @since 1.00
      */
     public ShutdownMonitor(ClassLoader loader, String invoke) {
-        this.invoke = invoke;
-        this.loader = loader;
+        this(loader, invoke, true);
     }
 
+    /**
+     * Creates a new monitor.
+     * 
+     * @param invoke the static method to be invoked
+     * @param loader the related class loader for invocation
+     * @param printStatistics whether statistics shall be printed
+     * 
+     * @since 1.00
+     */
+    public ShutdownMonitor(ClassLoader loader, String invoke, 
+        boolean printStatistics) {
+        this.invoke = invoke;
+        this.loader = loader;
+        this.printStatistics = printStatistics;
+    }
+    
     /**
      * Enables explicit waiting for end system notification (by
      * {@link #endSystemNotification()}). This mechanism should not be used
@@ -141,7 +161,7 @@ public class ShutdownMonitor extends Thread {
      * Ends the monitoring.
      */
     public void run() {
-        endMonitoring(true, loader, invoke);
+        endMonitoring(printStatistics, loader, invoke);
     }
 
 }

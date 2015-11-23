@@ -493,6 +493,14 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
             }
             for (int i = 0; i < ids.length; i++) {
                 boolean hasBinding = bindings.containsKey(ids[i]);
+                if (hasBinding) {
+                    String value = bindings.get(ids[i]);
+                    if ("0".equals(value)) {
+                        hasBinding = false;
+                    } else if ("1".equals(value)) {
+                        hasBinding = true;
+                    }
+                }
                 if (var.removeIfDisabled()) {
                     hasBinding = !hasBinding;
                 }

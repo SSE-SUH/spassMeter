@@ -217,8 +217,9 @@ public class CodeModifier implements ICodeModifier, Opcodes {
      * {@inheritDoc}
      */
     @Override
-    public void notifyRegisterThread(IClass cls, IBehavior behavior,
+    public boolean notifyRegisterThread(IClass cls, IBehavior behavior,
         boolean isMain) throws InstrumenterException {
+        boolean modified = false;
 // TODO validate
         if (isMain) {
             if (Configuration.INSTANCE.registerThreads()) {
@@ -230,6 +231,7 @@ public class CodeModifier implements ICodeModifier, Opcodes {
                     addRegisterThreadCall(instr, true));
                 insertBeforeReturn(instr, instructions, -1, null);
                 mNode.maxStack = Math.max(mNode.maxStack, maxStack);
+                modified = true;
             }
         } else {
             if (null == behavior) {
@@ -264,6 +266,7 @@ public class CodeModifier implements ICodeModifier, Opcodes {
                     addThreadEndCall(instructions));
                 method.maxLocals = maxLocals; 
                 cNode.methods.add(method);
+                modified = true;
             } else {
                 MethodNode mNode = ((ABehavior) behavior).getNode();
                 InsnList instructions = mNode.instructions;
@@ -281,8 +284,10 @@ public class CodeModifier implements ICodeModifier, Opcodes {
                     addThreadEndCall(instructions));
                 insertBeforeReturn(instr, instructions, -1, null);
                 mNode.maxStack = Math.max(mNode.maxStack, maxStack);
+                modified = true;
             }
         }
+        return modified;
     }
 
     /**
@@ -965,6 +970,7 @@ public class CodeModifier implements ICodeModifier, Opcodes {
             tmp = classLoaderToStack(instr, Factory.toInternalName(
                 behavior.getDeclaringClassName()));
             instr.add(new LdcInsnNode(behavior.expandInvoke(invoke)));
+            instr.add(booleanToNode(Configuration.INSTANCE.printStatistics()));
             instr.add(new MethodInsnNode(INVOKESPECIAL, shutdownMonitor, 
                 "<init>", "(" + classLoaderDescr + STRING_DESCR + ")V"));
 

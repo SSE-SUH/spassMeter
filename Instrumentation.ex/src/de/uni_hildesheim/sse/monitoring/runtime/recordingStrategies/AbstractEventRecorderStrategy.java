@@ -45,6 +45,11 @@ public abstract class AbstractEventRecorderStrategy
     private boolean record = true;
 
     /**
+     * Stores the handling thread.
+     */
+    private HandleThread thread;
+    
+    /**
      * Creates a new recorder strategy.
      * 
      * @param storage the storage object
@@ -62,7 +67,7 @@ public abstract class AbstractEventRecorderStrategy
      * @since 1.00
      */
     protected void start() {
-        HandleThread thread = new HandleThread();
+        thread = new HandleThread();
         thread.start();
     }
     
@@ -181,7 +186,7 @@ public abstract class AbstractEventRecorderStrategy
     public void endSystem() {
         add(new EndSystemElement());
         // wait for end of event processing
-        while (isRecording()) {
+        while (isRecording() || thread.isRunning) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -261,7 +266,7 @@ public abstract class AbstractEventRecorderStrategy
      */
     @Override
     public boolean printCurrentState(ProcessData data) {
-        add(new PrintStatisticsElement(data));
+        add(new PrintCurrentState(data));
         return false; // do not release, we will do this in element instance
     }
     
@@ -322,29 +327,35 @@ public abstract class AbstractEventRecorderStrategy
     private class HandleThread extends Thread {
 
         /**
+         * Stores whether this thread is running.
+         */
+        private boolean isRunning = true;
+        
+        /**
          * Responsible for sending the information to the server.
          * 
          * @since 1.00
          */
         @Override
         public void run() {
-            try {
-                while (isRecording()) {
-                    RecordingStrategiesElement e;
-                    synchronized (lock) {
-                        while (elements.isEmpty()) {
+            while (isRecording()) {
+                RecordingStrategiesElement e;
+                synchronized (lock) {
+                    while (elements.isEmpty()) {
+                        try {
                             lock.wait();
+                        } catch (InterruptedException ie) {
                         }
-                        e = elements.removeFirst();
                     }
-                    int id = processEvent(e);
-                    if (Constants.ENDSYSTEM == id) {
-                        record = false;
-                        ShutdownMonitor.endSystemNotification();
-                    }
+                    e = elements.removeFirst();
                 }
-            } catch (InterruptedException e) {
+                int id = processEvent(e);
+                if (Constants.ENDSYSTEM == id) {
+                    record = false;
+                    ShutdownMonitor.endSystemNotification();
+                }
             }
+            isRunning = false;
         }
         
     }

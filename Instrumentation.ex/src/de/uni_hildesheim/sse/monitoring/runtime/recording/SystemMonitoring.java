@@ -424,7 +424,7 @@ class SystemMonitoring {
         ThreadsInfo result = ThreadsInfo.POOL.getFromPool();
         result.setThreadId(tid);
         // next replaces calculateThreadTimeTicks
-        result.setCurrentThreadTicks(THREAD_DATA_GATHERER.getCurrentCpuTime());
+        result.setCurrentThreadTicks(THREAD_DATA_GATHERER.getCpuTime(tid));
         //calculateThreadTimeTicks(result);
         return result;
     }
