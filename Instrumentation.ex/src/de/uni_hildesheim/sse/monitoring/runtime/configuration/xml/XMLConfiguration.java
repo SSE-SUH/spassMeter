@@ -25,7 +25,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.wrap.
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.11
  */
 @Variability(id = AnnotationConstants.CONFIG_XML)
 public class XMLConfiguration {
@@ -51,7 +51,16 @@ public class XMLConfiguration {
      * overlap with source code annotations. Default is <code>true</code>.
      */
     private boolean exclusive = true;
-    
+
+    /**
+     * Just stores whether the most detailed type of annotation attachment per 
+     * class is a member (true) or not (false). May be <b>null</b> if 
+     * plain time recording is not configured as default monitoring, i.e., 
+     * other resources are considered by default.
+     * 
+     * @since 1.13
+     */
+    private HashMap<String, Boolean> analyzeMembers;
     
     /**
      * Reads a configuration from a given file.
@@ -69,7 +78,8 @@ public class XMLConfiguration {
             QdParser parser = new QdParser();
             XMLHandler handler = new XMLHandler();
             FileInputStream fis;
-            if (Configuration.INSTANCE.recordOverhead()) {
+            Configuration cfg = Configuration.INSTANCE;
+            if (cfg.recordOverhead()) {
                 fis = new InstrumentedFileInputStream(file, Helper.RECORDER_ID);
             } else {
                 fis = new FileInputStream(file);
@@ -79,6 +89,7 @@ public class XMLConfiguration {
             result.exclusive = handler.isExclusive();
             result.patterns = handler.getPatterns();
             result.groupConfigurations = handler.getGroupConfigurations();
+            result.analyzeMembers = handler.getAnalyzeMembers();
         } catch (QdParserException e) {
             throw new IOException(e);
         }
@@ -235,6 +246,18 @@ public class XMLConfiguration {
      */
     public boolean isExclusive() {
         return exclusive;
+    }
+
+    /**
+     * Returns a mapping between class names and whether code analysis of
+     * members is required according to the configuration.
+     * 
+     * @return the mapping of (Java) class names and whether analysis is 
+     *   required
+     * @since 1.13
+     */
+    public HashMap<String, Boolean> getAnalyzeMembers() {
+        return analyzeMembers;
     }
     
     /**

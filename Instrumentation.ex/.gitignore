@@ -17,3 +17,4 @@ MONITORING_MANIFEST.MF
 rt_instr.jar
 tmp.txt
 todo.txt
+/bin/

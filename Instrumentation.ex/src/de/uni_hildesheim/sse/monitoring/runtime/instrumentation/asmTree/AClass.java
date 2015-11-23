@@ -377,6 +377,15 @@ public class AClass extends AType {
         }
         return result;
     }
+    
+    @Override
+    public String getDeclaringClassName() throws InstrumenterException {
+        String result = null;
+        if (null != node.outerClass) {
+            result = Factory.toCodeName(node.outerClass, true);
+        }
+        return result;
+    }
 
     @Override
     public boolean isInterface() {

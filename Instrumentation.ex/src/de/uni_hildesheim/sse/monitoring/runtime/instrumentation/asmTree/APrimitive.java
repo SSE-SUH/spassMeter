@@ -150,6 +150,11 @@ public class APrimitive extends AType {
     public IClass getDeclaringClass() throws InstrumenterException {
         return null;
     }
+    
+    @Override
+    public String getDeclaringClassName() throws InstrumenterException {
+        return null;
+    }
 
     /**
      * Returns whether this class is an interface.

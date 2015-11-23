@@ -3,6 +3,7 @@ package de.uni_hildesheim.sse.monitoring.runtime.configuration.xml;
 import java.util.StringTokenizer;
 
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.ResourceType;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.AnnotationBuilder;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.Annotations;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.Configuration;
@@ -19,9 +20,14 @@ import de.uni_hildesheim.sse.monitoring.runtime.utils.xml.QdParserException;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.11
  */
 class XMLHandler implements DocHandler {
+
+    /**
+     * Defines the name of the "monitor" tag/annotation.
+     */
+    private static final String TAG_MONITOR = "monitor";
     
     /**
      * Stores the configuration, i.e. a mapping from signatures to annotation
@@ -31,11 +37,21 @@ class XMLHandler implements DocHandler {
         = new HashMap<String, AnnotationBuilderMap>();
     
     /**
+     * Just stores whether the most detailed type of annotation attachment per 
+     * class is a member (true) or not (false). May be <b>null</b> if 
+     * plain time recording is not configured as default monitoring, i.e., 
+     * other resources are considered by default.
+     * 
+     * @since 1.13
+     */
+    private HashMap<String, Boolean> analyzeMembers;
+    
+    /**
      * Stores if this configuration is exclusive, i.e. authoritive or if it may
      * overlap with source code annotations. Default is <code>true</code>.
      */
     private boolean exclusive = true;
-
+    
     /**
      * Stores the actual stack of annotation builders as read from the XML file.
      */
@@ -67,6 +83,13 @@ class XMLHandler implements DocHandler {
         = new HashMap<String, String>();
     
     /**
+     * Stores whether this configuration contains patterns.
+     * 
+     * @since 1.13
+     */
+    private boolean hasPatterns = false;
+    
+    /**
      * Returns whether this configuration is exclusive, i.e. source code 
      * annotations should not be considered.
      * 
@@ -77,6 +100,19 @@ class XMLHandler implements DocHandler {
      */
     boolean isExclusive() {
         return exclusive;
+    }
+    
+    /**
+     * Returns the mapping between class names and whether code analysis of
+     * members is required according to the configuration.
+     * 
+     * @return the mapping of (Java) class names and whether analysis is 
+     *   required, <b>null</b> if all classes must be considered
+     *   
+     * @since 1.13
+     */
+    HashMap<String, Boolean> getAnalyzeMembers() {
+        return hasPatterns ? null : analyzeMembers;
     }
     
     /**
@@ -135,6 +171,29 @@ class XMLHandler implements DocHandler {
     private void removeLastFromCurrentPath() {
         if (!currentPath.isEmpty()) {
             currentPath.remove(currentPath.size() - 1);
+        }
+    }
+    
+    /**
+     * Sets {@link #isPlainTime} based on already read configuration settings.
+     * 
+     * @since 1.13
+     */
+    private void setPlainTime() {
+        if (exclusive) {
+            Configuration cfg = Configuration.INSTANCE;
+            // time is the only accountable resource -> it is clear
+            boolean isPlainTime = ResourceType.isType(
+                cfg.getAccountableResources(), ResourceType.CPU_TIME);
+            // or time is accountable && it is the only default resource
+            isPlainTime |=
+                ResourceType.isType(cfg.getDefaultGroupResources(), 
+                    ResourceType.CPU_TIME) 
+                && ResourceType.isType(cfg.getSumResources(), 
+                    ResourceType.CPU_TIME);
+            if (isPlainTime) {
+                analyzeMembers = new HashMap<String, Boolean>();
+            }
         }
     }
     
@@ -234,6 +293,36 @@ class XMLHandler implements DocHandler {
         }
         return type;
     }
+
+    /**
+     * Records the (deepest) annotation level for the current path.
+     * 
+     * @since 1.13
+     */
+    private void recordAnnotationLevel() {
+        if (null != analyzeMembers) {
+            StringBuilder builder = new StringBuilder();
+            int size = currentPath.size();
+            if (size > 0) {
+                PathElement.Type type = null;
+                for (int e = 0; e < size; e++) {
+                    PathElement element = currentPath.get(e);
+                    type = element.getType();
+                    if (type.isMember()) {
+                        break;
+                    }
+                    if (e > 0) {
+                        builder.append(".");
+                    }
+                    builder.append(element.getName());
+                }
+                if (PathElement.Type.NAMESPACE != type) {
+                    // analyze configured classes only!
+                    analyzeMembers.put(builder.toString(), Boolean.TRUE);
+                }
+            }
+        }
+    }
     
     /**
       * Start of an XML Element.
@@ -284,6 +373,7 @@ class XMLHandler implements DocHandler {
                     }
                 }
             }
+            setPlainTime();
         } else {
             PathElement.Type type = modifyPath(tag, attributes);
             AnnotationBuilder<?> template = Annotations.getTemplate(tag);
@@ -295,6 +385,7 @@ class XMLHandler implements DocHandler {
                 if (null == builders) {
                     builders = new AnnotationBuilderMap();
                     configuration.put(cPath, builders);
+                    recordAnnotationLevel();
                 }
                 builders.put(template.getInstanceClass(), template);
                 Configuration.LOG.config("registered: signature " + cPath 
@@ -307,7 +398,7 @@ class XMLHandler implements DocHandler {
                     String typeOf = attributes.get("typeOf");
                     if (null != pattern || null != typeOf) {
                         AnnotationBuilder<?> templ 
-                            = Annotations.getTemplate("monitor");
+                            = Annotations.getTemplate(TAG_MONITOR);
                         if (null != templ) {
                             templ = templ.prepareForUse();
                             String cPath = getCurrentPath(true);
@@ -315,7 +406,12 @@ class XMLHandler implements DocHandler {
                                 cPath += ".*";
                             }
                             parsePatterns(cPath, typeOf, templ);
+                            hasPatterns = true;
+                            // no defaultsOnly as implicit
                         }
+                    } else { 
+                        // record also those that are only mentioned - start/end
+                        recordAnnotationLevel();
                     }
                 } else if (!templateStack.isEmpty()) {
                     template = templateStack.get(templateStack.size() - 1);

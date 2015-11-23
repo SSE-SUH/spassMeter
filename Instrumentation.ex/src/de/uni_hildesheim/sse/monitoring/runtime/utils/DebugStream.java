@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.rmi.dgc.VMID;
 
 /**
  * Allows writing information to a file for debugging.
@@ -15,6 +16,11 @@ import java.io.PrintStream;
 public class DebugStream {
 
     /**
+     * For logging according to the VM.
+     */
+    public static final VMID ID = new VMID();
+    
+    /**
      * Prevents external creation.
      * 
      * @since 1.00
@@ -23,7 +29,8 @@ public class DebugStream {
     }
     
     /**
-     * Prints the <code>text</code> to <code>file</code>.
+     * Prints the <code>text</code> to <code>file</code>. The output
+     * includes the JVM id.
      * 
      * @param file the file name to write
      * @param text the text to write
@@ -34,7 +41,7 @@ public class DebugStream {
         try {
             PrintStream out = new PrintStream(
                 new FileOutputStream(new File(file), true));
-            out.println(text);
+            out.println(ID.hashCode() + " " + text);
             out.flush();
             out.close();
         } catch (IOException e) {
