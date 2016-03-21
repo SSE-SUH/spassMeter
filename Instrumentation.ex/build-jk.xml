@@ -12,19 +12,19 @@
     <!-- Creates a jar file -->
     <target name="deploy" depends="jar">
         <copy file="pom/spass-meter-annotations.xml" toFile="pom.xml"/>
-        <mvnDeploy folderName="${ant.project.name}" jarFolder="${build.jar.dir}" jarFile="${meter.jars}/spass-meter-annotations.jar"/>
+        <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}" jarFile="spass-meter-annotations.jar"/>
         <copy file="pom/spass-meter-ant.xml" toFile="pom.xml"/>
-        <mvnDeploy folderName="${ant.project.name}" jarFolder="${build.jar.dir}" jarFile="${meter.jars}/spass-meter-ant.jar"/>
+        <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}" jarFile="spass-meter-ant.jar"/>
         <copy file="pom/spass-meter-boot.xml" toFile="pom.xml"/>
-        <mvnDeploy folderName="${ant.project.name}" jarFolder="${build.jar.dir}" jarFile="${meter.jars}/spass-meter-boot.jar"/>
+        <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}" jarFile="spass-meter-boot.jar"/>
         <copy file="pom/spass-meter-ia.xml" toFile="pom.xml"/>
-        <mvnDeploy folderName="${ant.project.name}" jarFolder="${build.jar.dir}" jarFile="${meter.jars}/spass-meter-ia.jar"/>
+        <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}" jarFile="spass-meter-ia.jar"/>
         <copy file="pom/spass-meter-rt.xml" toFile="pom.xml"/>
-        <mvnDeploy folderName="${ant.project.name}" jarFolder="${build.jar.dir}" jarFile="${meter.jars}/spass-meter-rt.jar"/>
+        <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}" jarFile="spass-meter-rt.jar"/>
         <copy file="pom/spass-meter-static.xml" toFile="pom.xml"/>
-        <mvnDeploy folderName="${ant.project.name}" jarFolder="${build.jar.dir}" jarFile="${meter.jars}/spass-meter-static.jar"/>
+        <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}" jarFile="spass-meter-static.jar"/>
         <copy file="pom/spass-meter.xml" toFile="pom.xml"/>
-        <mvnDeploy folderName="${ant.project.name}" jarFolder="${build.jar.dir}" jarFile="${meter.jars}/spass-meter.jar"/>
+        <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}" jarFile="spass-meter.jar"/>
     	<delete file="pom.xml"/>
     </target>
     
