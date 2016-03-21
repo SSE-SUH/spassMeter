@@ -14,6 +14,7 @@
     <property name="meter.jars" value="${meter.base}/dist"/>
     <property name="meter.lib" value="${meter.base}/lib"/>
     <property name="meter.tools" value="${meter.base}/tools"/>
+	<property name="javac.encoding" value="iso-8859-1"/>
 
 	<!-- SEVERE -->
 	<property name="iArgs.static" value= "logLevel=SEVERE,overhead=false,configDetect=false"/>
@@ -74,6 +75,7 @@
 	    <mkdir dir="${meter.bin}"/>
 		<javac destdir="${meter.bin}"           
 			includeantruntime="false"
+			encoding="${javac.encoding}"
             classpathref="meter.compile.classpath">
 		    <src path="${meter.src}" />
 		</javac>
