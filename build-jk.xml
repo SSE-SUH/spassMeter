@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SPASSmeter" default="all" basedir="." xmlns:jacoco="antlib:org.jacoco.ant">	
+	<property file="${user.home}/global-build.properties"/>
+	<taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+        <classpath path="${jacoco.path}/jacocoant.jar"/>
+    </taskdef>
+    
+	<target name="init">
+		<!-- Delete generated folders -->
+		<delete dir="junitResults"/>
+		<delete dir="${coverage.base.dir}"/>
+		<delete dir="${doc.dir}"/>
+		
+		<!-- Create folders -->
+		<mkdir dir="junitResults"/>
+		<mkdir dir="${coverage.base.dir}"/>
+		<mkdir dir="${coverage.instr.dir}"/>
+		<mkdir dir="${coverage.results.dir}"/>
+		<mkdir dir="${doc.dir}"/>
+	</target>
+	
+	<target name="compile">
+
+        <echo>#####################################</echo>
+        <echo>###     Processing SPASS-meter    ###</echo>
+        <echo>#####################################</echo>
+        <ant dir="Instrumentation.ex" antfile="${build.script.name}" />
+            
+	</target>
+	
+	<target name="copy.to.eclipse">
+	</target>
+	
+	<target name="coreTest" depends="copy.to.eclipse">
+    </target>
+	
+	<target name="report">
+	</target> 
+	
+	<target name="test" depends="coreTest, report">
+	</target>	
+
+	<target name="storeJars">
+	</target>	
+		
+	<target name="all" depends="init, compile, test, storeJars"/>
+	<target name="only.compile" depends="init, compile"/>
+</project>
