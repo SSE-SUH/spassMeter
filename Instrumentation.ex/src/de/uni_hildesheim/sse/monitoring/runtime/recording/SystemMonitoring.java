@@ -23,9 +23,9 @@ import de.uni_hildesheim.sse.system.IThreadDataGatherer;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.15
  */
-class SystemMonitoring {
+public class SystemMonitoring {
     
     /**
      * Stores the (default) timer execution period for the load counter.
