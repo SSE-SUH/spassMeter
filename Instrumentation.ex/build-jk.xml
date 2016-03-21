@@ -11,18 +11,6 @@
     
     <!-- Creates a jar file -->
     <target name="deploy" depends="jar">
-        <!-- package is already done! -->
-        <copy file="${dist.dir}/spass-meter-rt.jar" tofile="${build.jar.dir}/${ant.project.name}.jar"/>
-        <!-- Copy created jar to global EASy Plug-ins directory -->
-        <copy todir="${qm.bundles.dir}">
-            <fileset dir="${build.jar.dir}" includes="**/*.jar"/>
-        </copy>
-        
-        <!-- 
-        <artifact:install file="${build.jar.dir}/${ant.project.name}.jar">
-            <pom refid="pom"/>
-        </artifact:install>-->
-
         <copy file="poms/spass-meter-annotations.xml" toFile="pom.xml"/>
         <mvnDeploy folderName="${ant.project.name}" jarFolder="${build.jar.dir}" jarFile="${meter.jars}/spass-meter-annotations.jar"/>
         <copy file="poms/spass-meter-ant.xml" toFile="pom.xml"/>
