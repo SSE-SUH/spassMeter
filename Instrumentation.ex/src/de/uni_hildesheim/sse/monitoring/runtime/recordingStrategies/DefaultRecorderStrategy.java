@@ -174,13 +174,16 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
         //handleAggregatedSystemTime(now, threadInfo, null, false, 
         //    GroupAccountingType.INDIRECT 
         //    == Configuration.INSTANCE.getGroupAccountingType());
-        programRecord.stopTimeRecording(now, 
-            threadInfo.getCurrentThreadTicks(), -1);
+        long ticks = threadInfo.getCurrentThreadTicks();
+        // if thread is gone, e.g., during shutdown, ticks may be 0
+        if (0 == ticks) {
+            ticks = programRecord.getCpuTimeTicks();
+        }
+        programRecord.stopTimeRecording(now, ticks, -1);
         long id = threadInfo.getCurrentThreadId();
         ThreadData data = threads.get(id);
         if (null != data) {
-            data.stopTimeRecording(System.nanoTime(), 
-                threadInfo.getCurrentThreadTicks());
+            data.stopTimeRecording(System.nanoTime(), ticks);
         }
         return true; // release always
     }
@@ -1210,11 +1213,13 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
                 jvmNotificationInstance);            
         }        
             
-        configureFormatter();
-        formatter.setProcessData(pData);
-        RecorderElementMap elts = getRecorderElements();
-        formatter.printCurrentStateStatistics(elts, 
-            programRecord, null);
+        if (Configuration.INSTANCE.printStatistics()) {
+            configureFormatter();
+            formatter.setProcessData(pData);
+            RecorderElementMap elts = getRecorderElements();
+            formatter.printCurrentStateStatistics(elts, 
+                programRecord, null);
+        }
         return true; // release always
     }
 

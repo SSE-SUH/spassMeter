@@ -48,11 +48,13 @@ public interface ICodeModifier {
      * @param behavior the behavior to modify (may be <b>null</b> in case of
      *     a not found <code>run</code> method)
      * @param isMain is this the registration call for the main method
+     * @return <code>true</code> if modifications took place, 
+     *   <code>false</code> else
      * @throws InstrumenterException in case of byte code problems
      * 
      * @since 1.00
      */
-    public void notifyRegisterThread(IClass cls, IBehavior behavior, 
+    public boolean notifyRegisterThread(IClass cls, IBehavior behavior, 
         boolean isMain) throws InstrumenterException;
 
     /**

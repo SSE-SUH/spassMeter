@@ -362,15 +362,6 @@ public class JAClass extends IClass {
         return cl.getName();
     }
     
-    /**
-     * Returns the superclass of this class. Call 
-     * {@link #release()} when not used anymore.
-     * 
-     * @return the super class of this class (may be <b>null</b>)
-     * @throws InstrumenterException in case of any problems with the bytecode
-     * 
-     * @since 1.00
-     */
     @Override
     public IClass getSuperclass() throws InstrumenterException {
         JAClass result;
@@ -387,15 +378,6 @@ public class JAClass extends IClass {
         return result;
     }
     
-    /**
-     * Returns the declaring class of this class. Call 
-     * {@link #release()} when not used anymore.
-     * 
-     * @return the declaring class of this class (may be <b>null</b>)
-     * @throws InstrumenterException in case of any problems with the bytecode
-     * 
-     * @since 1.00
-     */
     @Override
     public IClass getDeclaringClass() throws InstrumenterException {
         JAClass result;
@@ -403,6 +385,22 @@ public class JAClass extends IClass {
             CtClass su = cl.getDeclaringClass();
             if (null != su) {
                 result = getClassFromPool(su);
+            } else {
+                result = null;
+            }
+        } catch (NotFoundException e) {
+            throw new InstrumenterException(e);
+        }
+        return result;
+    }
+    
+    @Override
+    public String getDeclaringClassName() throws InstrumenterException {
+        String result;
+        try {
+            CtClass su = cl.getDeclaringClass();
+            if (null != su) {
+                result = su.getName();
             } else {
                 result = null;
             }

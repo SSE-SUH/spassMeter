@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
 import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.Helper;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.GroupAccountingType;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.MainDefaultType;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ResourceType;
@@ -32,7 +33,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.utils.StreamUtilities;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.11
  */
 public class Configuration {
 
@@ -85,6 +86,11 @@ public class Configuration {
      * @since 1.00
      */
     private int outInterval = 0;
+    
+    /**
+     * Print statistic output at the end.
+     */
+    private boolean printStatistics = true;
     
     /**
      * Stores the base directory.
@@ -295,6 +301,22 @@ public class Configuration {
      * @since 1.00
      */
     private boolean accountExcluded = false;
+
+    /**
+     * Returns whether all class members shall be considered for instrumentation
+     * by default or whether SPASS-meter shall apply configuration-based filters
+     * such as "plain time" that may need explicit specification of the 
+     * monitoring phase (as arbitrary classes are then not considered for 
+     * analysis anymore).
+     * 
+     * @since 1.13
+     */
+    private boolean allClassMembers = true;
+    
+    /**
+     * Returns whether specific classes shall be excluded.
+     */
+    private String excludeClasses = null;
     
     /**
      * Allow initialization of constants, particularly those injected by
@@ -329,6 +351,8 @@ public class Configuration {
             ResourceType.class);        
         ConfigurationEntry.registerEntry("outInterval", 
             "outInterval", ConfigurationEntry.Type.INTEGER);
+        ConfigurationEntry.registerEntry("printStatistics", "printStatistics", 
+            ConfigurationEntry.Type.BOOLEAN);
         ConfigurationEntry.registerEntry("instrumentInstrumenter", 
             "instrumentInstrumenter", ConfigurationEntry.Type.BOOLEAN);
         ConfigurationEntry.registerEntry("annotationSearch", 
@@ -348,6 +372,10 @@ public class Configuration {
             ConfigurationEntry.Type.BOOLEAN);
         ConfigurationEntry.registerEntry("scopeType", "scopeType",
             ConfigurationEntry.Type.ENUM, ScopeType.class);
+        ConfigurationEntry.registerEntry("exclude", 
+            "excludeClasses", ConfigurationEntry.Type.STRING);
+        ConfigurationEntry.registerEntry("allClassMembers", 
+            ConfigurationEntry.Type.BOOLEAN);
         
         
         // SYSTEM_GATHER_INTERVAL_ARG, Integer
@@ -390,6 +418,7 @@ public class Configuration {
         out.writeBoolean(instrumentJavaLib);
         out.writeBoolean(retransformJavaLib);
         out.writeInt(outInterval);
+        out.writeBoolean(printStatistics);
         out.writeBoolean(variantContributions);
         out.writeBoolean(instrumentInstrumenter);
         out.writeBoolean(pruneAnnotations);
@@ -397,6 +426,8 @@ public class Configuration {
         out.writeBoolean(multiConsiderContained);
         out.writeBoolean(registerThreads);
         out.writeBoolean(accountExcluded);
+        out.writeBoolean(allClassMembers);
+        out.writeUTF(null == excludeClasses ? "" : excludeClasses);
         out.writeInt(memoryAccountingType.ordinal());
         out.writeInt(groupAccountingType.ordinal());
         out.writeInt(annotationSearchType.ordinal());
@@ -438,6 +469,7 @@ public class Configuration {
         instrumentJavaLib = in.readBoolean();
         retransformJavaLib = in.readBoolean();
         outInterval = in.readInt();
+        printStatistics = in.readBoolean();
         variantContributions = in.readBoolean();
         instrumentInstrumenter = in.readBoolean();
         pruneAnnotations = in.readBoolean();
@@ -445,6 +477,11 @@ public class Configuration {
         multiConsiderContained = in.readBoolean();
         registerThreads = in.readBoolean();
         accountExcluded = in.readBoolean();
+        allClassMembers = in.readBoolean();
+        excludeClasses = in.readUTF();
+        if (null != excludeClasses && 0 == excludeClasses.length()) {
+            excludeClasses = null;
+        }
         memoryAccountingType = MemoryAccountingType.values()[in.readInt()];
         groupAccountingType = GroupAccountingType.values()[in.readInt()];
         annotationSearchType = AnnotationSearchType.values()[in.readInt()];
@@ -685,6 +722,18 @@ public class Configuration {
             }
         }
         return result;
+    }
+    
+    /**
+     * Returns whether statistics shall be printed at the end of monitoring.
+     * 
+     * @return <code>true</code> if statistics shall be printed, 
+     *   <code>false</code> else
+     * 
+     * @since 1.00
+     */
+    public boolean printStatistics() {
+        return printStatistics;
     }
     
     /**
@@ -931,6 +980,8 @@ public class Configuration {
                     setDebugLog(value);
                 } else if ("xmlconfig".equals(key)) {
                     setXMLConfig(value);
+                } else if ("printStatistics".equals(key)) {
+                    printStatistics = Boolean.valueOf(value);
                 } else if ("out".equals(key)) {
                     setOutFileName(value);
                 } else if ("tcp".equals(key)) {
@@ -1238,6 +1289,38 @@ public class Configuration {
     }
     
     /**
+     * Returns class name prefixes to be excluded (given in / rather 
+     * than . notation).
+     * 
+     * @return class name prefixes to be excluded parsed into individual
+     *   entries, may be <b>null</b> if none shall be excluded
+     * 
+     * @since 1.11
+     */
+    public String[] getExcludeClasses() {
+        String[] result = null;
+        if (null != excludeClasses) {
+            ArrayList<String> tmp = new ArrayList<String>();
+            int lastPos = 0;
+            int length = excludeClasses.length();
+            for (int i = 0; i < length; i++) {
+                if (',' == excludeClasses.charAt(i)) {
+                    tmp.add(excludeClasses.substring(lastPos, i).trim());
+                    lastPos = i + 1;
+                }
+            }
+            if (lastPos < length - 1) {
+                tmp.add(excludeClasses.substring(lastPos, length).trim());
+            }
+            if (tmp.size() > 0) {
+                result = new String[tmp.size()];
+                tmp.toArray(result);
+            }
+        }
+        return result;
+    }
+    
+    /**
      * Returns the instrumenter factory class name.
      * 
      * @return the instrumenter factory class name
@@ -1269,6 +1352,20 @@ public class Configuration {
             }
         }
         return type;
+    }
+    
+    /**
+     * Returns whether all class members should be analyzed for instrumentation
+     * by default or whether SPASS-meter shall apply filter strategies such as
+     * "plain time".
+     * 
+     * @return <code>true</code> if all class members shall be analyzed by 
+     *   default, <code>false</code> if filters shall be applied 
+     * 
+     * @since 1.13
+     */
+    public boolean allClassMembers() {
+        return allClassMembers;
     }
 
 }

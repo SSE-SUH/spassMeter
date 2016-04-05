@@ -114,6 +114,17 @@ public abstract class IClass {
      * @since 1.00
      */
     public abstract IClass getDeclaringClass() throws InstrumenterException;
+
+    /**
+     * Returns the name of the declaring class of this class.
+     * 
+     * @return the name of the declaring class of this class (
+     *     may be <b>null</b>)
+     * @throws InstrumenterException in case of any problems with the bytecode
+     * 
+     * @since 1.13
+     */
+    public abstract String getDeclaringClassName() throws InstrumenterException;
     
     /**
      * Returns the name of the class.

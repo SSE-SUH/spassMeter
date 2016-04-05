@@ -5,7 +5,7 @@ package de.uni_hildesheim.sse.monitoring.runtime.configuration.xml;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.11
  */
 class PathElement {
     
@@ -21,38 +21,47 @@ class PathElement {
         /**
          * Denotes a namespace (package).
          */
-        NAMESPACE("namespace"),
+        NAMESPACE("namespace", false),
 
         /**
          * Denotes a module (class).
          */
-        MODULE("module"),
+        MODULE("module", false),
         
         /**
          * Denotes a behavior (method).
          */
-        BEHVIOUR("behavior"),
+        BEHVIOUR("behavior", true),
         
         /**
          * Denotes a data element (attribute).
          */
-        DATA("data");
+        DATA("data", true);
 
         /**
          * Stores the name of the type in an XML file.
          */
         private String xmlName;
+
+        /**
+         * Stores whether the type denotes a class member.
+         * 
+         * @since 1.11
+         */
+        private boolean member;
         
         /**
          * Creates a new type constant.
          * 
          * @param xmlName the name of the type in an XML file
+         * @param member whether this type denotes a member
          * 
          * @since 1.00
          */
-        private Type(String xmlName) {
+        private Type(String xmlName, boolean member) {
             assert null != xmlName;
             this.xmlName = xmlName;
+            this.member = member;
         }
         
         /**
@@ -64,6 +73,18 @@ class PathElement {
          */
         public String getXmlName() {
             return xmlName;
+        }
+        
+        /**
+         * Returns whether this type denotes a member.
+         * 
+         * @return <code>true</code> if it denotes a member, <code>false</code>
+         *   else
+         * 
+         * @since 1.11
+         */
+        public boolean isMember() {
+            return member;
         }
         
         /**

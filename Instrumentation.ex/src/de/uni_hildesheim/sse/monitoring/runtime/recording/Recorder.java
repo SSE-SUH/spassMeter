@@ -80,6 +80,11 @@ public class Recorder extends RecorderFrontend
     protected static boolean isRecording = false;
     
     /**
+     * Stores the threadId the program started with.
+     */
+    protected static long programThreadId;
+    
+    /**
      * Stores if overhead recording is enabled, i.e. if {@link #isRecording}
      * and overhead recording.
      */
@@ -192,6 +197,7 @@ public class Recorder extends RecorderFrontend
                         registerPlugin(line, parameter);
                     }
                 } while (null != line);
+                lnr.close();
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());
@@ -381,8 +387,9 @@ public class Recorder extends RecorderFrontend
     @Override
     public void notifyProgramStart() {
         GathererFactory.loadLibrary();
-        long tid = SystemMonitoring.getCurrentThreadId();
-        Lock.pushToStack(tid, Helper.RECORDER_ID); // pseudo, -> memAcc LOCK
+        programThreadId = SystemMonitoring.getCurrentThreadId();
+        // pseudo, -> memAcc LOCK
+        Lock.pushToStack(programThreadId, Helper.RECORDER_ID); 
         if (!isRecording) {
             isRecording = true;
             doUnallocationRecording = Configuration.INSTANCE.
@@ -395,8 +402,8 @@ public class Recorder extends RecorderFrontend
                     SystemMonitoring.getTicks(ids[i]), now);
             }
             SystemMonitoring.startTimer();
-            STRATEGY.startRecording(now, tid, 
-                SystemMonitoring.getCurrentTicks());
+            STRATEGY.startRecording(now, programThreadId, 
+                SystemMonitoring.getTicks(programThreadId));
             // must be after startRecording!
             //isOverheadRecording = Configuration.INSTANCE.recordOverhead();
             // do this always, particularly in case of TCP recording
@@ -413,13 +420,13 @@ public class Recorder extends RecorderFrontend
     @Override
     public void notifyProgramEnd() {
         if (isRecording) {
-            long tid = SystemMonitoring.getCurrentThreadId();
+            // tid may be shutdownthread
             SystemMonitoring.stopTimer();
             long now = System.nanoTime();
-            ThreadsInfo info = SystemMonitoring.getThreadInfo(tid);
+            ThreadsInfo info = SystemMonitoring.getThreadInfo(programThreadId);
             boolean release = STRATEGY.stopTimeRecording(now, info);
             // map is currently not pooled - ignore return value
-            STRATEGY.finishRecording(now, tid,
+            STRATEGY.finishRecording(now, programThreadId,
                 SystemMonitoring.getAllThreadTicks());
             isRecording = false;
             //isOverheadRecording = false;
@@ -435,7 +442,8 @@ public class Recorder extends RecorderFrontend
             if (null != listener) {
                 listener.notifyRecordingEnd();
             }
-            Lock.popFromStack(tid, Helper.RECORDER_ID); // pseudo, see above
+            // pseudo, see above
+            Lock.popFromStack(programThreadId, Helper.RECORDER_ID); 
         }
     }
     
@@ -480,6 +488,7 @@ public class Recorder extends RecorderFrontend
     public final void notifyThreadStart(long newThreadId) {
         // register the new thread with the currently running thread
         long tid = SystemMonitoring.getCurrentThreadId();
+        
         long accMem = Lock.isStackTopMemoryAccounting(tid);
         STRATEGY.register(tid, newThreadId, 
             SystemMonitoring.getTicks(tid), 

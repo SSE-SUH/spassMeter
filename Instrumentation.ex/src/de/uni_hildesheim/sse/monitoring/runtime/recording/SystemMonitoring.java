@@ -23,9 +23,9 @@ import de.uni_hildesheim.sse.system.IThreadDataGatherer;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.15
  */
-class SystemMonitoring {
+public class SystemMonitoring {
     
     /**
      * Stores the (default) timer execution period for the load counter.
@@ -424,7 +424,7 @@ class SystemMonitoring {
         ThreadsInfo result = ThreadsInfo.POOL.getFromPool();
         result.setThreadId(tid);
         // next replaces calculateThreadTimeTicks
-        result.setCurrentThreadTicks(THREAD_DATA_GATHERER.getCurrentCpuTime());
+        result.setCurrentThreadTicks(THREAD_DATA_GATHERER.getCpuTime(tid));
         //calculateThreadTimeTicks(result);
         return result;
     }

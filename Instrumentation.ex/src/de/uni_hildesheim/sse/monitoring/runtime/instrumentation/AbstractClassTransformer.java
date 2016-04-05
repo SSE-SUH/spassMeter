@@ -49,7 +49,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.recording.Recorder;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.13
  */
 public class AbstractClassTransformer implements ISemanticsCollector {
 
@@ -81,6 +81,18 @@ public class AbstractClassTransformer implements ISemanticsCollector {
     private int mainCount = 0;
 
     /**
+     * Stores classes to be excluded.
+     * @since 1.13
+     */
+    private String[] excludeClasses = null;
+    
+    /**
+     * Analyze the members of the individual classes.
+     * @since 1.13
+     */
+    private HashMap<String, Boolean> analyzeMembers;
+    
+    /**
      * Stores the assignments.
      */
     private final HashMap<String, HashMap<String, Monitor>> assignments 
@@ -97,6 +109,12 @@ public class AbstractClassTransformer implements ISemanticsCollector {
     public AbstractClassTransformer(boolean isStatic) {
         Recorder.initialize();
         this.isStatic = isStatic;
+        Configuration cfg = Configuration.INSTANCE;
+        excludeClasses = cfg.getExcludeClasses();
+        XMLConfiguration xmlCfg = cfg.getXMLConfig();
+        if (null != xmlCfg && !cfg.allClassMembers()) {
+            analyzeMembers = xmlCfg.getAnalyzeMembers();
+        }
     }
 
     /**
@@ -243,8 +261,16 @@ public class AbstractClassTransformer implements ISemanticsCollector {
         additional |= className.startsWith("com/sun/jmx/remote/internal/");
         // accesses private constructors in other classes
         additional |= className.startsWith("sun/reflect/Generated");
-        return !(className.startsWith("de/uni_hildesheim/sse/system")
+        
+        
+        boolean instr = !(className.startsWith("de/uni_hildesheim/sse/system")
             || isJavaClass || additional);
+        if (instr && null != excludeClasses) {
+            for (int i = 0; instr && i < excludeClasses.length; i++) {
+                instr &= !className.startsWith(excludeClasses[i]);
+            }
+        }
+        return instr;
     }
     
     /**
@@ -322,6 +348,35 @@ public class AbstractClassTransformer implements ISemanticsCollector {
 }*/
     
     /**
+     * Returns whether the members of a class shall be analyzed. Prerequisite 
+     * is that {@link #analyzeMembers} is not <b>null</b>.
+     * 
+     * @param clName the class name
+     * @param cl the class itself for further inspection
+     * @return <code>true</code> if the
+     * @throws InstrumenterException in case of problems with the bytecode
+     * 
+     * @since 1.00
+     */
+    private boolean analyzeMembers(String clName, IClass cl) 
+        throws InstrumenterException {
+        boolean analyze;
+        if (null != analyzeMembers) {
+            analyze = analyzeMembers.containsKey(clName);
+            if (!analyze) {
+                // for inner classes
+                String decl = cl.getDeclaringClassName();
+                if (null != decl) {
+                    analyze = analyzeMembers.containsKey(decl);
+                }
+            }
+        } else {
+            analyze = true;
+        }
+        return analyze;
+    }
+
+    /**
      * Processes a class of the system under monitoring.
      * 
      * @param name the name of the class given in the 
@@ -343,8 +398,9 @@ public class AbstractClassTransformer implements ISemanticsCollector {
         boolean transformed = false;
         HashMap<String, Monitor> assignedSemantics;
         Configuration config = Configuration.INSTANCE;
+        String clName = cl.getName();
         if (ScopeType.GROUP_INHERIT == config.getScopeType()) { 
-            assignedSemantics = assignments.remove(cl.getName());
+            assignedSemantics = assignments.remove(clName);
         } else {
             assignedSemantics = null;
         }
@@ -377,8 +433,8 @@ public class AbstractClassTransformer implements ISemanticsCollector {
             if (!done && TransformationType.REDEFINITION != type) {
                 mGroup = getMonitorAnnotation(cl);
             }
-    
-            if (!done && !cl.isInterface()) {
+            if (!done && !cl.isInterface() && (null != assignedSemantics 
+                || analyzeMembers(clName, cl))) {
 //                long memSize = ObjectSizeCache.INSTANCE.getSize(
 //                    cl.getSuperclass().getName(), false);
                 int fCount = cl.getDeclaredFieldCount();
@@ -395,7 +451,6 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 }
 //                ObjectSizeCache.INSTANCE.setSize(cl.getName(),
 //                    ObjectSizeEstimator.getClassSize(memSize));
-                
                 int bCount = cl.getDeclaredBehaviorCount();
                 boolean hasFinalizer = false;
                 MethodEditor methodEditor = 
@@ -456,8 +511,8 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 }
             }
         } // has Instrumented annotation
-        Configuration.INSTANCE.instrumented(cl.getName());
-        assignments.remove(cl.getName());
+        Configuration.INSTANCE.instrumented(clName);
+        assignments.remove(clName);
 
         // trigger retransformation
         if (mayAlterStructure) {
@@ -509,9 +564,8 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 if ("run".equals(behavior.getName())) {
                     if (0 == behavior.getParameterCount()) {
                         if (!behavior.isAbstract()) {
-                            IFactory.getInstance().getCodeModifier().
+                            modified = IFactory.getInstance().getCodeModifier().
                                 notifyRegisterThread(cl, behavior, false);
-                            modified = true;
                         }
                         found = true;
                     }
@@ -532,9 +586,8 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                     }
                 }
                 if (doit) {
-                    IFactory.getInstance().getCodeModifier().
+                    modified = IFactory.getInstance().getCodeModifier().
                         notifyRegisterThread(cl, null, false);
-                    modified = true;
                 }
             }
         }
@@ -856,14 +909,14 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 EndSystem endSystem = getAnnotation(behavior, 
                     EndSystem.class, AnnotationSearchType.NONE);
                 if (null == endSystem) {
-                    modifier.instrumentEndSystem(behavior, true, "");
+                    modifier.instrumentEndSystem(behavior, 
+                        Configuration.INSTANCE.printStatistics(), "");
                     modified = true;
                 }
             }
         }
         if (cls.isInstanceOf(Constants.JAVA_LANG_THREAD)) {
-            modifier.notifyRegisterThread(cls, null, false);
-            modified = true;
+            modified = modifier.notifyRegisterThread(cls, null, false);
         }
         return modified;
     }
@@ -887,8 +940,7 @@ public class AbstractClassTransformer implements ISemanticsCollector {
     private final boolean doMethod(IBehavior behavior, Monitor mGroupClass, 
         boolean inherited, TransformationType type, MethodEditor editor)
         throws InstrumenterException {
-
-        boolean modified = true;
+        boolean modified = false;
         ICodeModifier modifier = IFactory.getInstance().getCodeModifier();
         AnnotationSearchType asType = Configuration.INSTANCE.
             getAnnotationSearchType();
@@ -989,9 +1041,10 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 startSystem.shutdownHook(), startSystem.invoke());
             modified = true;
         } 
+
         if (null != endSystem) {
-            modifier.instrumentEndSystem(behavior, true, 
-                endSystem.invoke());
+            modifier.instrumentEndSystem(behavior, 
+                Configuration.INSTANCE.printStatistics(), endSystem.invoke());
             modified = true;
         }
         return modified;

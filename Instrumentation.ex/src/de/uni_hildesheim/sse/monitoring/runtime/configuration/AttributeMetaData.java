@@ -106,7 +106,7 @@ public class AttributeMetaData {
     }
     
     /**
-     * Returns of this attribute is nested into non-registered elements.
+     * Returns whether this attribute is nested into non-registered elements.
      * 
      * @return currently <code>false</code> as default
      * 

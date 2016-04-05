@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SpassMeterIntegration" default="deploy" basedir="." xmlns:jacoco="antlib:org.jacoco.ant"
+    xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+    <!-- import von globalen Properties Einstellungen -->
+    <property file="${user.home}/global-build.properties"/>
+    <property file="${user.home}/qualimaster-build.properties"/>
+    
+    <include file="${user.home}/macros.xml"/>
+    
+    <import file="build.xml"/>
+    
+    <!-- Creates a jar file -->
+    <target name="deploy" depends="jar">
+        <copy file="pom/spass-meter-annotations.xml" toFile="pom.xml" overwrite="true"/>
+        <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}/all" jarFile="spass-meter-annotations.jar"/>
+        <copy file="pom/spass-meter-ant.xml" toFile="pom.xml" overwrite="true"/>
+        <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}/all" jarFile="spass-meter-ant.jar"/>
+        <copy file="pom/spass-meter-boot.xml" toFile="pom.xml" overwrite="true"/>
+        <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}/all" jarFile="spass-meter-boot.jar"/>
+        <copy file="pom/spass-meter-ia.xml" toFile="pom.xml" overwrite="true"/>
+        <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}/all" jarFile="spass-meter-ia.jar"/>
+        <copy file="pom/spass-meter-rt.xml" toFile="pom.xml" overwrite="true"/>
+        <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}/all" jarFile="spass-meter-rt.jar"/>
+        <copy file="pom/spass-meter-static.xml" toFile="pom.xml" overwrite="true"/>
+        <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}/all" jarFile="spass-meter-static.jar"/>
+        <copy file="pom/spass-meter.xml" toFile="pom.xml" overwrite="true"/>
+        <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}/all" jarFile="spass-meter.jar"/>
+    	<delete file="pom.xml"/>
+    </target>
+    
+</project>

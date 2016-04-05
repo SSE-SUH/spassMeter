@@ -9,7 +9,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.03
  */
 public enum ResourceType {
 
@@ -104,6 +104,21 @@ public enum ResourceType {
     public static final boolean isNone(ResourceType[] resources) {
         return resources == SET_NONE 
             || (resources.length == 1 && resources[0] == NONE);
+    }
+
+    /**
+     * Returns whether <code>resources</code> is <code>type</code>.
+     * 
+     * @param resources the resources to be searched for
+     * @param type the specific type to check for
+     * @return <code>true</code> if <code>resources</code> is <code>type</code>,
+     *   <code>false</code> else
+     * 
+     * @since 1.03
+     */
+    public static final boolean isType(ResourceType[] resources, 
+        ResourceType type) {
+        return resources.length == 1 && resources[0] == type;
     }
     
     /**

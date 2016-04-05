@@ -21,7 +21,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.utils.xml.QdParserException;
  * @param <T> the annotation type
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.11
  */
 @Variability(id = AnnotationConstants.CONFIG_XML)
 public class AnnotationBuilder<T extends Annotation> 
@@ -232,6 +232,28 @@ public class AnnotationBuilder<T extends Annotation>
                 setData(key, value);
             }
         }
+    }
+    
+    /**
+     * Returns whether the values of this annotation just contains defaults.
+     * 
+     * @return <code>true</code> if only defaults are set, <code>false</code>
+     * else
+     * 
+     * @since 1.11
+     */
+    public boolean defaultsOnly() {
+        boolean only = true;
+        for (int pos = 0; only && pos < dataDefinition.length; pos++) {
+            Object val = data.get(dataDefinition[pos].getName());
+            Object dflt = dataDefinition[pos].getDefault();
+            if (null != val) {
+                only &= val.equals(dflt);
+            } else {
+                only &= dflt == null;
+            }
+        }
+        return only;
     }
 
     /**
