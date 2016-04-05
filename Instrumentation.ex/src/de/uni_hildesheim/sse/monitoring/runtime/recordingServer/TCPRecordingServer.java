@@ -285,7 +285,7 @@ public class TCPRecordingServer {
                     RecordingStrategiesElement element = elements.remove(0);
                     element.process(strategy);
                     int id = element.getIdentification();
-                    element.clear();
+//                    element.clear();
                     element.release();
                     end = (Constants.ENDSYSTEM == id);
                 } else {

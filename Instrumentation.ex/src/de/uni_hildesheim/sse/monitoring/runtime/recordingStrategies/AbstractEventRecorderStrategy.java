@@ -361,7 +361,7 @@ public abstract class AbstractEventRecorderStrategy
         int result = event.getIdentification();
         try {
             handleEvent(event);
-            event.clear();
+//            event.clear();
             event.release();
         } catch (HandleException ex) {
             ex.printStackTrace();

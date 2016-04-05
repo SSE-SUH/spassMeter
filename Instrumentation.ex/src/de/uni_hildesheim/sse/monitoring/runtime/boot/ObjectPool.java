@@ -1,14 +1,14 @@
 package de.uni_hildesheim.sse.monitoring.runtime.boot;
 
 
- /**
+/**
  * Defines an reusable object pool.
  *
  * @param <T> the poolable type
  * @author  Holger Eichelberger
  */
 public class ObjectPool<T extends Poolable<T>> {
-
+	
     /**
     * Stores the pool.
     */
@@ -61,13 +61,13 @@ public class ObjectPool<T extends Poolable<T>> {
     * @since   SugiBib 1.20
     */    
     public final synchronized T getFromPool() {
-        int size = pool.size();
-        T result;
-        if (0 == size || (maxSize > 0 && size >= maxSize)) {
-            result = prototype.create();
-        } else {
-            result = pool.remove(size - 1);
-        }
+		int size = pool.size();
+		T result;
+		if (0 == size || (maxSize > 0 && size >= maxSize)) {
+			result = prototype.create();
+		} else {
+			result = pool.remove(size - 1);
+		}
         return result;
     }
 
@@ -78,9 +78,8 @@ public class ObjectPool<T extends Poolable<T>> {
     * @param instance the instance to be released (must not be <b>null</b>)
     */  
     public final synchronized void release(T instance) {
-        
+		instance.clear();
         if (maxSize == 0 || (maxSize > 0 && pool.size() < maxSize)) {
-            instance.clear();
             pool.add(instance);   
         }
     }
