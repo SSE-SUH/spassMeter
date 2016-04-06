@@ -8,6 +8,7 @@ import javassist.bytecode.Opcode;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -817,13 +818,30 @@ class Utils implements Opcode {
     public static int appendRecorderCall(InsnList insn, String name, 
         String desc) {
         if (Configuration.INSTANCE.isStaticInstrumentation()) {
-            insn.add(new MethodInsnNode(INVOKESTATIC, 
+            insn.add(createMethodInsnNode(INVOKESTATIC, 
                 RECORDER_ACCESS, name, desc));
         } else {
-            insn.add(new MethodInsnNode(INVOKEVIRTUAL, 
+            insn.add(createMethodInsnNode(INVOKEVIRTUAL, 
                 RECORDER_FRONTEND, name, desc));
         }
         return buildInt(0, 0);
+    }
+
+    /**
+     * Old style MethodInsnNode creation after update of ASM to JDK 8.
+     * 
+     * @param opcode the opcode of the type instruction to be constructed
+     * @param owner the internal name of the method's owner class
+     * @param name the method's name
+     * @param desc the method's descriptor
+     * @return the instance
+     * 
+     * @since 1.00
+     */
+    static MethodInsnNode createMethodInsnNode(final int opcode, 
+        final String owner, final String name, final String desc) {
+        return new MethodInsnNode(opcode, owner, name, desc, 
+            opcode == Opcodes.INVOKEINTERFACE);
     }
     
     /**
@@ -1086,7 +1104,7 @@ class Utils implements Opcode {
             break;
         case AbstractInsnNode.METHOD_INSN:
             MethodInsnNode m1Node = (MethodInsnNode) instruction;
-            result = new MethodInsnNode(opcode, m1Node.owner, m1Node.name, 
+            result = createMethodInsnNode(opcode, m1Node.owner, m1Node.name, 
                 m1Node.desc);
             break;
         case AbstractInsnNode.MULTIANEWARRAY_INSN:
@@ -1280,7 +1298,7 @@ class Utils implements Opcode {
         } else {
             // getClass().getName()
             instr.add(new VarInsnNode(ALOAD, 0));
-            instr.add(new MethodInsnNode(INVOKEVIRTUAL, 
+            instr.add(createMethodInsnNode(INVOKEVIRTUAL, 
                 Factory.JAVA_LANG_OBJECT, "getClass", 
                 "()" + Utils.CLASS_DESCR));                    
             maxStack = 2;
@@ -1300,7 +1318,7 @@ class Utils implements Opcode {
      */
     public static int classNameToStack(InsnList instr, String className) {
         int maxStack = classToStack(instr, className);
-        instr.add(new MethodInsnNode(INVOKEVIRTUAL, Utils.CLASS, 
+        instr.add(createMethodInsnNode(INVOKEVIRTUAL, Utils.CLASS, 
             "getName", "()" + Utils.STRING_DESCR));
         return maxStack + 1;
     }
@@ -1317,7 +1335,7 @@ class Utils implements Opcode {
      */
     public static int classLoaderToStack(InsnList instr, String className) {
         int maxStack = classToStack(instr, className);
-        instr.add(new MethodInsnNode(INVOKEVIRTUAL, Utils.CLASS, 
+        instr.add(createMethodInsnNode(INVOKEVIRTUAL, Utils.CLASS, 
             "getClassLoader", "()" + Utils.CLASSLOADER_DESCR));
         return maxStack;
     }

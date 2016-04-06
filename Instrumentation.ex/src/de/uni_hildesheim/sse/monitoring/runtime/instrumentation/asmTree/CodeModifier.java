@@ -253,7 +253,7 @@ public class CodeModifier implements ICodeModifier, Opcodes {
                     maxLocals++;
                     instructions.add(new VarInsnNode(ALOAD, 0));
                     // might require searching for superclass method
-                    instructions.add(new MethodInsnNode(INVOKESPECIAL, 
+                    instructions.add(createMethodInsnNode(INVOKESPECIAL, 
                         cNode.superName, "run", RUNNABLE_RUN_DESCR));
                     sClass.release();
                 }
@@ -575,7 +575,7 @@ public class CodeModifier implements ICodeModifier, Opcodes {
                 maxStack = Math.max(maxStack, Utils.getLSB(tmp));
                 addIORecorderCallPart1(instr, cNode.name);
                 instr.add(new VarInsnNode(ALOAD, argSaveVariable));
-                instr.add(new MethodInsnNode(INVOKEVIRTUAL, STRING, 
+                instr.add(createMethodInsnNode(INVOKEVIRTUAL, STRING, 
                     "length", "()I"));
                 int maxStackOffset;
                 if (isWriteChars) {
@@ -905,7 +905,7 @@ public class CodeModifier implements ICodeModifier, Opcodes {
         int tmp = classLoaderToStack(instr, Factory.toInternalName(
             behavior.getDeclaringClassName()));
         instr.add(new LdcInsnNode(behavior.expandInvoke(invoke)));
-        instr.add(new MethodInsnNode(INVOKESTATIC, 
+        instr.add(createMethodInsnNode(INVOKESTATIC, 
             Factory.toInternalName(shutdownM), "endMonitoring", 
             "(Z" + CLASSLOADER_DESCR + STRING_DESCR + ")V"));
         maxStack = Math.max(maxStack, 2 + tmp);
@@ -961,9 +961,9 @@ public class CodeModifier implements ICodeModifier, Opcodes {
             String threadDescr = getClassTypeDescriptor(
                 Thread.class.getName(), false);
 
-            instr.add(new MethodInsnNode(INVOKESTATIC, runtime, "getRuntime", 
+            instr.add(createMethodInsnNode(INVOKESTATIC, runtime, "getRuntime", 
                 "()" + runtimeDescr));
-
+            
             // instantiate shutdownMonitor
             instr.add(new TypeInsnNode(NEW, shutdownMonitor));
             instr.add(new InsnNode(DUP));
@@ -971,15 +971,15 @@ public class CodeModifier implements ICodeModifier, Opcodes {
                 behavior.getDeclaringClassName()));
             instr.add(new LdcInsnNode(behavior.expandInvoke(invoke)));
             instr.add(booleanToNode(Configuration.INSTANCE.printStatistics()));
-            instr.add(new MethodInsnNode(INVOKESPECIAL, shutdownMonitor, 
+            instr.add(createMethodInsnNode(INVOKESPECIAL, shutdownMonitor, 
                 "<init>", "(" + classLoaderDescr + STRING_DESCR + "Z)V"));
 
-            instr.add(new MethodInsnNode(INVOKEVIRTUAL, runtime, 
+            instr.add(createMethodInsnNode(INVOKEVIRTUAL, runtime, 
                 "addShutdownHook", "(" + threadDescr + ")V"));
             maxStack = Math.max(maxStack, 5 + tmp);
         }
         
-        instr.add(new MethodInsnNode(INVOKESTATIC, 
+        instr.add(createMethodInsnNode(INVOKESTATIC, 
             Factory.toInternalName(Recorder.class.getName()), 
             "initialize", "()V")); // keep this line
 
@@ -1202,8 +1202,8 @@ public class CodeModifier implements ICodeModifier, Opcodes {
 
         
         // MonitoringGroupsSettings.getFromPool()
-        instr.add(new MethodInsnNode(INVOKESTATIC, settingsName, "getFromPool", 
-            "()" + settingsDescr));
+        instr.add(createMethodInsnNode(INVOKESTATIC, settingsName, 
+            "getFromPool", "()" + settingsDescr));
         instr.add(new VarInsnNode(ASTORE, settingsVar));
 
         // param 0: settings
@@ -1229,8 +1229,8 @@ public class CodeModifier implements ICodeModifier, Opcodes {
 
         // call setBasics(String[] id, DebugState[] debugStates, 
         //  GroupAccountingType gType, ResourceType[] resources)
-        instr.add(new MethodInsnNode(INVOKEVIRTUAL, settingsName, "setBasics", 
-            "(" + stringArrayDescr + debugStateArrayDescr 
+        instr.add(createMethodInsnNode(INVOKEVIRTUAL, settingsName, 
+            "setBasics", "(" + stringArrayDescr + debugStateArrayDescr 
             + groupAccountingDescr + resourceTypeArrayDescr + ")V"));
 
         // optional: produce code for filling multi values
@@ -1248,7 +1248,7 @@ public class CodeModifier implements ICodeModifier, Opcodes {
             instr.add(new FieldInsnNode(GETSTATIC, booleanValue, 
                 mGroup.considerContained().name(), booleanValueDescr));
             // call setMulti(BooleanValue, BooleanValue)
-            instr.add(new MethodInsnNode(INVOKEVIRTUAL, settingsName, 
+            instr.add(createMethodInsnNode(INVOKEVIRTUAL, settingsName, 
                 "setMulti", "(" + booleanValueDescr + booleanValueDescr 
                 + ")V"));
             data[DATA_MAXSTACK] = Math.max(data[DATA_MAXSTACK], 3);
@@ -1268,7 +1268,7 @@ public class CodeModifier implements ICodeModifier, Opcodes {
         // param 0
         instr.add(new VarInsnNode(ALOAD, settingsVar));
         // MonitoringGroupSettings.release(_settings);
-        instr.add(new MethodInsnNode(INVOKESTATIC, settingsName, "release", 
+        instr.add(createMethodInsnNode(INVOKESTATIC, settingsName, "release", 
             "(" + settingsDescr + ")V"));
         data[DATA_MAXSTACK] = Math.max(data[DATA_MAXSTACK], 1);
         
@@ -1490,7 +1490,7 @@ public class CodeModifier implements ICodeModifier, Opcodes {
                     aClass.findSuperclassWithMethodWoParameter(name);
                 if (null != sClass) {
                     mNode.instructions.add(new VarInsnNode(ALOAD, 0));
-                    mNode.instructions.add(new MethodInsnNode(INVOKESPECIAL, 
+                    mNode.instructions.add(createMethodInsnNode(INVOKESPECIAL, 
                         Factory.toInternalName(sClass.getName()), name, 
                         descriptor));
                     int maxStack = 1;

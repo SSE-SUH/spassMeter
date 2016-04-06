@@ -584,7 +584,7 @@ class StatementModifier extends MethodVisitor implements IStatementModifier,
                     // first param is on stack as result of <instruction>
                     tempInstructions.add(new VarInsnNode(ALOAD, urlVarNr));
                     tempInstructions.add(new InsnNode(ACONST_NULL));
-                    tempInstructions.add(new MethodInsnNode(INVOKESTATIC, 
+                    tempInstructions.add(createMethodInsnNode(INVOKESTATIC, 
                         DELEGATING_INPUTSTREAM, "createFrom", 
                         "(Ljava/io/InputStream;Ljava/net/URL;" 
                         + "Ljava/lang/String;)Ljava/io/InputStream;"));
@@ -614,7 +614,7 @@ class StatementModifier extends MethodVisitor implements IStatementModifier,
             }
             tempInstructions.add(new TypeInsnNode(NEW, delegate));
             tempInstructions.add(new InsnNode(DUP));
-            tempInstructions.add(new MethodInsnNode(INVOKESPECIAL, 
+            tempInstructions.add(createMethodInsnNode(INVOKESPECIAL, 
                 delegate, ABehavior.CONSTRUCTOR_NAME, 
                 "(Ljava/io/InputStream; " + STREAM_TYPE_DESCR 
                 + "Ljava/lang/String;)V"));
@@ -693,7 +693,7 @@ class StatementModifier extends MethodVisitor implements IStatementModifier,
         stack++;
         tempInstructions.add(new VarInsnNode(ALOAD, varNr));
         stack++;
-        tempInstructions.add(new MethodInsnNode(INVOKEVIRTUAL, 
+        tempInstructions.add(createMethodInsnNode(INVOKEVIRTUAL, 
             "java/net/DatagramPacket", "getLength", "()I"));
         tempInstructions.add(new FieldInsnNode(GETSTATIC, STREAM_TYPE, 
             "NET", STREAM_TYPE_DESCR));

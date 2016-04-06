@@ -7,7 +7,6 @@ import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
@@ -935,7 +934,7 @@ public class Expressions {
                 } else {
                     opcode = INVOKEVIRTUAL;
                 }
-                code.instr.add(new MethodInsnNode(opcode, ownerName, 
+                code.instr.add(createMethodInsnNode(opcode, ownerName, 
                     methodName, behavior.getNode().desc));
                 result.setType(Factory.getLocalFactory().obtainClass(
                     behavior.getResultTypeNameI(), null));

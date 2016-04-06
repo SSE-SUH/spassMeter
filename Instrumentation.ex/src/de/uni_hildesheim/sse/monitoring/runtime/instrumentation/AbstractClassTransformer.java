@@ -1,5 +1,7 @@
 package de.uni_hildesheim.sse.monitoring.runtime.instrumentation;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 
@@ -395,6 +397,7 @@ public class AbstractClassTransformer implements ISemanticsCollector {
      */
     public final boolean transform(String name, IClass cl, 
         TransformationType type) throws InstrumenterException {
+System.out.println("HERE " + name);
         boolean transformed = false;
         HashMap<String, Monitor> assignedSemantics;
         Configuration config = Configuration.INSTANCE;
@@ -525,6 +528,16 @@ public class AbstractClassTransformer implements ISemanticsCollector {
             }
         }
         //assignments.clear();
+System.out.println("HERE " + name);
+if (name.equals("main/Modulo")) {
+    try {
+        FileOutputStream fos = new FileOutputStream("Modulo.c");
+        fos.write(cl.toBytecode());
+        fos.close();
+    } catch (IOException e) {
+        
+    }
+}
         return transformed;
     }
     
