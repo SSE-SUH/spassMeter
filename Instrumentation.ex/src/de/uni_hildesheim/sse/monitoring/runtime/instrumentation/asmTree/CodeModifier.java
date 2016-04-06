@@ -972,11 +972,11 @@ public class CodeModifier implements ICodeModifier, Opcodes {
             instr.add(new LdcInsnNode(behavior.expandInvoke(invoke)));
             instr.add(booleanToNode(Configuration.INSTANCE.printStatistics()));
             instr.add(new MethodInsnNode(INVOKESPECIAL, shutdownMonitor, 
-                "<init>", "(" + classLoaderDescr + STRING_DESCR + ")V"));
+                "<init>", "(" + classLoaderDescr + STRING_DESCR + "Z)V"));
 
             instr.add(new MethodInsnNode(INVOKEVIRTUAL, runtime, 
                 "addShutdownHook", "(" + threadDescr + ")V"));
-            maxStack = Math.max(maxStack, 4 + tmp);
+            maxStack = Math.max(maxStack, 5 + tmp);
         }
         
         instr.add(new MethodInsnNode(INVOKESTATIC, 
