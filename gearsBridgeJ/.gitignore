@@ -4,3 +4,4 @@ doc/*
 test-run/*
 tmp/*
 applet.zip
+/bin/

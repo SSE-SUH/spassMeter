@@ -33,6 +33,18 @@ public class ThreadDataGatherer implements IThreadDataGatherer {
     private static final boolean SUBSTITUTE_BY_PROCESS = true;
     
     /**
+     * Experimental direct access to the CPU thread time via locutor library.
+     * 
+     * @param threadId the thread identification of the 
+     *   thread to return the CPU time for (should be one returned 
+     *   by {@link #getAllThreadIds()}.
+     * @return the CPU time if available or <code>0</code> if not available
+     * 
+     * @since 1.00
+     */
+    private static native int getCpuThreadTime0(long threadId);
+    
+    /**
      * Checks JMX capabilities and initializes the threads map.
      */
     static {
@@ -77,7 +89,8 @@ public class ThreadDataGatherer implements IThreadDataGatherer {
     public long getCpuTime(long threadId) {
         long result;
         if (THREAD_CPU_TICKS_ENABLED) {
-            result = THREAD_MX.getThreadCpuTime(threadId);
+            result = getCpuThreadTime0(threadId);
+            //result = THREAD_MX.getThreadCpuTime(threadId);
         } else {
             result = 
                 (ThisProcessDataGatherer.getCurrentProcessKernelTimeTicks0() 

@@ -51,6 +51,9 @@ public class Test {
                 + max);
             System.out.println("net utilization " 
                 + (max > 0 ? (cur / (double) max * 100) : 0.0));
+            System.out.println("Thread CPU time " 
+                + GathererFactory.getThreadDataGatherer().getCpuTime(
+                    Thread.currentThread().getId()));
             System.out.println();
             if (maxNetCount > 0) {
                 maxNetCount--;
@@ -92,12 +95,12 @@ public class Test {
         GathererFactory.getThisProcessDataGatherer()
             .getCurrentProcessProcessorLoad();
         System.out.println("gathering data ...");
-        AccessPointData[] aps = GathererFactory.
-            getDataGatherer().gatherWifiSignals(1000);
+        //AccessPointData[] aps = GathererFactory.
+//            getDataGatherer().gatherWifiSignals(1000);
         
-        for (AccessPointData ap : aps) {
-            System.out.println(ap);
-        }
+  //      for (AccessPointData ap : aps) {
+  //          System.out.println(ap);
+  //      }
         
         System.out.println();
         
