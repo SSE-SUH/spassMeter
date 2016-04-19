@@ -80,14 +80,21 @@ CC = gcc
 CXX = g++
 ECHO=@echo
 
-UBUNTU_INCLUDES = -I /usr/lib/jvm/java-6-openjdk/include/
+UBUNTU_INCLUDES = -I /usr/lib/jvm/java-6-openjdk/include/ -I javavm -I javavm/solaris
 
 CPPFLAGS = -DLINUX $(UBUNTU_INCLUDES)
 CPPFLAGS += -I. -DNO_GZIP -DNO_GZCOMPRESS 
 CPPFLAGS += -DUSING_CCTESTS=1
 
-#OS_SUFFIX = -64
-#CPPFLAGS += -m64
+LBITS := $(shell getconf LONG_BIT)
+ifeq ($(LBITS),64)
+   #OS_SUFFIX = -64
+   #CPPFLAGS += -m64
+   CPPFLAGS += -DENVIRONMENT64
+else
+   CPPFLAGS += -Ze
+   # do 32 bit stuff here
+endif
 
 COMPILE_FLAGS_dbg = -g -O0
 COMPILE_FLAGS_opt = -O2
@@ -116,7 +123,7 @@ ECHO=@echo
 CPPFLAGS_dbg = -D_DEBUG=1 
 CPPFLAGS_opt =
 CPPFLAGS += -I. /nologo -DSTRICT -D_UNICODE -DUNICODE -D_USRDLL -DWIN32 -D_WINDLL \
-            -D_CRT_SECURE_NO_DEPRECATE -DNOMINMAX
+            -D_CRT_SECURE_NO_DEPRECATE -DNOMINMAX  -I javavm -I javavm/win32
 
 ifeq ($(OS),win32)
 WINVER=0x0500
@@ -214,7 +221,7 @@ else
 DLLFLAGS_NOPDB += /SUBSYSTEM:WINDOWSCE,5.01
 endif
 endif
-DLLFLAGS = $(DLLFLAGS_NOPDB) /PDB:"$(@D)/$(MODULE).pdb" /INCREMENTAL:NO /OPT:REF /OPT:ICF comsupp.lib Wbemuuid.lib Iphlpapi.lib psapi.lib pdh.lib  kernel32.lib user32.lib gdi32.lib gdiplus.lib uuid.lib sensapi.lib shlwapi.lib shell32.lib advapi32.lib wininet.lib comdlg32.lib user32.lib
+DLLFLAGS = $(DLLFLAGS_NOPDB) /PDB:"$(@D)/$(MODULE).pdb" /INCREMENTAL:NO /OPT:REF /OPT:ICF comsupp.lib Wbemuuid.lib Iphlpapi.lib psapi.lib pdh.lib  kernel32.lib user32.lib gdi32.lib gdiplus.lib uuid.lib sensapi.lib shlwapi.lib shell32.lib advapi32.lib wininet.lib comdlg32.lib user32.lib jvm.lib
 EXT_LINKER_CMD_FLAG = @
 OBJ_SUFFIX = .obj
 MKDEP = python tools/mkdepend.py $< $@ > $(@D)/$(*F).pp

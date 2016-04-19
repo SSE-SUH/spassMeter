@@ -1,5 +1,13 @@
 //#include "de_uni_hildesheim_sse_system_DataGatherer.h"
 #include <jni.h>
+//experiment: direct access to JVM thread time, not via JMX
+#ifndef ANDROID
+  #ifdef _WINDOWS
+    #include <windows.h>
+  #endif
+  #include "jvm.h"
+  #include "jmm.h"
+#endif
 #ifdef WITH_JVMTI
 #include "jvmti.h"
 #include <list>
@@ -50,9 +58,10 @@ char* _itoa(int value, char* result, int base) {
 #ifdef WITH_JVMTI
 // stores a pointer to the current (one) JVMTI environment (initialized in on_load)
 static jvmtiEnv *jvmti = 0;
-
 #endif
-
+#ifndef ANDROID
+const JmmInterface *jmm_interface = NULL;
+#endif
 
 // ------------ helper ----------------
 
@@ -671,6 +680,16 @@ extern "C" JNIEXPORT void JNICALL Java_de_uni_1hildesheim_sse_system_deflt_DataG
   (JNIEnv *, jclass, jlong threadId, jboolean reg) {
 	registerThread(threadId, reg);
 }
+#else
+//experiment: direct access to JVM thread time, not via JMX
+extern "C" JNIEXPORT jlong JNICALL Java_de_uni_1hildesheim_sse_system_deflt_ThreadDataGatherer_getCpuThreadTime0
+  (JNIEnv *env, jclass, jlong threadId) {
+    if (NULL == jmm_interface) {
+        return 0;
+    } else {
+	    return jmm_interface->GetThreadCpuTimeWithKind(env, threadId, JNI_TRUE); //user+sys
+	}
+}	
 #endif
 
 // lifecycle
@@ -711,6 +730,23 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad( JavaVM *vm, void *pvt ) {
 					printf("Cannot set jvmti event notification mode (%d).", error);
 				}
 			}
+		}
+	}
+  #endif
+  #ifndef ANDROID
+	JNIEnv* env;
+	res = vm->GetEnv((void**)&env, JNI_VERSION_1_2);
+	if (res != JNI_OK || env == NULL) {
+		printf("ERROR: Unable to access JNI Version 1 (0x%x),"
+				" is your J2SE a 1.2 or newer version?"
+				" JNIEnv's GetEnv() returned %d\n",
+			   JNI_VERSION_1_2, res);
+	} else {
+		jmm_interface = (JmmInterface*) JVM_GetManagement(JMM_VERSION_1_0);
+		if (jmm_interface == NULL) {
+		    printf("ERROR: Unable to access JMM Version 1 (0x%x),"
+				" is your J2SE a 1.2 or newer version?",
+			   JMM_VERSION_1_0);
 		}
 	}
   #endif

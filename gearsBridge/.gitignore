@@ -12,6 +12,6 @@ libc.pdf
 SyncToy*
 t
 test.cc
-perflib_Examples.cc
+perflib_examples.cc
 tmp.log
 win_perflib

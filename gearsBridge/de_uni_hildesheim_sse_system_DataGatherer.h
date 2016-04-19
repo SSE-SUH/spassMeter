@@ -201,11 +201,12 @@ JNIEXPORT jboolean JNICALL Java_de_uni_1hildesheim_sse_system_deflt_ThisProcessD
 #endif
 #endif
 
+JNIEXPORT jlong JNICALL Java_de_uni_1hildesheim_sse_system_deflt_ThreadDataGatherer_getCpuThreadTime0
+  (JNIEnv *, jclass, jlong);
+  
 #ifdef ANDROID
 JNIEXPORT jboolean JNICALL Java_de_uni_1hildesheim_sse_system_deflt_ThreadDataGatherer_supportsCpuThreadTiming0
   (JNIEnv *, jclass);
-JNIEXPORT jlong JNICALL Java_de_uni_1hildesheim_sse_system_deflt_ThreadDataGatherer_getCpuThreadTime0
-  (JNIEnv *, jclass, jlong);
 JNIEXPORT void JNICALL Java_de_uni_1hildesheim_sse_system_deflt_DataGatherer_registerThread0
   (JNIEnv *, jclass, jlong, reg);
 #endif
