@@ -15,3 +15,4 @@ test.cc
 perflib_examples.cc
 tmp.log
 win_perflib
+SyncToy*
