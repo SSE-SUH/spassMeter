@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.lang.reflect.Field;
-import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 
@@ -29,7 +28,14 @@ import de.uni_hildesheim.sse.monitoring.runtime.plugins.Plugin;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.ValueType;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.internal.
     InternalPluginRegistry;
-import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.*;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.DefaultEventRecorderStrategy;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.DefaultRecorderStrategy;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.ProcessData;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.RecorderStrategy;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.TCPRecorderStrategy;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.TabFormatter;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.ThreadsInfo;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.LongHashMap;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.LongLongHashMap;
 import de.uni_hildesheim.sse.system.GathererFactory;
@@ -142,11 +148,11 @@ public class Recorder extends RecorderFrontend
     static {
         if (CALIBRATE_RECORDER) {
             // do this only once or on changes of the Java library
-            java.util.Map<Object, Object> test 
-                = new java.util.HashMap<Object, Object>();
+            HashMap<Object, Object> test 
+                = new HashMap<Object, Object>();
             test.put(test, test);
             long size = 0;
-            for (Map.Entry<Object, Object> entry : test.entrySet()) {
+            for (HashMap.Entry<Object, Object> entry : test.entries()) {
                 size = ObjectSizeProvider.getInstance().getObjectSize(entry);
                 break;
             }

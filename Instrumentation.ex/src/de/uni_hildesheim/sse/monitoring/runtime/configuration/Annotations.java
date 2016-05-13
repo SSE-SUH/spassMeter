@@ -1,10 +1,9 @@
 package de.uni_hildesheim.sse.monitoring.runtime.configuration;
 
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.Map;
 
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.Registration;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
 
 /**
  * Tooling for building initialized annotations.
@@ -18,7 +17,7 @@ public class Annotations {
     /**
      * Stores the template instances assigned to XML element names.
      */
-    private static Map<String, AnnotationBuilder<?>> templates =
+    private static HashMap<String, AnnotationBuilder<?>> templates =
         new HashMap<String, AnnotationBuilder<?>>();
 
     /**

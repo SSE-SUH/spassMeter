@@ -1,9 +1,5 @@
 package de.uni_hildesheim.sse.monitoring.runtime.boot;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 /**
  * Helper class to transfer the values of a monitoring group (also compiled in
  * instrumented code) to the recorder. Be careful: Due to the JVM init and load
@@ -20,7 +16,7 @@ public class MonitoringGroupSettings {
      * Stores instances of this class for reuse. As class loading usually
      * happens not in parallel, not many instances will be stored here.
      */
-    private static final List<MonitoringGroupSettings> POOL 
+    private static final ArrayList<MonitoringGroupSettings> POOL 
         = new ArrayList<MonitoringGroupSettings>(5);
     
     /**

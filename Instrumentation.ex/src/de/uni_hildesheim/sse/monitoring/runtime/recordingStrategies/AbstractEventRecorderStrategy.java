@@ -5,9 +5,28 @@ import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.TimerState;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.StreamType;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.ValueType;
-import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.*;
-import de.uni_hildesheim.sse.monitoring.runtime.utils.LinkedList;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.AssignToAllElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.ClearTemporaryDataElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.Constants;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.EndSystemElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.EnterConfigurationElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.EnterElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.ExitElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.FinishRecordingElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.IoElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.MemoryAllocatedElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.MemoryFreedByRecIdElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.NotifyProgramRecordCreationElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.NotifyTimerElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.NotifyValueChangeElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.PrintCurrentState;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.PrintStatisticsElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.RecordingStrategiesElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.RegisterElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.StartRecordingElement;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.StopTimeRecordingElement;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.LongLongHashMap;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.RecordingStrategiesElementLinkedList;
 import de.uni_hildesheim.sse.monitoring.runtime.wrap.ShutdownMonitor;
 
 /**
@@ -31,8 +50,10 @@ public abstract class AbstractEventRecorderStrategy
     /**
      * Stores the generated elements for sending them to the specified server.
      */
-    private LinkedList<RecordingStrategiesElement> elements 
-        = new LinkedList<RecordingStrategiesElement>();
+//    private LinkedList<RecordingStrategiesElement> elements 
+//        = new LinkedList<RecordingStrategiesElement>();
+    private RecordingStrategiesElementLinkedList elements
+    	= new RecordingStrategiesElementLinkedList();
 
     /**
      * The internal lock for the message producer-consumer.

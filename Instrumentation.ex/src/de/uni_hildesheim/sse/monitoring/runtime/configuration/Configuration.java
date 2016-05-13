@@ -6,9 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +20,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.boot.MainDefaultType;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ResourceType;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.xml.
     XMLConfiguration;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.StreamUtilities;
 
 /**
@@ -128,7 +127,7 @@ public class Configuration {
     /**
      * Stores unrecognized parameters to be passed to plugins.
      */
-    private Map<String, String> unrecognizedParams 
+    private HashMap<String, String> unrecognizedParams 
         = new HashMap<String, String>();
     
     /**
@@ -291,7 +290,7 @@ public class Configuration {
     /**
      * Stores recorderId/pseudoId mappings for multiple recorder ids.
      */
-    private Map<String, String> pseudoId = new HashMap<String, String>();
+    private HashMap<String, String> pseudoId = new HashMap<String, String>();
 
     /**
      * Stores whether excluded parts should be accounted in a global monitoring
@@ -445,7 +444,7 @@ public class Configuration {
             out.writeInt(sumResources[i].ordinal());
         }
         out.writeInt(unrecognizedParams.size());
-        for (Map.Entry<String, String> entry : unrecognizedParams.entrySet()) {
+        for (HashMap.Entry<String, String> entry : unrecognizedParams.entries()) {
             StreamUtilities.writeString(out, entry.getKey());
             StreamUtilities.writeString(out, entry.getValue());
         }
@@ -1212,7 +1211,7 @@ public class Configuration {
      * @since 1.00
      */
     public String getPseudoMapping(String recId) {
-        for (Map.Entry<String, String> ent : pseudoId.entrySet()) {
+        for (HashMap.Entry<String, String> ent : pseudoId.entries()) {
             if (ent.getValue().equals(recId)) {
                 return ent.getKey();
             }

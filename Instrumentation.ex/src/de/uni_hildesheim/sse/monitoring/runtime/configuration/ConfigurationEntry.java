@@ -2,12 +2,11 @@ package de.uni_hildesheim.sse.monitoring.runtime.configuration;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
+
+import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
 
 /**
  * Defines a generic configuration entry.
@@ -123,7 +122,7 @@ public class ConfigurationEntry {
     /**
      * Stores the configuration entries.
      */
-    private static final Map<String, ConfigurationEntry> ENTRIES 
+    private static final HashMap<String, ConfigurationEntry> ENTRIES 
         = new HashMap<String, ConfigurationEntry>();
 
     /**
@@ -314,7 +313,7 @@ public class ConfigurationEntry {
             break;
         case ARRAY_ENUM:
             StringTokenizer tokens = new StringTokenizer(value, ",");
-            List<Object> values = new ArrayList<Object>();
+            ArrayList<Object> values = new ArrayList<Object>();
             while (tokens.hasMoreTokens()) {
                 Object val = getPrimitiveValue(tokens.nextToken().trim(), 
                     type.getElementType(), elemType);

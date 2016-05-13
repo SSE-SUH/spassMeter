@@ -1,15 +1,11 @@
 package de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.Helper;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.BooleanValue;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.MonitoringGroupSettings;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.Configuration;
@@ -18,6 +14,8 @@ import de.uni_hildesheim.sse.monitoring.runtime.configuration.
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.
     MonitoringGroupCreationListener;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.PluginRegistry;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap.Entry;
 
 /**
  * Implements a double indirected map which may assign {@link RecorderElement 
@@ -38,25 +36,25 @@ public class RecorderElementMap {
      * Stores the class name to group-id mappings. Multiple class names might
      * be assigned to one id.
      */
-    private Map<String, String> classNameToId = 
+    private HashMap<String, String> classNameToId = 
         new HashMap<String, String>();
     
     /**
      * Stores the class name / id mapping to recorder elements.
      */
-    private Map<String, RecorderElement> mappedClasses = 
+    private HashMap<String, RecorderElement> mappedClasses = 
         new HashMap<String, RecorderElement>();
     
     /**
      * Stores the recorder ids (in sequence of registration).
      */
-    private List<String> recorderIds = 
+    private ArrayList<String> recorderIds = 
         new ArrayList<String>();
 
     /**
      * Stores the records for the individual configurations.
      */
-    private Map<String, RecorderElement> mappedConfigurations =
+    private HashMap<String, RecorderElement> mappedConfigurations =
         new HashMap<String, RecorderElement>();
     
     /**
@@ -67,27 +65,27 @@ public class RecorderElementMap {
     /**
      * Stores the records for the recording ids.
      */
-    private Map<String, PositionRecord> idToConfiguration = 
+    private HashMap<String, PositionRecord> idToConfiguration = 
         new HashMap<String, PositionRecord>();
 
     /**
      * Stores the last recently used mappings between variability (i.e. 
      * the substring before {@link #separatorChar}) and the assigned position.
      */
-    private Map<String, PositionRecord> lruRecords = 
+    private HashMap<String, PositionRecord> lruRecords = 
         new HashMap<String, PositionRecord>();
 
     /**
      * Stores the variability identification to integer mapping (simplified
      * recognition of variabilities during assignment to recording elements).
      */
-    private Map<String, Integer> varIds = 
+    private HashMap<String, Integer> varIds = 
         new HashMap<String, Integer>();
     
     /**
      * Stores the pseudo recorder elements.
      */
-    private List<MultipleRecorderElement> pseudoElt 
+    private LinkedList<MultipleRecorderElement> pseudoElt 
         = new LinkedList<MultipleRecorderElement>();
     
     /**
@@ -232,7 +230,8 @@ public class RecorderElementMap {
         MultipleRecorderElement elt = new MultipleRecorderElement(conf, 
             elements, distributeValues, considerContained);
         mappedClasses.put(recId, elt);
-        pseudoElt.add(elt);
+        pseudoElt.addLast(elt);
+//        pseudoElt.add(elt);
     }
     
     /**
@@ -242,7 +241,7 @@ public class RecorderElementMap {
      * 
      * @since 1.00
      */
-    public Iterable<MultipleRecorderElement> pseudoElements() {
+    public LinkedList<MultipleRecorderElement> pseudoElements() {
         return pseudoElt;
     }
     
@@ -491,8 +490,8 @@ public class RecorderElementMap {
         if (null == getAggregatedRecord(recId)) {
             // TODO optimize
             // search for variant starting with the given recId as prefix
-            for (Map.Entry<String, PositionRecord> entry 
-                : idToConfiguration.entrySet()) {
+            for (HashMap.Entry<String, PositionRecord> entry 
+                : idToConfiguration.entries()) {
                 String id = entry.getKey();
                 if (id.startsWith(recId)) {
                     PositionRecord rec = entry.getValue();
@@ -530,8 +529,8 @@ public class RecorderElementMap {
     public ConfigurationToName getConfigurationMapping() {
         ConfigurationToName result = 
             new ConfigurationToName(currentConfiguration.length);
-        for (Map.Entry<String, PositionRecord> entry 
-            : idToConfiguration.entrySet()) {
+        for (HashMap.Entry<String, PositionRecord> entry 
+            : idToConfiguration.entries()) {
             PositionRecord rec = entry.getValue();
             result.put(entry.getKey(), separatorChar, rec.index, rec.value);
         }
@@ -607,8 +606,8 @@ public class RecorderElementMap {
      * 
      * @since 1.00
      */
-    public Collection<Map.Entry<String, RecorderElement>> idToRecordingSet() {
-        return mappedClasses.entrySet();
+    public Iterable<Entry<String, RecorderElement>> idToRecordingSet() {
+        return mappedClasses.entries();
     }
     
     /**
@@ -631,7 +630,7 @@ public class RecorderElementMap {
      * 
      * @since 1.00
      */
-    public Collection<RecorderElement> values() {
+    public Iterable<RecorderElement> values() {
         return mappedClasses.values();
     }
 
@@ -664,8 +663,8 @@ public class RecorderElementMap {
      * 
      * @since 1.00
      */
-    public Collection<String> configurations() {
-        return mappedConfigurations.keySet();
+    public Iterable<String> configurations() {
+        return mappedConfigurations.keys();
     }
     
     /**
@@ -675,9 +674,9 @@ public class RecorderElementMap {
      * 
      * @since 1.00
      */
-    public Collection<Map.Entry<String, RecorderElement>> 
+    public Iterable<Entry<String, RecorderElement>> 
     configurationToRecording() {
-        return mappedConfigurations.entrySet();
+        return mappedConfigurations.entries();
     }
     
     /**
@@ -737,10 +736,10 @@ public class RecorderElementMap {
     String getRecorderId(RecorderElement element) {
         String result = null;
         if (null != element) {
-            Iterator<Map.Entry<String, RecorderElement>> iter 
-                = mappedClasses.entrySet().iterator();
+            Iterator<HashMap.Entry<String, RecorderElement>> iter 
+                = mappedClasses.entries().iterator();
             while (null == result && iter.hasNext()) {
-                Map.Entry<String, RecorderElement> entry = iter.next();
+                HashMap.Entry<String, RecorderElement> entry = iter.next();
                 if (entry.getValue() == element) {
                     result = entry.getKey();
                 }

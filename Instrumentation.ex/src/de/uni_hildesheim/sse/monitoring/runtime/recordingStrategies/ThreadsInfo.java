@@ -34,7 +34,7 @@ public class ThreadsInfo /*extends LongLongHashMap*/
      * The pool size needs to be twice as large as the enter and exit pools.
      */
     public static final ObjectPool<ThreadsInfo> POOL = 
-        new ObjectPool<ThreadsInfo>(new ThreadsInfo(), 1000);
+        new ObjectPool<ThreadsInfo>(new ThreadsInfo(), 2000);
         
     /**
      * Stores the current time ticks of the (initially) creating thread.

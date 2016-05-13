@@ -3,20 +3,21 @@ package de.uni_hildesheim.sse.monitoring.runtime.utils;
 import java.util.NoSuchElementException;
 
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.RecordingStrategiesElement;
 
 /**
  * Implements a linked list of long values.
  * 
- * @author Holger Eichelberger
+ * @author Aike Sass
  * @since 1.00
  * @version 1.00
  */
-public class LongLinkedList {
+public class RecordingStrategiesElementLinkedList {
 
     /**
      * Defines a list entry.
      * 
-     * @author Holger Eichelberger
+     * @author Aike Sass
      * @since 1.00
      * @version 1.00
      */
@@ -25,7 +26,7 @@ public class LongLinkedList {
         /**
          * Stores the entry value.
          */
-        private long value;
+        private RecordingStrategiesElement value;
         
         /**
          * Stores the next entry.
@@ -46,7 +47,7 @@ public class LongLinkedList {
          * 
          * @since 1.00
          */
-        Entry(long value, Entry next, Entry previous) {
+        Entry(RecordingStrategiesElement value, Entry next, Entry previous) {
             this.value = value;
             this.next = next;
             this.previous = previous;
@@ -56,13 +57,13 @@ public class LongLinkedList {
     /**
      * Stores the {@link Entry} pool.
      */
-    private static ArrayList<Entry> entryPool = new ArrayList<Entry>(5);
+    private static ArrayList<Entry> entryPool = new ArrayList<Entry>(1000);
     
     /**
      * Defines the dummy header element where to hook into further list 
      * elements. This is not taken from the pool.
      */
-    private Entry header = new Entry(0, null, null);
+    private Entry header = new Entry(null, null, null);
     
     /**
      * Stores the size of the list.
@@ -72,7 +73,7 @@ public class LongLinkedList {
     /**
      * Constructs an empty list.
      */
-    public LongLinkedList() {
+    public RecordingStrategiesElementLinkedList() {
         header.next = header; 
         header.previous = header;
     }
@@ -87,7 +88,7 @@ public class LongLinkedList {
      * 
      * @since 1.00
      */
-    private static final synchronized Entry getEntryFromPool(long value, 
+    private static final synchronized Entry getEntryFromPool(RecordingStrategiesElement value, 
         Entry next, Entry previous) {
         int size = entryPool.size();
         Entry result;
@@ -110,7 +111,7 @@ public class LongLinkedList {
      *     be <b>null</b>)
      */  
     private static final synchronized void releaseEntry(Entry entry) {
-        entry.value = 0;
+        entry.value = null;
         entry.next = null;
         entry.previous = null;
         entryPool.add(entry);
@@ -126,17 +127,17 @@ public class LongLinkedList {
      * 
      * @since 1.00
      */
-    private long remove(Entry entry) {
+    private RecordingStrategiesElement remove(Entry entry) {
         if (entry == header) {
             throw new NoSuchElementException();
         }
 
-        long result = entry.value;
+        RecordingStrategiesElement result = entry.value;
         entry.previous.next = entry.next;
         entry.next.previous = entry.previous;
         entry.next = null;
         entry.previous = null;
-        entry.value = 0;
+        entry.value = null;
         size--;
         releaseEntry(entry);
         return result;
@@ -148,7 +149,7 @@ public class LongLinkedList {
      * @return the first element from this list
      * @throws NoSuchElementException if this list is empty
      */
-    public long removeFirst() {
+    public RecordingStrategiesElement removeFirst() {
         return remove(header.next);
     }
 
@@ -158,7 +159,7 @@ public class LongLinkedList {
      * @return the last element from this list
      * @throws NoSuchElementException if this list is empty
      */
-    public long removeLast() {
+    public RecordingStrategiesElement removeLast() {
         return remove(header.previous);
     }
 
@@ -167,7 +168,7 @@ public class LongLinkedList {
      *
      * @param value the element to add
      */
-    public void addFirst(long value) {
+    public void addFirst(RecordingStrategiesElement value) {
         addBefore(value, header.next);
     }
 
@@ -176,7 +177,7 @@ public class LongLinkedList {
      *
      * @param value the element to add
      */
-    public void addLast(long value) {
+    public void addLast(RecordingStrategiesElement value) {
         addBefore(value, header);
     }
 
@@ -189,7 +190,7 @@ public class LongLinkedList {
      * 
      * @since 1.00
      */
-    private Entry addBefore(long value, Entry entry) {
+    private Entry addBefore(RecordingStrategiesElement value, Entry entry) {
         Entry newEntry = getEntryFromPool(value, entry, entry.previous);
         newEntry.previous.next = newEntry;
         newEntry.next.previous = newEntry;
@@ -219,6 +220,17 @@ public class LongLinkedList {
      */
     public int size() {
         return size;
+    }
+    
+    /**
+     * Returns whether the list is empty.
+     * 
+     * @return <code>true</code> if it is empty, <code>false</code> else
+     * 
+     * @since 1.00
+     */
+    public boolean isEmpty() {
+        return 0 == size;
     }
 
 }

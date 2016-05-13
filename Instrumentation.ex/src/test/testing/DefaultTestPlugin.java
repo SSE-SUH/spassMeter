@@ -3,14 +3,13 @@ package test.testing;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import test.AnnotationId;
 import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
 import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.*;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap.Entry;
 
 /**
  * Implements a test environment which obtains data directly from 
@@ -65,7 +64,7 @@ public class DefaultTestPlugin extends AbstractTestPlugin {
     /**
      * Stores the configurations. Lazy initialization during test.
      */
-    private static List<Map.Entry<String, RecorderElement>> configurations;
+    private static ArrayList<HashMap.Entry<String, RecorderElement>> configurations;
     
     /**
      * Stores the translation instance for internal configurations to
@@ -275,11 +274,12 @@ public class DefaultTestPlugin extends AbstractTestPlugin {
                 recorderElementMap = (RecorderElementMap) 
                     configAccess.invoke(strategy, (Object[]) null);
                 conf2Name = recorderElementMap.getConfigurationMapping();
-                Collection<Map.Entry<String, RecorderElement>> conf = 
+				Iterable<Entry<String, RecorderElement>> conf = 
                     recorderElementMap.configurationToRecording();
-                configurations = new java.util.ArrayList<
-                    Map.Entry<String, RecorderElement>>(conf.size());
-                configurations.addAll(conf);
+                configurations = new ArrayList<HashMap.Entry<String, RecorderElement>>();
+                for (Entry<String, RecorderElement> entry : conf) {
+					configurations.add(entry);
+				}
             } catch (IllegalArgumentException e) {
                 exception(ILogger.CANNOT_GET_CONFIGURATION, e);
             } catch (IllegalAccessException e) {
@@ -323,7 +323,7 @@ public class DefaultTestPlugin extends AbstractTestPlugin {
         initConfigurations();
         String result;
         if (null != configurations) {
-            Map.Entry<String, RecorderElement> entry 
+            HashMap.Entry<String, RecorderElement> entry 
                 = configurations.get(index);
             String confId = entry.getKey();
             result = conf2Name.formatConfiguration(confId, ", ");
@@ -349,7 +349,7 @@ public class DefaultTestPlugin extends AbstractTestPlugin {
         initConfigurations();
         Long result;
         if (null != configurations) {
-            Map.Entry<String, RecorderElement> entry 
+            HashMap.Entry<String, RecorderElement> entry 
                 = configurations.get(index);
             result = obtainValue(entry.getValue(), value);
         } else {

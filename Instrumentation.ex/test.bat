@@ -46,3 +46,5 @@ java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,con
 java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=false,out=generated/test.log,xmlconfig=src/test/manual/Serialization.xml -Dbla=x -classpath %CP_BIN% test.manual.SerializationTest read
 
 :end
+
+@pause

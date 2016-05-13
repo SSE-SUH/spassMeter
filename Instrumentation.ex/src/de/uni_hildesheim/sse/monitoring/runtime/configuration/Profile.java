@@ -1,8 +1,8 @@
 package de.uni_hildesheim.sse.monitoring.runtime.configuration;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+
+import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
 
 /**
  * Defines a static profile for an execution environment, i.e. a simple and 
@@ -17,7 +17,7 @@ public abstract class Profile {
     /**
      * Stores the name-profile mappings.
      */
-    private static final Map<String, Profile> PROFILES 
+    private static final HashMap<String, Profile> PROFILES 
         = new HashMap<String, Profile>();
     
     /**

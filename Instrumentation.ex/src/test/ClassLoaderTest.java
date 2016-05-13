@@ -1,6 +1,7 @@
 package test;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -42,11 +43,12 @@ public class ClassLoaderTest {
     @EndSystem
     public static void main(String[] args) {
         System.out.println("HERE");
+        MyClassLoader cl = null;
         try {
             File jar = new File("bin/loader-test.jar");
             // assumption: prebuilt by ANT
             assert jar.exists();
-            MyClassLoader cl = new MyClassLoader(
+            cl = new MyClassLoader(
                 new URL[]{jar.toURI().toURL()});
             Class<?> testClass = cl.loadClass("test.classLoading.test.Test");
             Plugin plug = (Plugin) testClass.newInstance();
@@ -61,6 +63,12 @@ public class ClassLoaderTest {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        } finally {
+        	try {
+				cl.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
         }
     }
     

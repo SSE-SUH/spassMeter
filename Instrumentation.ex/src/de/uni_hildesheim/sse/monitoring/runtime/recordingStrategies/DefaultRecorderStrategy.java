@@ -8,10 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.rmi.dgc.VMID;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
@@ -39,6 +36,8 @@ import de.uni_hildesheim.sse.monitoring.runtime.plugins.ValueType;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.internal.Cleanup;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.internal.
     InternalPluginRegistry;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap.Entry;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.LongHashMap;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.LongHashMap.MapElement;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.LongLongHashMap;
@@ -89,7 +88,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
     /**
      * Stores information about the timers.
      */
-    private final Map<String, TimerInfo> timers;
+    private final HashMap<String, TimerInfo> timers;
     
     /**
      * Stores the formatter for output formatting.
@@ -288,7 +287,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
      * @version 1.00
      */
     private static class RecorderElementEntryComparator 
-        implements Comparator<Map.Entry<String, RecorderElement>> {
+        implements Comparator<HashMap.Entry<String, RecorderElement>> {
 
         /**
          * Compares two given map entries.
@@ -304,7 +303,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
             Entry<String, RecorderElement> o2) {
             return o1.getKey().compareTo(o2.getKey());
         }
-        
+
     }
     
     /**
@@ -398,14 +397,17 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
         }
         
         formatter.printIndividual("Program", programRecord);
-        TreeSet<Map.Entry<String, RecorderElement>> recorderElementSet = 
-            new TreeSet<Map.Entry<String, RecorderElement>>(
+        TreeSet<HashMap.Entry<String, RecorderElement>> recorderElementSet = 
+            new TreeSet<HashMap.Entry<String, RecorderElement>>(
                 new RecorderElementEntryComparator());
-        recorderElementSet.addAll(recorderElements.idToRecordingSet());
-        Iterator<Map.Entry<String, RecorderElement>> iter 
+//        recorderElementSet.addAll(recorderElements.idToRecordingSet());
+        for (Entry<String, RecorderElement> entry : recorderElements.idToRecordingSet()) {
+			recorderElementSet.add(entry);
+		}
+        Iterator<HashMap.Entry<String, RecorderElement>> iter 
             = recorderElementSet.iterator();
         while (iter.hasNext()) {
-            Map.Entry<String, RecorderElement> entry = iter.next();
+            HashMap.Entry<String, RecorderElement> entry = iter.next();
             RecorderElement elt = entry.getValue();
             if (elt.wasRecorded() && elt.isVisible()
                 && !Helper.RECORDER_ID.equals(entry.getKey())) {
@@ -418,7 +420,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
         formatter.printProcessStatistics();
         formatter.printCompare("JVM vs. System", null, true);
         while (iter.hasNext()) {
-            Map.Entry<String, RecorderElement> entry = iter.next();
+            HashMap.Entry<String, RecorderElement> entry = iter.next();
             RecorderElement elt = entry.getValue();
             if ((elt.wasRecorded() && elt.isVisible()) 
                 || Helper.RECORDER_ID.equals(entry.getKey())) {
@@ -429,13 +431,16 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
 
         formatter.printInfo(ResultFormatter.InfoCategory.CONFIGURATIONS);
         recorderElementSet.clear();
-        recorderElementSet.addAll(recorderElements.configurationToRecording());
+//        recorderElementSet.addAll(recorderElements.configurationToRecording());
+        for (Entry<String, RecorderElement> entry : recorderElements.configurationToRecording()) {
+			recorderElementSet.add(entry);
+		}
         iter = recorderElementSet.iterator();
         String confSeparator = ", ";
         //printData.out.println(conf2Name.configurationHeadline(confSeparator));
 
         while (iter.hasNext()) {
-            Map.Entry<String, RecorderElement> entry = iter.next();
+            HashMap.Entry<String, RecorderElement> entry = iter.next();
             String conf = entry.getKey();
             RecorderElement elt = entry.getValue();
             if (elt.wasRecorded()) {

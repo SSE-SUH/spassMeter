@@ -28,7 +28,7 @@ public class EnterElement extends RecordingStrategiesElement
      * Defines an object pool for this class.
      */
     public static final ObjectPool<EnterElement> POOL 
-        = new ObjectPool<EnterElement>(new EnterElement(), 500);
+        = new ObjectPool<EnterElement>(new EnterElement(), 1000);
     
     /**
      * Stores the recId.

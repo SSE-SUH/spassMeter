@@ -28,7 +28,7 @@ public class ExitElement extends RecordingStrategiesElement
      * Defines an object pool for this class.
      */
     public static final ObjectPool<ExitElement> POOL 
-        = new ObjectPool<ExitElement>(new ExitElement(), 500);
+        = new ObjectPool<ExitElement>(new ExitElement(), 1000);
     
     /**
      * Stores the recId.

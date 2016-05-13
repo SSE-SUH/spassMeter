@@ -1,7 +1,6 @@
 package de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies;
 
-import java.util.HashMap;
-import java.util.Map;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
 
 /**
  * Realizes a class which outputs for a given configuration (in binary String 
@@ -41,7 +40,7 @@ public class ConfigurationToName {
          * instantiate the same variability as "parent", thus have the same
          * variability-name-prefix.
          */
-        private Map<Character, String> valuesToName;
+        private HashMap<Character, String> valuesToName;
         
         /**
          * Name ofthe variability.

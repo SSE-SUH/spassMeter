@@ -3,8 +3,8 @@ package de.uni_hildesheim.sse.monitoring.runtime.utils;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
+import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
 
 /**
  * A hash map mapping long values to objects.
@@ -29,7 +29,7 @@ public class LongLongHashMap {
    /**
     * Stores the {@link MapElement} pool.
     */
-    private static List<MapElement> mapElementPool 
+    private static ArrayList<MapElement> mapElementPool 
         = new ArrayList<MapElement>(5);
      
    /**

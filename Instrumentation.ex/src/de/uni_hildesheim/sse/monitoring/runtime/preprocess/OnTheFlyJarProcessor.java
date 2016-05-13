@@ -4,14 +4,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 
 import de.uni_hildesheim.sse.monitoring.runtime.instrumentation.lib.*;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
 
 /**
  * Realizes an on-the-fly JAR processor, i.e. a processor for transforming 
@@ -52,7 +50,7 @@ public class OnTheFlyJarProcessor {
      * This attribute is initialized only if {@link #loadClasses(String)} 
      * was called before.
      */
-    private Map<IClass, String> classes;
+    private HashMap<IClass, String> classes;
     
     /**
      * Stores the optional bin path.
@@ -92,8 +90,8 @@ public class OnTheFlyJarProcessor {
      * 
      * @since 1.00
      */
-    protected Set<IClass> loadedClasses() {
-        return classes.keySet();
+    protected Iterable<IClass> loadedClasses() {
+        return classes.keys();
     }
     
     /**
@@ -236,7 +234,7 @@ public class OnTheFlyJarProcessor {
             jos = new JarOutputStream(new FileOutputStream(
                 out), jf.getManifest());
             if (null != classes) {
-                for (Map.Entry<IClass, String> entry : classes.entrySet()) {
+                for (HashMap.Entry<IClass, String> entry : classes.entries()) {
                     writeBackClass(entry.getKey(), entry.getValue(), jos);
                 }
             }

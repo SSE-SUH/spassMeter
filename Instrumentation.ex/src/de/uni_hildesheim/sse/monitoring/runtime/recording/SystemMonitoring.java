@@ -424,11 +424,11 @@ public class SystemMonitoring {
         ThreadsInfo result = ThreadsInfo.POOL.getFromPool();
         result.setThreadId(tid);
         // next replaces calculateThreadTimeTicks
-        result.setCurrentThreadTicks(THREAD_DATA_GATHERER.getCpuTime(tid));
+    	result.setCurrentThreadTicks(THREAD_DATA_GATHERER.getCpuTime(tid));
         //calculateThreadTimeTicks(result);
         return result;
     }
-
+    
     /**
      * Returns information about the currently running thread and other 
      * (monitored and unmonitored remaining threads). 

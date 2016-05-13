@@ -1,10 +1,9 @@
 package de.uni_hildesheim.sse.monitoring.runtime.configuration;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.StringTokenizer;
 
+import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.DebugState;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.GroupAccountingType;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ResourceType;
@@ -267,7 +266,7 @@ public class MonitoringGroupConfiguration {
         ResourceType[] aResources = ResourceType.SET_DEFAULT;
         if (null != debug) {
             StringTokenizer tokens = new StringTokenizer(debug, ",");
-            List<DebugState> states = new ArrayList<DebugState>();
+            ArrayList<DebugState> states = new ArrayList<DebugState>();
             while (tokens.hasMoreTokens()) {
                 String state = tokens.nextToken();
                 for (DebugState res : DebugState.values()) {

@@ -1,7 +1,5 @@
 package de.uni_hildesheim.sse.monitoring.runtime.instrumentation;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 

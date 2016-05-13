@@ -1,6 +1,5 @@
 package de.uni_hildesheim.sse.monitoring.runtime.instrumentation.asmTree;
 
-import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -10,6 +9,7 @@ import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
 import de.uni_hildesheim.sse.monitoring.runtime.instrumentation.lib.*;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
 
