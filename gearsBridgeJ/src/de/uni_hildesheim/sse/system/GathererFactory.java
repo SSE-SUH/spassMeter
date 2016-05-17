@@ -25,6 +25,12 @@ public abstract class GathererFactory {
     public static final String PROPERTY_EXTERNAL_LIB = "locutor.library";
     
     /**
+     * Additional name infix to separate the native library across 
+     * various JVMs.
+     */
+    public static final String PROPERTY_INFIX = "locutor.infix";
+    
+    /**
      * Stores the factories to be considered for initialization. Processed
      * in given sequence as long as there are no further factories and
      * none could be initialized.

@@ -301,7 +301,7 @@
 			<property name="illegalClassNames" value="java.lang.Exception, java.lang.Throwable, java.lang.RuntimeException"/>
 		</module>--><!-- enable for beginners -->
 		<!--<module name="PackageDeclaration"/>--> <!-- disable for beginners-->
-		<module name="JUnitTestCase"/>
+<!-- 		<module name="JUnitTestCase"/> -->
 		<!--<module name="ReturnCount">
 		    <property name="max" value="2"/>
 		</module>--><!-- enable for beginners -->

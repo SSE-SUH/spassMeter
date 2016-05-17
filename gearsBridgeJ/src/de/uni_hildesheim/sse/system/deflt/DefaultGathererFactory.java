@@ -52,6 +52,7 @@ public class DefaultGathererFactory
             // operating system and the underlying architecture
             String osName = System.getProperty("os.name").toUpperCase();
             String osArch = System.getProperty("os.arch").toUpperCase();
+            String infix = System.getProperty(PROPERTY_INFIX, "");
 
             String libName = "";
             String libExtension = "";
@@ -69,10 +70,12 @@ public class DefaultGathererFactory
             String error = "";
             boolean is64 = osArch.endsWith("64");
             if (is64) {
-                error = loadLibrary(libName + "_64" + libExtension);    
+                error = loadLibrary(libName + "_64" + libExtension, 
+                    libName + "_64" + infix + libExtension);    
             }
             if (null != error) {
-                String tmp = loadLibrary(libName + libExtension);
+                String tmp = loadLibrary(libName + libExtension, 
+                    libName + infix + libExtension);
                 if (null != tmp) {
                     if (error.length() > 0) {
                         error = "Error loading 64 bit library:\n" + error; 
@@ -91,11 +94,12 @@ public class DefaultGathererFactory
      * file system as well as the containing JAR.
      * 
      * @param libName the name of the library
+     * @param outName the output name (how the library shall be loaded)
      * @return <b>null</b> if the library was loaded, the error else
      * 
      * @since 1.00
      */
-    private String loadLibrary(String libName) {
+    private String loadLibrary(String libName, String outName) {
         String error = null;
         // load the library and set the library loaded flag
         if (libName.length() > 0) {
