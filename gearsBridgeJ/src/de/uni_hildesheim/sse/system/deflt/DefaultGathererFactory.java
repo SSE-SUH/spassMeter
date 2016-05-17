@@ -126,7 +126,7 @@ public class DefaultGathererFactory
                     byte[] buffer = new byte[1024];
                     File tmpFile = new File(
                         System.getProperty("java.io.tmpdir"),
-                        libName);
+                        outName);
                     FileOutputStream fos = null;
                     try {
                         fos = new FileOutputStream(tmpFile);
