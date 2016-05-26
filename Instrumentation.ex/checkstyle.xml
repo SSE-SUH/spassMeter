@@ -172,7 +172,7 @@
 		</module>-->
         <module name="LineLength">
 		    <property name="ignorePattern" value="^$"/>
-		    <property name="max" value="80"/>
+		    <property name="max" value="120"/>
 		</module>
         <module name="MethodLength">
 		    <property name="max" value="150"/>
@@ -286,7 +286,7 @@
 			<property name="max" value="1"/>
 		</module>
 		<module name="SuperFinalize"/>
-		<module name="JUnitTestCase"/>
+<!-- 		<module name="JUnitTestCase"/> -->
 		<module name="DeclarationOrder"/>
 		<module name="DefaultComesLast"/>
 		<module name="FallThrough">
