@@ -31,6 +31,12 @@ public abstract class GathererFactory {
     public static final String PROPERTY_INFIX = "locutor.infix";
     
     /**
+     * Forces individual libraries to support usage across various JVMs
+     * on some operating systems. Takes precedence over {@link #PROPERTY_INFIX}.
+     */
+    public static final String PROPERTY_OWNINSTANCE = "locutor.ownInstance";
+    
+    /**
      * Stores the factories to be considered for initialization. Processed
      * in given sequence as long as there are no further factories and
      * none could be initialized.

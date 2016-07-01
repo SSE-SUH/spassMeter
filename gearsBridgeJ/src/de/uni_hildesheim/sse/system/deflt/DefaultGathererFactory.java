@@ -71,11 +71,11 @@ public class DefaultGathererFactory
             boolean is64 = osArch.endsWith("64");
             if (is64) {
                 error = loadLibrary(libName + "_64" + libExtension, 
-                    libName + "_64" + infix + libExtension);    
+                    determineOutName(libName + "_64", infix, libExtension));    
             }
             if (null != error) {
                 String tmp = loadLibrary(libName + libExtension, 
-                    libName + infix + libExtension);
+                    determineOutName(libName, infix,  libExtension));
                 if (null != tmp) {
                     if (error.length() > 0) {
                         error = "Error loading 64 bit library:\n" + error; 
@@ -87,6 +87,49 @@ public class DefaultGathererFactory
                 System.err.println("Error loading library: " + error);
             }
         }
+    }
+    
+    /**
+     * Determines a temporary file for the native library based on a given name.
+     * 
+     * @param name the file name
+     * @return the temporary file
+     * 
+     * @since 1.20
+     */
+    private File determineTmpFile(String name) {
+        return new File(System.getProperty("java.io.tmpdir"), name);
+    }
+
+    /**
+     * Determines the output name of a feasible temporary file for the native.
+     * 
+     * @param libName the library name
+     * @param infix the infix to use if not {@link #PROPERTY_OWNINSTANCE}, 
+     *    may be empty
+     * @param libExtension the extension of the library file name
+     * @return the output name
+     * 
+     * @since 1.20
+     */
+    private String determineOutName(String libName, String infix, 
+        String libExtension) {
+        String result = null;
+        if (Boolean.valueOf(System.getProperty(PROPERTY_OWNINSTANCE, "FALSE")
+            .toUpperCase())) {
+            int i = 0;
+            do {
+                String tmp = libName + i + libExtension;
+                File f = determineTmpFile(tmp);
+                if (!f.exists() || f.delete()) {
+                    result = tmp;
+                }
+                i++;
+            } while (null != result);
+        } else {
+            result = libName + infix + libExtension;
+        }
+        return result;
     }
     
     /**
@@ -124,9 +167,7 @@ public class DefaultGathererFactory
                 }
                 if (null != stream) {
                     byte[] buffer = new byte[1024];
-                    File tmpFile = new File(
-                        System.getProperty("java.io.tmpdir"),
-                        outName);
+                    File tmpFile = determineTmpFile(outName);
                     FileOutputStream fos = null;
                     try {
                         fos = new FileOutputStream(tmpFile);
@@ -159,6 +200,7 @@ public class DefaultGathererFactory
                 } catch (Exception e) {
                     error = e.getMessage();
                 }
+                f.deleteOnExit();
             } else {
                 error = "Library " + f.getAbsolutePath() + " not found!";
             }
