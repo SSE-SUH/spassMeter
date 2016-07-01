@@ -125,7 +125,7 @@ public class DefaultGathererFactory
                     result = tmp;
                 }
                 i++;
-            } while (null != result);
+            } while (null == result);
         } else {
             result = libName + infix + libExtension;
         }
