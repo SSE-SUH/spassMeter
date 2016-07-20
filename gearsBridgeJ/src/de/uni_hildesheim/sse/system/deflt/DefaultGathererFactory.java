@@ -122,8 +122,10 @@ public class DefaultGathererFactory
                 String tmp = libName + i + libExtension;
                 File f = determineTmpFile(tmp);
                 // f.delete() performs different on linux then win os
-                if (!f.exists() || f.delete()) {
+//                if (!f.exists() || f.delete()) {
+                if (!f.exists()) {
                     result = tmp;
+                    f.deleteOnExit();
                 }
                 i++;
             } while (null == result);
