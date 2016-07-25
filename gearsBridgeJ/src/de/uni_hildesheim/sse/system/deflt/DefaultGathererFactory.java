@@ -28,6 +28,12 @@ import de.uni_hildesheim.sse.system.IVolumeDataGatherer;
  */
 public class DefaultGathererFactory 
     extends de.uni_hildesheim.sse.system.GathererFactory {
+    
+    /**
+     * References the path to the native library. This object is used to 
+     * delete the native library when the JVM shuts down.
+     */
+    private static File nativeLib = null;
 
     /**
      * Is called in case that a (new) context is available. Does nothing
@@ -125,7 +131,6 @@ public class DefaultGathererFactory
 //                if (!f.exists() || f.delete()) {
                 if (!f.exists()) {
                     result = tmp;
-                    f.deleteOnExit();
                 }
                 i++;
             } while (null == result);
@@ -200,6 +205,15 @@ public class DefaultGathererFactory
                     System.load(f.getAbsolutePath());
                     System.setProperty(PROPERTY_EXTERNAL_LIB, 
                         f.getAbsolutePath());
+                    nativeLib = new File(f.getAbsolutePath());
+                    // Try to delete the native library when the JVM shuts down
+                    Runtime.getRuntime().addShutdownHook(new Thread() {
+                        public void run() {
+                            if (nativeLib != null) {
+                                nativeLib.delete();
+                            }
+                        }
+                    });
                 } catch (Exception e) {
                     error = e.getMessage();
                 }
