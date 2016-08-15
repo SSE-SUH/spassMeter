@@ -43,6 +43,11 @@ public class ProcessData {
         private double avgLoad;
 
         /**
+         * Stores the actual load.
+         */
+        private double load;
+        
+        /**
          * Stores the maximum load collected during monitoring.
          */
         private double maxLoad;
@@ -56,6 +61,11 @@ public class ProcessData {
          * Stores the average memory use collected during monitoring.
          */
         private double avgMemUse;
+        
+        /**
+         * Stores the actual memory use.
+         */
+        private double memUse;
 
         /**
          * Stores the maximum memory use collected during monitoring.
@@ -101,8 +111,10 @@ public class ProcessData {
         void clear() {
             minLoad = Double.MAX_VALUE;
             avgLoad = 0;
+            load = 0;
             maxLoad = Double.MIN_VALUE;
             minMemUse = Long.MAX_VALUE;
+            memUse = 0;
             avgMemUse = 0;
             maxMemUse = Long.MIN_VALUE;
             systemTime = 0;
@@ -121,9 +133,11 @@ public class ProcessData {
         public void copyFrom(Measurements measurements) {
             this.minLoad = measurements.minLoad;
             this.avgLoad = measurements.avgLoad;
+            this.load = measurements.load;
             this.maxLoad = measurements.maxLoad;
             this.minMemUse = measurements.minMemUse;
             this.avgMemUse = measurements.avgMemUse;
+            this.memUse = measurements.memUse;
             this.maxMemUse = measurements.maxMemUse;
             this.systemTime = measurements.systemTime;
             this.ioRead = measurements.ioRead;
@@ -140,6 +154,7 @@ public class ProcessData {
         public void setMinMaxLoad(double load) {
             this.minLoad = Math.min(this.minLoad, load);
             this.maxLoad = Math.max(this.maxLoad, load);
+            this.load = load;
         }
 
         /**
@@ -160,6 +175,7 @@ public class ProcessData {
         public void setMinMaxMemUse(long use) {
             this.minMemUse = Math.min(this.minMemUse, use);
             this.maxMemUse = Math.max(this.maxMemUse, use);
+            this.memUse = use;
         }
         
         /**
@@ -321,10 +337,12 @@ public class ProcessData {
          */
         public void send(DataOutputStream out) throws IOException {
             out.writeDouble(avgLoad);
+            out.writeDouble(load);
             out.writeDouble(minLoad);
             out.writeDouble(maxLoad);
             
             out.writeDouble(avgMemUse);
+            out.writeDouble(memUse);
             out.writeLong(minMemUse);
             out.writeLong(maxMemUse);
        
@@ -345,10 +363,12 @@ public class ProcessData {
          */
         public void read(DataInputStream in) throws IOException {
             avgLoad = in.readDouble();
+            load = in.readDouble();
             minLoad = in.readDouble();
             maxLoad = in.readDouble();
 
             avgMemUse = in.readDouble();
+            memUse = in.readDouble();
             minMemUse = in.readLong();
             maxMemUse = in.readLong();
 
@@ -357,6 +377,16 @@ public class ProcessData {
             ioWrite = in.readLong();
             
             status = in.readInt();
+        }
+
+        @Override
+        public double getLoad() {
+            return load;
+        }
+
+        @Override
+        public double getActMemUse() {
+            return memUse;
         }
         
     }

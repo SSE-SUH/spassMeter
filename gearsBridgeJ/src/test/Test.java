@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import de.uni_hildesheim.sse.system.AccessPointData;
 import de.uni_hildesheim.sse.system.GathererFactory;
 import de.uni_hildesheim.sse.system.IThisProcessDataGatherer;
 import de.uni_hildesheim.sse.system.IoStatistics;

@@ -56,6 +56,15 @@ public interface IMeasurements {
     public double getAvgLoad();
 
     /**
+     * Returns the actual load.
+     * 
+     * @return the actual load (in percent)
+     * 
+     * @since 1.00
+     */
+    public double getLoad();
+    
+    /**
      * Returns the maximum load.
      * 
      * @return the maximum load (in percent)
@@ -73,6 +82,15 @@ public interface IMeasurements {
      */
     public long getMinMemUse();
 
+    /**
+     * Returns the actual memory usage.
+     * 
+     * @return the actual memory usage (in bytes)
+     * 
+     * @since 1.00
+     */
+    public double getActMemUse();
+    
     /**
      * Returns the average memory usage.
      * 
