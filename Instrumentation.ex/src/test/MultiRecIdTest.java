@@ -128,8 +128,7 @@ public class MultiRecIdTest {
          * @since 1.00
          */
         public void execute() {
-            File file = new File(
-                "../Instrumentation/src/test/MultiRecIdTest.java");
+            File file = new File("src/test/MultiRecIdTest.java");
             try {
                 URL url = file.toURI().toURL();
                 fileRead = TestUtils.read(url.openStream());
