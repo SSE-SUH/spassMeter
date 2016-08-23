@@ -66,6 +66,16 @@
             <fileset dir="${gbj.base}" includes="locutor.dll"/>
         </jar>
 
+    	<delete file="${gbj.jars}/locutor-all-${version}.jar"/>
+        <jar jarfile="${gbj.jars}/locutor-all-${version}.jar" manifest="${gbj.base}/MANIFEST.MF"
+            excludes="test/**.class *.jar *.zip **/*.html" 
+        	basedir="${gbj.bin}">
+            <fileset dir="${gbj.base}" includes="locutor.dll"/>
+            <fileset dir="${gbj.base}" includes="locutor_64.dll"/>
+            <fileset dir="${gbj.base}" includes="locutor.so"/>
+            <fileset dir="${gbj.base}" includes="locutor_64.so"/>
+        </jar>
+    	
     	<delete file="${gbj.jars}/locutorServer-${version}.jar"/>
         <jar jarfile="${gbj.jars}/locutorServer-${version}.jar"
             includes="de/uni_hildesheim/sse/util/*.class de/uni_hildesheim/sse/system/**/*.class"

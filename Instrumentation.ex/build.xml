@@ -316,6 +316,7 @@
 	      <fileset dir="${bridge.jars}">
 	        <include name="locutor-instrumenter*.jar"/>
 	        <include name="locutor-jniBinding*.jar"/>
+	        <include name="locutor-all-*.jar"/>
 	      </fileset>
         </copy>
 	</target>
