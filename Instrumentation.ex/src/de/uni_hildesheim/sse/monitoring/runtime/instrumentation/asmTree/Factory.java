@@ -21,7 +21,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.20
  */
 public class Factory extends IFactory {
 
@@ -29,7 +29,17 @@ public class Factory extends IFactory {
      * Stores the internal name of "java.lang.Object".
      */
     static final String JAVA_LANG_OBJECT = "java/lang/Object";
-    
+
+    /**
+     * Stores the internal name of "java.lang.System".
+     */
+    static final String JAVA_LANG_SYSTEM = "java/lang/System";
+
+    /**
+     * Stores the internal name of "java.lang.Thread".
+     */
+    static final String JAVA_LANG_THREAD = "java/lang/Thread";
+
     /**
      * Defines the identifier for the internal type <code>void</code>.
      */

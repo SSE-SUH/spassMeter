@@ -50,6 +50,16 @@ public class DefaultTestPlugin extends AbstractTestPlugin {
      * Stores the method to access the configurations.
      */
     private static Method configAccess;
+
+    /**
+     * Stores the method to access the instance recorder elements.
+     */
+    private static Method instanceAccess;
+
+    /**
+     * Stores the method to access the ids of instance recorder elements.
+     */
+    private static Method instanceIdAccess;
     
     /**
      * Stores the recorder strategy.
@@ -104,23 +114,25 @@ public class DefaultTestPlugin extends AbstractTestPlugin {
             
             // stop recording, access strategy and receive map instance
             
-            Class<?> recorderClass = Class.forName("de.uni_hildesheim.sse." 
-                + "monitoring.runtime.recording.Recorder");
+            Class<?> recorderClass = Class.forName(
+                "de.uni_hildesheim.sse.monitoring.runtime.recording.Recorder");
             Field strategyField = recorderClass.getDeclaredField(
                 "STRATEGY");
             strategyField.setAccessible(true);
             strategy = strategyField.get(null);
             Class<?> recorderStrategyClass = Class.forName(
-                "de.uni_hildesheim." 
-                + "sse.monitoring.runtime.recordingStrategies." 
-                + "AbstractRecorderStrategy");
-            groupAccess = recorderStrategyClass.getDeclaredMethod(
-                "getRecorderElement", String.class);
+                "de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.AbstractRecorderStrategy");
+            groupAccess = recorderStrategyClass.getDeclaredMethod("getRecorderElement", String.class);
             groupAccess.setAccessible(true);
-            configAccess = recorderStrategyClass.getDeclaredMethod(
-                "getRecorderElements");
+            configAccess = recorderStrategyClass.getDeclaredMethod("getRecorderElements");
             configAccess.setAccessible(true);
             
+            Class<?> recorderElementClass = Class.forName(
+                "de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.RecorderElement");
+            instanceIdAccess = recorderElementClass.getDeclaredMethod("instanceRecorderIds");
+            instanceIdAccess.setAccessible(true);
+            instanceAccess = recorderElementClass.getDeclaredMethod("getInstanceRecorderElement", Long.TYPE);
+            instanceAccess.setAccessible(true);
         } catch (ClassNotFoundException e) {
             exception(ILogger.CLASS_NOT_FOUND, e);
         } catch (SecurityException e) {
@@ -250,6 +262,34 @@ public class DefaultTestPlugin extends AbstractTestPlugin {
         return result;
     }
 
+    @Override
+    public String[] getInstanceIdentifiers(String recId) {
+        String[] result = null;
+        Object mGroup = getMonitoringGroup(recId);
+        if (null != mGroup) {
+            if (null != instanceIdAccess && null != instanceAccess) {
+                try {
+                    Object tmp = instanceIdAccess.invoke(mGroup);
+                    if (tmp instanceof long[]) {
+                        long[] ids = (long[]) tmp;
+                        result = new String[ids.length];
+                        for (int i = 0; i < result.length; i++) {
+                            result[i] = recId + RECID_INSTANCEID_SEPARATOR + ids[i];
+                            monitoringGroups.put(result[i], instanceAccess.invoke(mGroup, ids[i]));
+                        }
+                    } 
+                } catch (IllegalArgumentException e) {
+                    exception(ILogger.CANNOT_GET_GROUP, e);
+                } catch (IllegalAccessException e) {
+                    exception(ILogger.CANNOT_GET_GROUP, e);
+                } catch (InvocationTargetException e) {
+                    exception(ILogger.CANNOT_GET_GROUP, e);
+                }
+            }
+        }
+        return result;
+    }
+
     /**
      * Returns whether this test plugin supports configurations.
      * 
@@ -274,12 +314,12 @@ public class DefaultTestPlugin extends AbstractTestPlugin {
                 recorderElementMap = (RecorderElementMap) 
                     configAccess.invoke(strategy, (Object[]) null);
                 conf2Name = recorderElementMap.getConfigurationMapping();
-				Iterable<Entry<String, RecorderElement>> conf = 
+                Iterable<Entry<String, RecorderElement>> conf = 
                     recorderElementMap.configurationToRecording();
                 configurations = new ArrayList<HashMap.Entry<String, RecorderElement>>();
                 for (Entry<String, RecorderElement> entry : conf) {
-					configurations.add(entry);
-				}
+                    configurations.add(entry);
+                }
             } catch (IllegalArgumentException e) {
                 exception(ILogger.CANNOT_GET_CONFIGURATION, e);
             } catch (IllegalAccessException e) {

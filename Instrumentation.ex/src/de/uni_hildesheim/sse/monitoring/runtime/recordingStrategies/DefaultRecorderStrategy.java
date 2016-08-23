@@ -133,7 +133,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
         MonitoringGroupSettings settings = 
             MonitoringGroupSettings.getFromPool();
         settings.setBasics(null, conf.getDebug(), conf.getGroupAccounting(), 
-            conf.getResources()); // do not set multi as irrelevant here
+            conf.getResources(), conf.getInstanceIdentifierKind()); // do not set multi as irrelevant here
 
         programRecord = getStorage().create(conf, true);
         getStorage().registerDefaultRecorderElement(Helper.PROGRAM_ID, 
@@ -402,8 +402,8 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
                 new RecorderElementEntryComparator());
 //        recorderElementSet.addAll(recorderElements.idToRecordingSet());
         for (Entry<String, RecorderElement> entry : recorderElements.idToRecordingSet()) {
-			recorderElementSet.add(entry);
-		}
+            recorderElementSet.add(entry);
+        }
         Iterator<HashMap.Entry<String, RecorderElement>> iter 
             = recorderElementSet.iterator();
         while (iter.hasNext()) {
@@ -433,8 +433,8 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
         recorderElementSet.clear();
 //        recorderElementSet.addAll(recorderElements.configurationToRecording());
         for (Entry<String, RecorderElement> entry : recorderElements.configurationToRecording()) {
-			recorderElementSet.add(entry);
-		}
+            recorderElementSet.add(entry);
+        }
         iter = recorderElementSet.iterator();
         String confSeparator = ", ";
         //printData.out.println(conf2Name.configurationHeadline(confSeparator));
@@ -518,7 +518,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
         ThreadData threadData = getThread(id, threadTicks, now);
         // local aggregation to recId as specified in scope definition
         RecorderElement elt = assignByStackTrace(recId, null, 
-            threadInfo.getCurrentThreadId(), exclude);
+            threadInfo.getCurrentThreadId(), exclude, threadInfo.getCurrentInstanceId());
         // it would be good but due to remote recording...
         // record time as late as possible, i.e. as close as possible to the 
         // method entry, so recording is not included
@@ -610,13 +610,11 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
      * @since 1.00
      */
     @Override
-    public boolean exit(String recId, long now, ThreadsInfo threadInfo, 
-        boolean exclude) {
-
+    public boolean exit(String recId, long now, ThreadsInfo threadInfo, boolean exclude) {
         MonitoringGroupChangeListener listener 
             = PluginRegistry.getMonitoringGroupChangeListener();
         RecorderElement elt = assignByStackTrace(recId, null, 
-            threadInfo.getCurrentThreadId(), exclude);
+            threadInfo.getCurrentThreadId(), exclude, threadInfo.getCurrentInstanceId());
         long id = threadInfo.getCurrentThreadId();
         long threadTicks = threadInfo.getCurrentThreadTicks();
         ThreadData threadData = threads.get(id);
@@ -697,8 +695,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
             // enforce thread registration
             getThread(threadId, threadTicks, now);
         } else {
-            RecorderElement elt = assignByStackTrace(null, null, 
-                threadId, false);
+            RecorderElement elt = assignByStackTrace(null, null, threadId, false, 0);
             ThreadData thread = getThread(threadId, threadTicks, now);
             if (null != elt) {
                 thread.setRecorderElement(elt);
@@ -804,7 +801,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
             }
         }
         // local aggregation to recId as specified in scope definition
-        RecorderElement elt = assignByStackTrace(recId, null, threadId, false);
+        RecorderElement elt = assignByStackTrace(recId, null, threadId, false, 0);
         if (null != elt 
             && elt.accountResource(ResourceType.MEMORY)) {
             elt.memoryAllocated(size);
@@ -965,8 +962,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
                 listener.monitoringGroupChanged(programRecord);
             }
         }
-        RecorderElement elt = assignByStackTrace(
-            recId, caller, threadId, false);
+        RecorderElement elt = assignByStackTrace(recId, caller, threadId, false, 0);
         // local aggregation to recId as specified in scope definition
         if (null != elt && elt.accountResource(resource)) {
             elt.readIo(bytes, type);
@@ -1039,8 +1035,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
                 listener.monitoringGroupChanged(programRecord);
             }
         }
-        RecorderElement elt = assignByStackTrace(
-            recId, caller, threadId, false);
+        RecorderElement elt = assignByStackTrace(recId, caller, threadId, false, 0);
         // local aggregation to recId as specified in scope definition
         if (null != elt && elt.accountResource(resource)) {
             elt.writeIo(bytes, type);
@@ -1138,6 +1133,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
      * @param caller optional class name of the calling class
      * @param threadId the thread identification
      * @param exclude force exclusion from monitoring
+     * @param instanceId the instance identifier (may be <code>0</code> for disabled)
      * @return the most appropriate recorder element (may be <b>null</b>, 
      *   denotes that the information provided cannot be used to derive the
      *   recorder element and, thus, the information should be recorded for the
@@ -1146,7 +1142,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
      * @since 1.00
      */
     protected RecorderElement assignByStackTrace(String recId, String caller, 
-        long threadId, boolean exclude) {
+        long threadId, boolean exclude, long instanceId) {
         RecorderElement result = null;
         if (exclude) {
             result = excluded;
@@ -1176,6 +1172,9 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
                 if (null == result) {
                     result = thread.getRecorderElement();
                 }
+            }
+            if (instanceId != 0 && null != result) {
+                result = result.getInstanceRecorderElement(instanceId);
             }
         }
         return result;

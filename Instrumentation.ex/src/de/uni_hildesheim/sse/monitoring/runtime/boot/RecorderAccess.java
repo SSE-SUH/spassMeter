@@ -15,7 +15,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.annotations.TimerState;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.20
  */
 public class RecorderAccess {
 
@@ -204,13 +204,15 @@ public class RecorderAccess {
      * @param exclude is this an exclusion from monitoring
      * @param directId is <code>recId</code> direct, e.g. in case of an 
      *    annotated method
+     * @param instanceId the optional instance identifier, <code>0</code> means 
+     *    disabled
      * 
-     * @since 1.00
+     * @since 1.20
      */
     public static void enter(String caller, String recId, boolean exclude, 
-        boolean directId) {
+        boolean directId, long instanceId) {
         if (null != RecorderFrontend.instance) {
-            RecorderFrontend.instance.enter(caller, recId, exclude, directId);
+            RecorderFrontend.instance.enter(caller, recId, exclude, directId, instanceId);
         }
     }
 
@@ -222,13 +224,15 @@ public class RecorderAccess {
      * @param exclude is this an exclusion from monitoring
      * @param directId is <code>recId</code> direct, e.g. in case of an 
      *    annotated method
+     * @param instanceId the optional instance identifier, <code>0</code> means 
+     *    disabled
      * 
      * @since 1.00
      */
     public static void exit(String caller, String recId, boolean exclude, 
-        boolean directId) {
+        boolean directId, long instanceId) {
         if (null != RecorderFrontend.instance) {
-            RecorderFrontend.instance.exit(caller, recId, exclude, directId);
+            RecorderFrontend.instance.exit(caller, recId, exclude, directId, instanceId);
         }
     }
 

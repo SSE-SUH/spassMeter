@@ -19,15 +19,8 @@ import de.uni_hildesheim.sse.monitoring.runtime.boot.Poolable;
  * @since 1.00
  * @version 1.00
  */
-public class ThreadsInfo /*extends LongLongHashMap*/ 
-    implements Poolable<ThreadsInfo> {
+public class ThreadsInfo implements Poolable<ThreadsInfo> {
 
-    /**
-     * Defines a pseudo thread id representing all remaining active threads
-     * currently not being monitored.
-     */
-    //public static final long REMAINDER_THREAD_ID = -1;
-    
     /**
      * Defines an object pool for this class.
      * 
@@ -47,10 +40,9 @@ public class ThreadsInfo /*extends LongLongHashMap*/
     private long currentThreadId;
     
     /**
-     * Stores the thread time ticks aggregated in this instance in 
-     * {@link #put(long, long)}.
+     * Stores the current instance identifier (<code>0</code> means none).
      */
-    //private transient long storedTicks;
+    private long currentInstanceId;
     
     /**
      * Creates a new thread information object. The specified values are
@@ -65,7 +57,6 @@ public class ThreadsInfo /*extends LongLongHashMap*/
      */
     ThreadsInfo() {
         // do not call this from outside, use the ObjectPools
-        //super();
     }
     
     /**
@@ -109,6 +100,32 @@ public class ThreadsInfo /*extends LongLongHashMap*/
     }
 
     /**
+     * Specifies the instance id to initialize (reusable)
+     * instances.
+     * 
+     * @param currentInstanceId the current instance id (<code>0</code> for disabled)
+     * 
+     * @since 1.00
+     */
+    public void setInstanceId(long currentInstanceId) {
+        this.currentInstanceId = currentInstanceId;
+    }
+
+    /**
+     * Specifies both ids to initialize (reusable)
+     * instances.
+     * 
+     * @param currentThreadId the current thread id
+     * @param currentInstanceId the current instance id (<code>0</code> for disabled)
+     * 
+     * @since 1.00
+     */
+    public void setIds(long currentThreadId, long currentInstanceId) {
+        this.currentThreadId = currentThreadId;
+        this.currentInstanceId = currentInstanceId;
+    }
+
+    /**
      * Specifies the thread time ticks to initialize (reusable)
      * instances.
      * 
@@ -126,8 +143,6 @@ public class ThreadsInfo /*extends LongLongHashMap*/
      * @since 1.00
      */
     public void clear() {
-        //super.clear();
-        //storedTicks = 0;
     }
     
     /**
@@ -139,7 +154,7 @@ public class ThreadsInfo /*extends LongLongHashMap*/
     public void write(DataOutputStream out) throws IOException {
         out.writeLong(currentThreadTicks);
         out.writeLong(currentThreadId);
-        //super.write(out);
+        out.writeLong(currentInstanceId);
     }
 
     /**
@@ -151,7 +166,7 @@ public class ThreadsInfo /*extends LongLongHashMap*/
     public void read(DataInputStream in) throws IOException {
         currentThreadTicks = in.readLong();
         currentThreadId = in.readLong();
-        //super.read(in);
+        currentInstanceId = in.readLong();
     }
 
     /**
@@ -175,44 +190,15 @@ public class ThreadsInfo /*extends LongLongHashMap*/
     public long getCurrentThreadId() {
         return currentThreadId;
     }
-    
+
     /**
-     * Returns all ticks added to this class as values in 
-     * {@link #put(long, long)}.
+     * Returns the current instance id.
      * 
-     * @return the sum of all ticks added to this class
-     * 
-     * @since 1.00
+     * @return the instance id (disabled if <code>0</code>)
      */
-    /*public long getStoredTicks() {
-        return storedTicks;
-    }*/
-    
-    /**
-     * Adds information about a thread. This method updates {@link #storedTicks}
-     * accordingly.
-     * 
-     * @param key the thread id
-     * @param value the runtime taken by the thread (in nano seconds) or, 
-     *     dependent on use and as intended, the difference of runtime between 
-     *     two points in time (in this case threads with no change in runtime 
-     *     should not be added
-     */
-    /*public void put(long key, long value) {
-        storedTicks += value;
-        super.put(key, value);
-    }*/
-    
-    /**
-     * Returns the sum of the (difference) time ticks for all remainder threads.
-     * 
-     * @return the time ticks for the remainder threads
-     * 
-     * @since 1.00
-     */
-    /*public long getReminderThreadsTicks() {
-        return get(ThreadsInfo.REMAINDER_THREAD_ID);
-    }*/
+    public long getCurrentInstanceId() {
+        return currentInstanceId;
+    }
     
     /**
      * Returns a textual representation.
@@ -220,8 +206,7 @@ public class ThreadsInfo /*extends LongLongHashMap*/
      * @return the textual representation
      */
     public String toString() {
-        return currentThreadId + " " + currentThreadTicks /*+ " " + storedTicks
-            + " " + super.toString()*/;
+        return currentThreadId + " " + currentThreadTicks + " " + currentInstanceId;
     }
 
 }

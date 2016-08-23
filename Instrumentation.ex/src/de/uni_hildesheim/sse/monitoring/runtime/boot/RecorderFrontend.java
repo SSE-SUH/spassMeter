@@ -29,7 +29,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.annotations.TimerState;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.20
  */
 public abstract class RecorderFrontend {
     
@@ -185,11 +185,13 @@ public abstract class RecorderFrontend {
      * @param exclude is this an exclusion from monitoring
      * @param directId is <code>recId</code> direct, e.g. in case of an 
      *    annotated method
+     * @param instanceId the optional instance identifier, <code>0</code> means 
+     *    disabled
      * 
-     * @since 1.00
+     * @since 1.20
      */
     public abstract void enter(String caller, String recId, boolean exclude, 
-        boolean directId);
+        boolean directId, long instanceId);
 
     /**
      * Notifies the recorder about a method being exited. [Java call, 
@@ -200,11 +202,13 @@ public abstract class RecorderFrontend {
      * @param exclude is this an exclusion from monitoring
      * @param directId is <code>recId</code> direct, e.g. in case of an 
      *    annotated method
+     * @param instanceId the optional instance identifier, <code>0</code> means 
+     *    disabled
      * 
      * @since 1.00
      */
     public abstract void exit(String caller, String recId, boolean exclude, 
-        boolean directId);
+        boolean directId, long instanceId);
 
     /**
      * Notify the recorder that a new variability configuration might have 

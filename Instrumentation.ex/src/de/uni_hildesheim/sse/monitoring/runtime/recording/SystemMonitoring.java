@@ -23,7 +23,7 @@ import de.uni_hildesheim.sse.system.IThreadDataGatherer;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.15
+ * @version 1.20
  */
 public class SystemMonitoring {
     
@@ -414,32 +414,19 @@ public class SystemMonitoring {
      * relevant
      * 
      * @param tid the thread id
+     * @param instanceid the instance id (disabled if <code>0</code>)
      * @return the information object on currently running threads
      * 
-     * @since 1.00
+     * @since 1.20
      */
-    // TODO consider JDI ThreadStartEvent/ThreadDeadEvent
-    public static ThreadsInfo getThreadInfo(long tid) {
+    public static ThreadsInfo getThreadInfo(long tid, long instanceid) {
         //Thread current = Thread.currentThread();
         ThreadsInfo result = ThreadsInfo.POOL.getFromPool();
-        result.setThreadId(tid);
+        result.setIds(tid, instanceid);
         // next replaces calculateThreadTimeTicks
-    	result.setCurrentThreadTicks(THREAD_DATA_GATHERER.getCpuTime(tid));
+        result.setCurrentThreadTicks(THREAD_DATA_GATHERER.getCpuTime(tid));
         //calculateThreadTimeTicks(result);
         return result;
-    }
-    
-    /**
-     * Returns information about the currently running thread and other 
-     * (monitored and unmonitored remaining threads). 
-     * 
-     * @return the information object on currently running threads
-     * 
-     * @since 1.00
-     */
-    // TODO consider JDI ThreadStartEvent/ThreadDeadEvent
-    public static ThreadsInfo getThreadInfo() {
-        return getThreadInfo(getCurrentThreadId());
     }
 
     /**

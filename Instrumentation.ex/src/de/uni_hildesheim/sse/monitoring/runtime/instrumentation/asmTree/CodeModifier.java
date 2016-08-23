@@ -37,6 +37,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.boot.BooleanValue;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.DebugState;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.Flags;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.GroupAccountingType;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.InstanceIdentifierKind;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.MonitoringGroupSettings;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ResourceType;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.StreamType;
@@ -56,7 +57,7 @@ import static de.uni_hildesheim.sse.monitoring.runtime.instrumentation.
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.20
  */
 public class CodeModifier implements ICodeModifier, Opcodes {
 
@@ -88,7 +89,7 @@ public class CodeModifier implements ICodeModifier, Opcodes {
      * Stores the descriptor for the enter/exit notification calls.
      */
     private static final String ENTER_EXIT_DESCR 
-        = "(" + STRING_DESCR + STRING_DESCR + "ZZ)V";
+        = "(" + STRING_DESCR + STRING_DESCR + "ZZJ)V";
 
     /**
      * Stores the descriptor for the assignAllTo notification calls.
@@ -1130,8 +1131,10 @@ public class CodeModifier implements ICodeModifier, Opcodes {
         }
         instr.add(booleanToNode(exclude));
         instr.add(booleanToNode(directId));
-        maxStack += 2;
-        
+        maxStack += 3;
+
+        maxStack += addInstanceIdentifier(behavior, mGroup, instr);
+
         // copy the params for second and third call
         InsnList paramCopy = new InsnList();
         copy(instr, paramCopy, null);
@@ -1172,14 +1175,52 @@ public class CodeModifier implements ICodeModifier, Opcodes {
         mNode.maxStack = Math.max(mNode.maxStack, maxStack);
         mNode.maxLocals = maxLocals;
     }
-        
+
+    /**
+     * Adds the code for the parameter representing the instance identifier.
+     * 
+     * @param behavior the behavior to instrument
+     * @param mGroup the monitoring group
+     * @param instr the instruction list the parameter shall be added to
+     * @return the required stack frames
+     * 
+     * @since 1.20
+     */
+    private int addInstanceIdentifier(IBehavior behavior, Monitor mGroup, InsnList instr) {
+        int result = 1;
+        boolean done = false;
+        if (!(behavior.isConstructor() || behavior.isStatic())) {
+            done = true;
+            switch (mGroup.instanceIdentifierKind()) {
+            case IDENTITY_HASHCODE:
+                instr.add(new VarInsnNode(ALOAD, 0)); // this
+                instr.add(createMethodInsnNode(INVOKESTATIC, Factory.JAVA_LANG_SYSTEM, 
+                    "identityHashCode", "(" + Utils.OBJECT_DESCR + ")I"));
+                instr.add(new InsnNode(I2L));
+                break;
+            case THREAD_ID:
+                instr.add(createMethodInsnNode(INVOKESTATIC, Factory.JAVA_LANG_THREAD, 
+                    "currentThread", "()L" + Factory.JAVA_LANG_THREAD + ";"));
+                instr.add(createMethodInsnNode(INVOKESTATIC, Factory.JAVA_LANG_THREAD, 
+                    "getId", "()J"));
+                break;
+            default:
+                done = false;
+                break;
+            }
+        }
+        if (!done) {
+            instr.add(longToNode(0));
+        }
+        return result;
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public void addRegisteringInitializer(IClass cls, Monitor mGroup)
         throws InstrumenterException {
-// TODO validate
         AClass aClass = (AClass) cls;
         ClassNode cNode = aClass.getNode();
         MethodNode initializer = findInitializer(cNode, true);
@@ -1199,7 +1240,10 @@ public class CodeModifier implements ICodeModifier, Opcodes {
             GroupAccountingType.class.getName());
         String groupAccountingDescr = getClassTypeDescriptor(
             groupAccounting, true);
-
+        String instanceIdentifierKind = Factory.toInternalName(
+            InstanceIdentifierKind.class.getName());
+        String instanceIdentifierKindDescr = getClassTypeDescriptor(
+            instanceIdentifierKind, true);
         
         // MonitoringGroupsSettings.getFromPool()
         instr.add(createMethodInsnNode(INVOKESTATIC, settingsName, 
@@ -1226,12 +1270,17 @@ public class CodeModifier implements ICodeModifier, Opcodes {
         // param 4: prepare resources array
         String resourceTypeArrayDescr = addResourceTypeArray(cls, 
             mGroup, instr, data);
-
+        
+        // param 5: instance identifier kind
+        instr.add(new FieldInsnNode(GETSTATIC, instanceIdentifierKind, 
+            mGroup.instanceIdentifierKind().name(), instanceIdentifierKindDescr));
+        data[DATA_MAXSTACK]++;
+        
         // call setBasics(String[] id, DebugState[] debugStates, 
-        //  GroupAccountingType gType, ResourceType[] resources)
+        //  GroupAccountingType gType, ResourceType[] resources, InstanceIdentifierKind idKind)
         instr.add(createMethodInsnNode(INVOKEVIRTUAL, settingsName, 
             "setBasics", "(" + stringArrayDescr + debugStateArrayDescr 
-            + groupAccountingDescr + resourceTypeArrayDescr + ")V"));
+            + groupAccountingDescr + resourceTypeArrayDescr + instanceIdentifierKindDescr + ")V"));
 
         // optional: produce code for filling multi values
         if (mGroup.id().length > 1) {

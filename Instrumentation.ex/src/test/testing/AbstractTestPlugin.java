@@ -26,6 +26,11 @@ import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
  */
 @Variability(id = AnnotationId.VAR_TESTING)
 public abstract class AbstractTestPlugin {
+
+    /**
+     * The separator between recording and instance ids.
+     */
+    public static final String RECID_INSTANCEID_SEPARATOR = "-";
     
     /**
      * Stores the exception handler. May be <b>null</b>.
@@ -225,5 +230,17 @@ public abstract class AbstractTestPlugin {
      */
     public abstract Long getConfigurationValue(int index, 
         MonitoringGroupValue value);
+    
+    /**
+     * Returns the instance identifiers for a certain monitoring group. Caches available instance
+     * identifier recording groups as recId-instanceId (using {@link #RECID_INSTANCEID_SEPARATOR} as
+     * separator). 
+     * 
+     * @param recId the recorder id to return the group for
+     * @return the available instance identifiers, may be <b>null</b> for none
+     * 
+     * @since 1.20
+     */
+    public abstract String[] getInstanceIdentifiers(String recId);
     
 }

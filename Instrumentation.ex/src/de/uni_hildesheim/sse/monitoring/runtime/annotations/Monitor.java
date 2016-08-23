@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.BooleanValue;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.DebugState;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.GroupAccountingType;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.InstanceIdentifierKind;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ResourceType;
 
 /**
@@ -16,7 +17,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.boot.ResourceType;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.20
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = {ElementType.TYPE, ElementType.METHOD, 
@@ -79,5 +80,12 @@ public @interface Monitor {
      * @since 1.00
      */
     public BooleanValue considerContained() default BooleanValue.DEFAULT;
+
+    /**
+     * Returns the instance identifier to be used for more detailed monitoring.
+     * 
+     * @since 1.20
+     */
+    public InstanceIdentifierKind instanceIdentifierKind() default InstanceIdentifierKind.DEFAULT;
 
 }

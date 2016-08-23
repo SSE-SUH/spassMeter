@@ -674,8 +674,7 @@ public class RecorderElementMap {
      * 
      * @since 1.00
      */
-    public Iterable<Entry<String, RecorderElement>> 
-    configurationToRecording() {
+    public Iterable<Entry<String, RecorderElement>> configurationToRecording() {
         return mappedConfigurations.entries();
     }
     

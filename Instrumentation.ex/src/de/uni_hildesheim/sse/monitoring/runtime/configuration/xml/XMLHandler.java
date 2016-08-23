@@ -347,7 +347,8 @@ class XMLHandler implements DocHandler {
                         MonitoringGroupConfiguration.create(
                             attributes.get("debug"),
                             attributes.get("groupAccounting"), 
-                            attributes.get("resources"));
+                            attributes.get("resources"), 
+                            attributes.get("instanceIdentification"));
                     groupConfigurations.put(id, conf); 
                 }
             }

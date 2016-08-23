@@ -166,7 +166,6 @@ public class ConfigurationTest {
      * 
      * @since 1.00
      */
-    @SuppressWarnings("unused")
     @ExcludeFromMonitoring
     private static String configToId(boolean file) {
         if (file) {

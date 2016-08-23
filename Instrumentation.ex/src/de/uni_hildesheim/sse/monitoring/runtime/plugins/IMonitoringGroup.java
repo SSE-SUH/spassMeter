@@ -3,6 +3,8 @@ package de.uni_hildesheim.sse.monitoring.runtime.plugins;
 import de.uni_hildesheim.sse.codeEraser.annotations.Operation;
 import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
 import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
+import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.RecorderElement;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.LongHashMap.MapElement;
 
 /**
  * Provides a read-only interface to the data collected for a monitoring group
@@ -13,7 +15,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.20
  */
 public interface IMonitoringGroup {
 
@@ -128,5 +130,35 @@ public interface IMonitoringGroup {
      */
     @Variability(id = AnnotationConstants.MONITOR_FILE_IO)
     public long getFileOut();
+    
+    /**
+     * Returns an instance recorder element for recording how the data in this recorder element
+     * is composed.
+     * 
+     * @param instanceId the instance identifier
+     * @return the instance recorder element
+     * 
+     * @since 1.20
+     */
+    public RecorderElement getInstanceRecorderElement(long instanceId);
+
+    /**
+     * Returns all instance recorder elements.
+     * 
+     * @return the instance recorder elements
+     * 
+     * @since 1.20
+     */
+    public Iterable<MapElement<RecorderElement>> instanceRecorderElements();
+
+
+    /**
+     * Returns all instance recorder keys.
+     * 
+     * @return the instance recorder keys
+     * 
+     * @since 1.20
+     */
+    public long[] instanceRecorderIds();
     
 }

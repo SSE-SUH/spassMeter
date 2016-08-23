@@ -8,7 +8,7 @@ package de.uni_hildesheim.sse.monitoring.runtime.boot;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.20
  */
 public class MonitoringGroupSettings {
 
@@ -51,6 +51,13 @@ public class MonitoringGroupSettings {
      */
     private ResourceType[] resources;
 
+    /**
+     * Stores the instance identifier kind.
+     * 
+     * @since 1.20
+     */
+    private InstanceIdentifierKind instanceIdentifierKind;
+    
     /**
      * Stores whether values in multi groups should be distributed evenly to
      * the contained values or whether the entire value should be added to each
@@ -102,6 +109,7 @@ public class MonitoringGroupSettings {
         resources = ResourceType.SET_DEFAULT;
         distributeValues = BooleanValue.DEFAULT;
         considerContained = BooleanValue.DEFAULT;
+        instanceIdentifierKind = InstanceIdentifierKind.NONE;
     }
     
     /**
@@ -111,15 +119,17 @@ public class MonitoringGroupSettings {
      * @param debugStates the intended debugging flags
      * @param gType the group accounting type
      * @param resources the accountable resources
+     * @param instanceIdentifierKind the instance identifier kind
      * 
-     * @since 1.00
+     * @since 1.20
      */
     public void setBasics(String[] id, DebugState[] debugStates, 
-        GroupAccountingType gType, ResourceType[] resources) {
+        GroupAccountingType gType, ResourceType[] resources, InstanceIdentifierKind instanceIdentifierKind) {
         this.id = id;
         this.debugStates = debugStates;
         this.gType = gType;
         this.resources = resources;
+        this.instanceIdentifierKind = instanceIdentifierKind;
     }
 
     /**
@@ -183,6 +193,17 @@ public class MonitoringGroupSettings {
      */
     public ResourceType[] getResources() {
         return resources;
+    }
+    
+    /**
+     * Returns the instance identifier kind.
+     * 
+     * @return the instance identifier kind
+     * 
+     * @since 1.20
+     */
+    public InstanceIdentifierKind getInstanceIdentifierKind() {
+        return instanceIdentifierKind;
     }
 
     /**

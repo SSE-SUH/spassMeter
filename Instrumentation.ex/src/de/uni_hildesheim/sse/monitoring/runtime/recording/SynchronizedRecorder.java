@@ -21,7 +21,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.utils.LinkedList;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.20
  */
 public class SynchronizedRecorder extends Recorder {
 
@@ -85,13 +85,15 @@ public class SynchronizedRecorder extends Recorder {
      * @param exclude is this an exclusion from monitoring
      * @param directId is <code>recId</code> direct, e.g. in case of an 
      *    annotated method
+     * @param instanceId the optional instance identifier, <code>0</code> means 
+     *    disabled
      * 
-     * @since 1.00
+     * @since 1.20
      */
     @Override
     public void enter(String caller, String recId, 
-        boolean exclude, boolean directId) {
-        super.enter(caller, recId, exclude, directId);
+        boolean exclude, boolean directId, long instanceId) {
+        super.enter(caller, recId, exclude, directId, instanceId);
     }
     
     /**
@@ -103,13 +105,15 @@ public class SynchronizedRecorder extends Recorder {
      * @param exclude is this an exclusion from monitoring
      * @param directId is <code>recId</code> direct, e.g. in case of an 
      *    annotated method
+     * @param instanceId the optional instance identifier, <code>0</code> means 
+     *    disabled
      * 
      * @since 1.00
      */
     @Override
     public final synchronized void exit(String caller, String recId, 
-        boolean exclude, boolean directId) {
-        super.exit(caller, recId, exclude, directId);
+        boolean exclude, boolean directId, long instanceId) {
+        super.exit(caller, recId, exclude, directId, instanceId);
     }
     
     /**

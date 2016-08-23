@@ -637,9 +637,8 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                             ids[i] = cl.getName();
                         }
                     }
-                    settings.setBasics(ids, mGroup.debug(), 
-                        mGroup.groupAccounting(), 
-                        mGroup.resources());
+                    settings.setBasics(ids, mGroup.debug(), mGroup.groupAccounting(), 
+                        mGroup.resources(), mGroup.instanceIdentifierKind());
                     if (ids.length > 1) {
                         settings.setMulti(mGroup.distributeValues(), 
                             mGroup.considerContained());

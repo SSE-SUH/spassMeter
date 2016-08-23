@@ -239,6 +239,7 @@ public abstract class AbstractNetIoTest {
         TestEnvironment.notice("read " + clientRead + " server " + serverRead 
             + " total " + (clientRead + serverRead));
         
+        socket.close();
         port++;
     }
 

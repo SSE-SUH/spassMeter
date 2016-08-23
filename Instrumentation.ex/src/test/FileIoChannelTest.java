@@ -58,6 +58,7 @@ public class FileIoChannelTest {
                 totalRead += read;
             } while (read > 0);
 
+            in.close();
             System.out.println("read " + ( file.length() ));
         }
 

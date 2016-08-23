@@ -6,6 +6,7 @@ import java.util.StringTokenizer;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.DebugState;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.GroupAccountingType;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.InstanceIdentifierKind;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ResourceType;
 
 /**
@@ -13,7 +14,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.boot.ResourceType;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.20
  */
 public class MonitoringGroupConfiguration {
 
@@ -50,6 +51,13 @@ public class MonitoringGroupConfiguration {
     private DebugState[] debug = DebugState.DEFAULT;
     
     /**
+     * Stores the instance identifier kind.
+     * 
+     * @since 1.20
+     */
+    private InstanceIdentifierKind instanceIdentifierKind = InstanceIdentifierKind.DEFAULT;
+    
+    /**
      * Creates the default instance.
      * 
      * @since 1.00
@@ -66,11 +74,12 @@ public class MonitoringGroupConfiguration {
      *   the default accounting specified in the configuration is applied)
      * @param resourceTypes the accountable resources (may be <b>null</b>, then
      *   all available resources are accounted).
+     * @param instanceIdentifierKind the instance identifier (may be <b>null</b>, leads to default)
      * 
-     * @since 1.00
+     * @since 1.20
      */
-    private MonitoringGroupConfiguration(DebugState[] debug, 
-        GroupAccountingType accounting, ResourceType[] resourceTypes) {
+    private MonitoringGroupConfiguration(DebugState[] debug, GroupAccountingType accounting, 
+        ResourceType[] resourceTypes, InstanceIdentifierKind instanceIdentifierKind) {
         if (null != debug) {
             // just keep default in case of null
             this.debug = debug;
@@ -83,70 +92,10 @@ public class MonitoringGroupConfiguration {
             // just keep default in case of null
             this.accounting = accounting;
         }
+        if (null != instanceIdentifierKind) {
+            this.instanceIdentifierKind = instanceIdentifierKind;
+        }
     }
-
-    /**
-     * Creates a new monitoring group configuration from equivalent string 
-     * values.
-     * 
-     * @param debug the debug states (may be <b>null</b>, then no debug state
-     *   is considered; comma separated)
-     * @param accounting the group accounting strategy (may be <b>null</b>, then
-     *   the default accounting specified in the configuration is applied)
-     * @param resources the accountable resources (may be <b>null</b>, then
-     *   all available resources are accounted; comma separated).
-     * 
-     * @since 1.00
-     */
-/*    public MonitoringGroupConfiguration(String debug, String accounting, 
-        String resources) {
-        if (null != debug) {
-            StringTokenizer tokens = new StringTokenizer(debug, ",");
-            List<DebugState> states = new ArrayList<DebugState>();
-            while (tokens.hasMoreTokens()) {
-                String state = tokens.nextToken();
-                for (DebugState res : DebugState.values()) {
-                    if (res.name().equals(state)) {
-                        states.add(res);
-                        break;
-                    }
-                }
-            }
-            if (!states.isEmpty()) {
-                this.debug = new DebugState[states.size()];
-                states.toArray(this.debug);
-            }
-        }
-        if (null != accounting) {
-            for (GroupAccountingType gValue : GroupAccountingType.values()) {
-                if (gValue.name().equals(accounting)) {
-                    this.accounting = gValue;
-                    break;
-                }
-            }
-            if (this.accounting == GroupAccountingType.DEFAULT) {
-                this.accounting = Configuration.INSTANCE.
-                    getGroupAccountingType();
-            }
-        }
-        if (null != resources) {
-            StringTokenizer tokens = new StringTokenizer(resources, ",");
-            List<ResourceType> foundResources = new ArrayList<ResourceType>();
-            while (tokens.hasMoreTokens()) {
-                String resource = tokens.nextToken();
-                for (ResourceType res : ResourceType.values()) {
-                    if (res.name().equals(resource)) {
-                        foundResources.add(res);
-                        break;
-                    }
-                }
-            }
-            if (!foundResources.isEmpty()) {
-                this.resourceTypes = new ResourceType[foundResources.size()];
-                foundResources.toArray(this.resourceTypes);
-            }
-        }
-    }*/
     
     /**
      * Returns the group accounting to be applied. 
@@ -182,6 +131,17 @@ public class MonitoringGroupConfiguration {
     public DebugState[] getDebug() { 
         return debug;
     }
+    
+    /**
+     * Returns the instance identifier kind.
+     * 
+     * @return the instance identifier kind
+     * 
+     * @since 1.20
+     */
+    public InstanceIdentifierKind getInstanceIdentifierKind() {
+        return instanceIdentifierKind;
+    }
 
     /**
      * Creates a new monitoring group configuration and checks for references
@@ -191,12 +151,13 @@ public class MonitoringGroupConfiguration {
      *   to be emitted during monitoring (must not be <b>null</b>)
      * @param accounting the group accounting strategy (must not be <b>null</b>)
      * @param resourceTypes the accountable resources (must not be <b>null</b>)
+     * @param instanceIdentifierKind instance identifier kind (must not be <b>null</b>)
      * @return the created monitoring group configuration or {@link #DEFAULT}
      * 
-     * @since 1.00
+     * @since 1.20
      */
     public static final MonitoringGroupConfiguration create(DebugState[] debug, 
-        GroupAccountingType accounting, ResourceType[] resourceTypes) {
+        GroupAccountingType accounting, ResourceType[] resourceTypes, InstanceIdentifierKind instanceIdentifierKind) {
         Configuration conf = Configuration.INSTANCE;
 
         resourceTypes = ResourceType.ensureSubset(
@@ -232,15 +193,17 @@ public class MonitoringGroupConfiguration {
         }
         
         MonitoringGroupConfiguration result;
-        if (accounting == DEFAULT.accounting
-            && Arrays.deepEquals(resourceTypes, DEFAULT.resourceTypes)
-            && Arrays.deepEquals(debug, DEFAULT.debug)) {
+        boolean isDflt = accounting == DEFAULT.accounting;
+        isDflt &= Arrays.deepEquals(resourceTypes, DEFAULT.resourceTypes);
+        isDflt &= Arrays.deepEquals(debug, DEFAULT.debug);
+        isDflt &= (null == instanceIdentifierKind || InstanceIdentifierKind.NONE == instanceIdentifierKind);
+        if (isDflt) {
             // unify references and safe memory
             result = DEFAULT;
         } else {
             // create new instance
             result = new MonitoringGroupConfiguration(debug, accounting, 
-                resourceTypes);
+                resourceTypes, instanceIdentifierKind);
         }
         return result;
     }
@@ -255,15 +218,17 @@ public class MonitoringGroupConfiguration {
      *   the default accounting specified in the configuration is applied)
      * @param resources the accountable resources (may be <b>null</b>, then
      *   all available resources are accounted; comma separated).
+     * @param instanceIdentifierKind the instance identifier kind, may be <b>null</b> then the default is used
      * @return the created monitoring group configuration or {@link #DEFAULT}
      * 
      * @since 1.00
      */
     public static MonitoringGroupConfiguration create(
-        String debug, String accounting, String resources) {
+        String debug, String accounting, String resources, String instanceIdentifierKind) {
         DebugState[] aDebug = DebugState.DEFAULT;
         GroupAccountingType aAccounting = GroupAccountingType.DEFAULT;
         ResourceType[] aResources = ResourceType.SET_DEFAULT;
+        InstanceIdentifierKind aInstanceIdentifierKind = InstanceIdentifierKind.NONE;
         if (null != debug) {
             StringTokenizer tokens = new StringTokenizer(debug, ",");
             ArrayList<DebugState> states = new ArrayList<DebugState>();
@@ -307,7 +272,15 @@ public class MonitoringGroupConfiguration {
                 foundResources.toArray(aResources);
             }
         }
-        return create(aDebug, aAccounting, aResources);
+        if (null != instanceIdentifierKind) {
+            for (InstanceIdentifierKind iid : InstanceIdentifierKind.values()) {
+                if (iid.name().equals(instanceIdentifierKind)) {
+                    aInstanceIdentifierKind = iid;
+                    break;
+                }
+            }
+        }
+        return create(aDebug, aAccounting, aResources, aInstanceIdentifierKind);
     }
     
     /**

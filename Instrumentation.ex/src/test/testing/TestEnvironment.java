@@ -18,10 +18,15 @@ import de.uni_hildesheim.sse.system.GathererFactory;
  *
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.20
  */
 @Variability(id = AnnotationId.VAR_TESTING)
 public class TestEnvironment {
+
+    /**
+     * The separator between recording and instance ids.
+     */
+    public static final String RECID_INSTANCEID_SEPARATOR = AbstractTestPlugin.RECID_INSTANCEID_SEPARATOR;
     
     /**
      * Enable or disable debugging of testing, e.g. printing additional
@@ -357,6 +362,26 @@ public class TestEnvironment {
         }
         return result;
     }
+    
+    /**
+     * Returns the instance identifiers for a certain monitoring group. Caches available instance
+     * identifier recording groups as recId-instanceId (using {@link #RECID_INSTANCEID_SEPARATOR} as
+     * separator). 
+     * 
+     * @param recId the recorder id to return the group for
+     * @return the available instance identifiers, may be <b>null</b> for none
+     * 
+     * @since 1.20
+     */
+    public static String[] getInstanceIdentifiers(String recId) {
+        String[] result = null;
+        if (initialize()) {
+            if (null != plugin) {
+                result = plugin.getInstanceIdentifiers(recId);
+            }
+        }
+        return result;
+    }
 
     /**
      * Asserts that a given value in a monitoring group is greater than (or 
@@ -562,6 +587,22 @@ public class TestEnvironment {
             stopAndFail();
         }
     }
+    
+    /**
+     * Asserts the equality of <code>expected</code> and <code>value</code>.
+     * 
+     * @param recId the recorder identification to test for
+     * @param expected the expected value
+     * @param value the actual value
+     * 
+     * @since 1.20
+     */
+    public static void assertEquals(String recId, int expected, int value) {
+        if (expected != value) {
+            System.out.println(recId + ": int equality failed (" + expected + " != " + value + ")");
+            stopAndFail();
+        }        
+    }
 
     /**
      * Asserts the <code>test</code> value to null.
@@ -602,8 +643,7 @@ public class TestEnvironment {
      * 
      * @since 1.00
      */
-    public static void assertEquals(String recId, long value, 
-        long expected) {
+    public static void assertEquals(String recId, long value, long expected) {
         if (value != expected) {
             System.out.println(recId + ": assert " + value + "=" + expected 
                 + " failed");
@@ -729,8 +769,7 @@ public class TestEnvironment {
         }
         
         if (msg.length() > 0) {
-            System.out.println(recId + ": "
-                + recResult + text + msg);
+            System.out.println(recId + ": " + recResult + text + msg);
             stopAndFail();
         }
     }

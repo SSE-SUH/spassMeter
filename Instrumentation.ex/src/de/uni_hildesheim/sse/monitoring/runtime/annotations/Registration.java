@@ -1,5 +1,6 @@
 package de.uni_hildesheim.sse.monitoring.runtime.annotations;
 
+import de.uni_hildesheim.sse.monitoring.runtime.boot.InstanceIdentifierKind;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ResourceType;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.Annotations;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.AttributeMetaData;
@@ -31,7 +32,9 @@ public class Registration {
         ResourceType[] all = new ResourceType[1];
         all[0] = ResourceType.ALL;
         Annotations.register(Monitor.class, 
-            new AttributeMetaData("resources", all, all.getClass()));
+            new AttributeMetaData("resources", all, all.getClass()),
+            new AttributeMetaData("instanceIdentifierKind", 
+                InstanceIdentifierKind.DEFAULT, InstanceIdentifierKind.class));
         Annotations.register(ExcludeFromMonitoring.class);
         Annotations.register(StartSystem.class);
         Annotations.register(EndSystem.class);

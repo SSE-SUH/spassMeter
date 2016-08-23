@@ -5,19 +5,22 @@ import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
 import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.DebugState;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.GroupAccountingType;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.InstanceIdentifierKind;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ResourceType;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.StreamType;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.Configuration;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.
     MonitoringGroupConfiguration;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.IMonitoringGroup;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.LongHashMap;
+import de.uni_hildesheim.sse.monitoring.runtime.utils.LongHashMap.MapElement;
 
 /**
  * Defines the element, i.e. the data to be recorded for a monitoring group.
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.20
  */
 public abstract class RecorderElement implements IMonitoringGroup {
 
@@ -37,6 +40,11 @@ public abstract class RecorderElement implements IMonitoringGroup {
      * case.
      */
     private MonitoringGroupConfiguration conf;
+    
+    /**
+     * Stores the instance recorder elements.
+     */
+    private LongHashMap<RecorderElement> instanceElements;
     
     /**
      * Creates a recorder element.
@@ -393,4 +401,42 @@ public abstract class RecorderElement implements IMonitoringGroup {
         }
     }
 
+    @Override
+    public RecorderElement getInstanceRecorderElement(long instanceId) {
+        RecorderElement result = this;
+        if (InstanceIdentifierKind.NONE != conf.getInstanceIdentifierKind()) {
+            if (null == instanceElements) {
+                instanceElements = new LongHashMap<RecorderElement>();
+            }
+            result = instanceElements.get(instanceId);
+            if (null == result) {
+                result = new InstanceRecorderElement(conf, this);
+                instanceElements.put(instanceId, result);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Iterable<MapElement<RecorderElement>> instanceRecorderElements() {
+        Iterable<MapElement<RecorderElement>> result;
+        if (null == instanceElements) {
+            result = null;
+        } else {
+            result = instanceElements.entries();
+        }
+        return result;
+    }
+
+    @Override
+    public long[] instanceRecorderIds() {
+        long[] result;
+        if (null == instanceElements) {
+            result = null;
+        } else {
+            result = instanceElements.keySet();
+        }
+        return result;
+    }
+    
 }

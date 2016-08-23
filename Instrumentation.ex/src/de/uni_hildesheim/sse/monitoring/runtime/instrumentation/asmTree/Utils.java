@@ -46,7 +46,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.20
  */
 class Utils implements Opcode {
 
@@ -1277,7 +1277,27 @@ class Utils implements Opcode {
         }
         return result;
     }
-    
+
+    /**
+     * Returns an instruction node representing an long constant.
+     * 
+     * @param val the long value for representing the constant
+     * @return the instruction node
+     * 
+     * @since 1.20
+     */
+    public static AbstractInsnNode longToNode(long val) {
+        AbstractInsnNode result;
+        if (0 == val) {
+            result = new InsnNode(LCONST_0);
+        } else if (1 == val) {
+            result = new InsnNode(LCONST_1);
+        } else {
+            result = new LdcInsnNode(val);
+        }
+        return result;
+    }
+
     /**
      * Adds instructions to the stack which loads the current class.
      * 

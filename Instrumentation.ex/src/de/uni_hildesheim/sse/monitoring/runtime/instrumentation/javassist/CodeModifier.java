@@ -45,6 +45,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.annotations.TimerState;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.BooleanValue;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.DebugState;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.GroupAccountingType;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.InstanceIdentifierKind;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.MonitoringGroupSettings;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.RecorderAccess;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.RecorderFrontend;
@@ -116,8 +117,7 @@ public class CodeModifier implements ICodeModifier {
      * Stores the relationship between measurement value constants and
      * related code generation data.
      */
-    private static final HashMap<MeasurementValue, MeasurementValueData> 
-    MEASUREMENT_VALUE_DATA_MAP 
+    private static final HashMap<MeasurementValue, MeasurementValueData> MEASUREMENT_VALUE_DATA_MAP 
         = new HashMap<MeasurementValue, MeasurementValueData>();
     
     static {
@@ -762,11 +762,13 @@ public class CodeModifier implements ICodeModifier {
             } else {
                 recId = "\"\"";
             }
+            
+            String instanceIdentifier = instanceIdentifierParameter(behavior, mGroup);
             String entryCode = RECORDER + ".enter(" + clsStr + "," + recId 
-                + "," + exclude + "," + directId + ");";
+                + "," + exclude + "," + directId + "," + instanceIdentifier + ");";
             jaBehavior.insertBefore(entryCode);
             String exitCode = RECORDER + ".exit(" + clsStr + "," + recId 
-                + "," + exclude + "," + directId + ");";
+                + "," + exclude + "," + directId + "," + instanceIdentifier + ");";
             try {
                 CtClass ctThrowable = ClassPool.get("java.lang.Throwable");
                 jaBehavior.addCatch(
@@ -779,6 +781,38 @@ public class CodeModifier implements ICodeModifier {
         } catch (CannotCompileException e) {
             throw new InstrumenterException(e);
         }
+    }
+    
+    /**
+     * Returns the code for identifying an individual instance.
+     * 
+     * @param behavior the behavior to instrument
+     * @param mGroup the monitoring group
+     * @return the code
+     * 
+     * @since 1.00
+     */
+    private String instanceIdentifierParameter(IBehavior behavior, Monitor mGroup) {
+        String result = "";
+        boolean done = false;
+        if (!(behavior.isConstructor() || behavior.isStatic())) {
+            done = true;
+            switch (mGroup.instanceIdentifierKind()) {
+            case IDENTITY_HASHCODE:
+                result = "(long) java.lang.System.identityHashCode($0)";
+                break;
+            case THREAD_ID:
+                result = "java.lang.Thread.currentThread().getId()";
+                break;
+            default:
+                done = false;
+                break;
+            }
+        }
+        if (!done) {
+            result = "0L";
+        }
+        return result;
     }
 
     /**
@@ -818,6 +852,10 @@ public class CodeModifier implements ICodeModifier {
             builder.append(mGroup.groupAccounting().name());
             builder.append(paramSeparator);
             resourcesAsParam(mGroup.resources(), builder);
+            builder.append(paramSeparator);
+            builder.append(InstanceIdentifierKind.class.getName());
+            builder.append(".");
+            builder.append(mGroup.instanceIdentifierKind().name());
             builder.append(");");
 
             // optional: produce code for filling multi values

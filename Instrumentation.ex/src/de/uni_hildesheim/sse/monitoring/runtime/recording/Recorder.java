@@ -55,7 +55,7 @@ import de.uni_hildesheim.sse.system.IMemoryUnallocationReceiver;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.20
  */
 public class Recorder extends RecorderFrontend 
     implements IMemoryUnallocationReceiver {
@@ -162,7 +162,7 @@ public class Recorder extends RecorderFrontend
             COLLECTION_ENTRY_SIZE 
                 = ObjectSizeProvider.getInstance().getObjectSize(array) / 2;
             System.out.println("Map.Entry size " + MAP_ENTRY_SIZE 
-                + " ref size " + COLLECTION_ENTRY_SIZE );
+                + " ref size " + COLLECTION_ENTRY_SIZE);
         } else {
             MAP_ENTRY_SIZE = 24;
             COLLECTION_ENTRY_SIZE = 12;
@@ -308,7 +308,7 @@ public class Recorder extends RecorderFrontend
         if (null == conf) {
             conf = MonitoringGroupConfiguration.create(
                 settings.getDebugStates(), settings.getAccountingType(), 
-                settings.getResources());
+                settings.getResources(), settings.getInstanceIdentifierKind());
         }
         Lock.registerGroup(className, recId, conf);
         // boolean as parameter
@@ -429,7 +429,7 @@ public class Recorder extends RecorderFrontend
             // tid may be shutdownthread
             SystemMonitoring.stopTimer();
             long now = System.nanoTime();
-            ThreadsInfo info = SystemMonitoring.getThreadInfo(programThreadId);
+            ThreadsInfo info = SystemMonitoring.getThreadInfo(programThreadId, 0);
             boolean release = STRATEGY.stopTimeRecording(now, info);
             // map is currently not pooled - ignore return value
             STRATEGY.finishRecording(now, programThreadId,
@@ -557,7 +557,7 @@ public class Recorder extends RecorderFrontend
         //TODO add overhead
         long tid = SystemMonitoring.getCurrentThreadId();
         long accMem = Lock.isStackTopMemoryAccounting(tid);
-        ThreadsInfo info = SystemMonitoring.getThreadInfo(tid);
+        ThreadsInfo info = SystemMonitoring.getThreadInfo(tid, 0);
         if (STRATEGY.assignAllTo(recId, enter, System.nanoTime(), info)) {
             ThreadsInfo.POOL.release(info);
         }
@@ -599,12 +599,14 @@ public class Recorder extends RecorderFrontend
      * @param exclude is this an exclusion from monitoring
      * @param directId is <code>recId</code> direct, e.g. in case of an 
      *    annotated method
+     * @param instanceId the optional instance identifier, <code>0</code> means 
+     *    disabled
      * 
      * @since 1.00
      */
     @Override
     public void enter(String caller, String recId, 
-        boolean exclude, boolean directId) {
+        boolean exclude, boolean directId, long instanceId) {
         if (isRecording) {
             long tid = SystemMonitoring.getCurrentThreadId();
             long accMem = Lock.isStackTopMemoryAccounting(tid);
@@ -625,7 +627,7 @@ public class Recorder extends RecorderFrontend
                 now = 0;
             }*/
             recId = assignId(recId, caller, directId);
-            ThreadsInfo info = SystemMonitoring.getThreadInfo(tid);
+            ThreadsInfo info = SystemMonitoring.getThreadInfo(tid, instanceId);
             if (STRATEGY.enter(recId, System.nanoTime(), info, exclude)) {
                 ThreadsInfo.POOL.release(info);
             }
@@ -649,12 +651,14 @@ public class Recorder extends RecorderFrontend
      * @param exclude is this an exclusion from monitoring
      * @param directId is <code>recId</code> direct, e.g. in case of an 
      *    annotated method
+     * @param instanceId the optional instance identifier, <code>0</code> means 
+     *    disabled
      * 
      * @since 1.00
      */
     @Override
     public void exit(String caller, String recId, 
-        boolean exclude, boolean directId) {
+        boolean exclude, boolean directId, long instanceId) {
         if (isRecording) {
             long tid = SystemMonitoring.getCurrentThreadId();
             long accMem = Lock.isStackTopMemoryAccounting(tid);
@@ -662,7 +666,7 @@ public class Recorder extends RecorderFrontend
             if (accMem > 0) {
                 STRATEGY.memoryAllocated(recId, tid, 0, accMem);
             }
-            ThreadsInfo info = SystemMonitoring.getThreadInfo(tid);
+            ThreadsInfo info = SystemMonitoring.getThreadInfo(tid, instanceId);
             if (STRATEGY.exit(recId, System.nanoTime(), info, exclude)) {
                 ThreadsInfo.POOL.release(info);
             }
