@@ -13,7 +13,10 @@
 	<property name="gearsBridge.home" value="../gearsBridge"/>
 	<property name="codeEraser.home" value="../CodeEraser"/>
 	
-    <property name="gbj.classpath" value="${gbj.base}"/>
+	<path id="gbj.classpath">
+	    <pathelement location="${gbj.lib}/eraser-runtime.jar"/>
+	    <pathelement location="${gbj.lib}/json-lobaris.jar"/>
+	</path>
 
 	<taskdef resource="code-eraser.properties" 
 		classpath="${gbj.tools}/eraser.jar"/>
@@ -45,9 +48,11 @@
        <mkdir dir="${gbj.bin}"/>
        <javac           
           srcdir="${gbj.src}" 
+		  source="1.7"
+		  target="1.7"
           includeantruntime="false"
               compiler="modern" 
-              classpath="${gbj.classpath}"
+              classpathref="gbj.classpath"
               destdir="${gbj.bin}"
               excludes="bin/**"
           debug="on" />

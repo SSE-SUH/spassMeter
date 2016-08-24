@@ -86,6 +86,7 @@ public @interface Monitor {
      * 
      * @since 1.20
      */
-    public InstanceIdentifierKind instanceIdentifierKind() default InstanceIdentifierKind.DEFAULT;
+    public InstanceIdentifierKind instanceIdentifierKind() default InstanceIdentifierKind.NONE;
+    // DEFAULT works only with JDK 1.8
 
 }
