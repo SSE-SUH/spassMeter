@@ -27,7 +27,7 @@
         <mvnDeploy folderName="${ant.project.name}" jarFolder="${meter.jars}/all" jarFile="spass-meter.jar"/>
     	<delete file="pom.xml"/>
         <copy file="pom/locutor-all.xml" toFile="pom.xml" overwrite="true"/>
-        <mvnDeploy folderName="locutor" jarFolder="${meter.lib}" jarFile="locutor-all.jar"/>
+        <mvnDeploy folderName="locutor" jarFolder="${meter.lib}" jarFile="locutor-all-1.00.jar"/>
     	<delete file="pom.xml"/>
     </target>
     
