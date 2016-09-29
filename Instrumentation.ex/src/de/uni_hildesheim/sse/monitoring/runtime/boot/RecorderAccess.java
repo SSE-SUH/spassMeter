@@ -4,7 +4,6 @@ import de.uni_hildesheim.sse.codeEraser.annotations.Operation;
 import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
 import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.TimerState;
-import de.uni_hildesheim.sse.monitoring.runtime.instrumentation.ElschaLogger;
 
 /**
  * Provides static access to {@link RecorderFrontend}. This is needed because
@@ -555,7 +554,6 @@ public class RecorderAccess {
      * @since 1.00
      */
     public static void printCurrentState() {
-       ElschaLogger.info("RecoderAccess.printCurrentState");
         if (null != RecorderFrontend.instance) {
             RecorderFrontend.instance.printCurrentState();
         }

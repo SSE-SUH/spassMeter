@@ -3,13 +3,10 @@ package de.uni_hildesheim.sse.monitoring.runtime.recording;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.sun.org.apache.xml.internal.serializer.ElemDesc;
-
 import de.uni_hildesheim.sse.monitoring.runtime.boot.RecorderFrontend;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.Configuration;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.
     ConfigurationListener;
-import de.uni_hildesheim.sse.monitoring.runtime.instrumentation.ElschaLogger;
 //import de.uni_hildesheim.sse.monitoring.runtime.instrumentation.lib.IFactory;
 import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.ProcessData;
 import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.
@@ -167,7 +164,6 @@ public class SystemMonitoring {
          * @since 1.00
          */
         public void collectOnce() {
-           ElschaLogger.info("SystemMonitoring.collectOnce");
             synchronized (processData) {
                 IThisProcessDataGatherer pdg = 
                     GathererFactory.getThisProcessDataGatherer();
@@ -236,7 +232,6 @@ public class SystemMonitoring {
          * Runs the task.
          */
         public void run() {
-           ElschaLogger.info("LogEventTask.run");
             RecorderFrontend.instance.printCurrentState();
         }
     }
