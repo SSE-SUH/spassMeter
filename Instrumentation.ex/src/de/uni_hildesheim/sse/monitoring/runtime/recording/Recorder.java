@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import de.uni_hildesheim.sse.codeEraser.annotations.Operation;
 import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
 import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
-import de.uni_hildesheim.sse.monitoring.runtime.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.Helper;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.TimerState;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
@@ -1305,7 +1304,6 @@ public class Recorder extends RecorderFrontend
      */
     @Override
     public void printCurrentState() {
-       ElschaLogger.info("Recoder.printCurrentState is recording = " + isRecording);
         if (isRecording) {
             long tid = SystemMonitoring.getCurrentThreadId();
             long accMem = Lock.isStackTopMemoryAccounting(tid);

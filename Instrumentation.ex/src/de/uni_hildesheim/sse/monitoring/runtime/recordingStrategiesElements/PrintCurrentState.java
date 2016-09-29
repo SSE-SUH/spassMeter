@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
 import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
-import de.uni_hildesheim.sse.monitoring.runtime.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.ProcessData;
 import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.
     RecorderStrategy;
@@ -75,7 +74,6 @@ public class PrintCurrentState extends RecordingStrategiesElement {
      */
     @Override
     public void process(RecorderStrategy strategy) {
-       ElschaLogger.info("PrintCurrentState.process with strategy = " + strategy);
         strategy.printCurrentState(data);
     }
 
