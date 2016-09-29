@@ -14,6 +14,7 @@ import java.util.logging.Level;
 
 import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
 import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
+import de.uni_hildesheim.sse.monitoring.runtime.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.Helper;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.TimerState;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.DebugState;
@@ -1191,10 +1192,13 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
      */
     @Override
     public boolean printCurrentState(ProcessData pData) {
+       ElschaLogger.info("DefaultRecorderStrategy.printCurrentState with data = " + pData);
         MonitoringGroupBurstChangeListener listener 
             = PluginRegistry.getMonitoringGroupBurstChangeListener();
         MonitoringGroupChangeListener chListener 
-            = PluginRegistry.getMonitoringGroupChangeListener();        
+            = PluginRegistry.getMonitoringGroupChangeListener();
+       ElschaLogger.info("listener = " + listener);
+       ElschaLogger.info("chListener = " + chListener);
         if (null != listener || null != chListener) {
             if (null == systemNotificationInstance) {
                 systemNotificationInstance = new ProcessData.Measurements();
