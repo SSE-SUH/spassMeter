@@ -1,4 +1,4 @@
-package de.uni_hildesheim.sse.monitoring.runtime.instrumentation;
+package de.uni_hildesheim.sse.monitoring.runtime;
 
 import java.io.BufferedWriter;
 import java.io.File;

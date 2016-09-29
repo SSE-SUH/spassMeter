@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import de.uni_hildesheim.sse.codeEraser.annotations.Operation;
 import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
 import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
+import de.uni_hildesheim.sse.monitoring.runtime.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.Helper;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.TimerState;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
@@ -23,7 +24,6 @@ import de.uni_hildesheim.sse.monitoring.runtime.configuration.
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.
     MonitoringGroupConfiguration;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.ObjectSizeCache;
-import de.uni_hildesheim.sse.monitoring.runtime.instrumentation.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.IPluginParameter;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.Plugin;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.ValueType;
