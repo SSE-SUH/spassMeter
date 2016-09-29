@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.Configuration;
-import de.uni_hildesheim.sse.monitoring.runtime.instrumentation.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.*;
 import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.*;
 
@@ -280,7 +279,6 @@ public class TCPRecordingServer {
          */
         @Override
         public void run() {
-           ElschaLogger.info("TCPRecording.WorkThread.run");
             boolean end = false;
             while (!end) {
                 if (elements.size() > 0) {
