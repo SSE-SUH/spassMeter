@@ -1,5 +1,6 @@
 package de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies;
 
+import de.uni_hildesheim.sse.monitoring.runtime.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.*;
 
 /**
@@ -42,6 +43,7 @@ public class DefaultEventRecorderStrategy
      */
     protected void handleEvent(RecordingStrategiesElement event) 
         throws HandleException {
+       ElschaLogger.info("DefaultEventRecorderStrategy.hendleEvent with event = " + event);
         event.process(strategy);
     }
 }
