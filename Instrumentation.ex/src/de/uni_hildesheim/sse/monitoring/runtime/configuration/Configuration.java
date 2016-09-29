@@ -80,8 +80,8 @@ public class Configuration {
 
     /**
      * Stores the interval (in 500ms units) used for incrementally printing 
-     * aggregated events.
-     * 
+     * aggregated events.<br/>
+     * This value must be 0 &lt; outInterval &lt; 500, otherwise this function will be disabled.
      * @since 1.00
      */
     private int outInterval = 0;
