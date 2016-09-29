@@ -35,7 +35,7 @@ public class ElschaLogger {
         
         OUT = out;
         
-        info("Logging started.");
+        info("Logging started, Log version 2.");
     }
     
     public static void info(String msg) {
