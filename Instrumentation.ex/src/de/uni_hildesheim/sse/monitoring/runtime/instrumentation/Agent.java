@@ -7,7 +7,6 @@ import java.lang.instrument.UnmodifiableClassException;
 import java.util.jar.JarFile;
 
 import de.uni_hildesheim.sse.codeEraser.util.OnCreationJarProvider;
-import de.uni_hildesheim.sse.monitoring.runtime.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.Configuration;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration
     .IObjectSizeProvider;

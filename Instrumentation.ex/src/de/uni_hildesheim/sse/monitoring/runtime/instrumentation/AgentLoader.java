@@ -3,8 +3,6 @@ package de.uni_hildesheim.sse.monitoring.runtime.instrumentation;
 import java.lang.management.ManagementFactory;
 import com.sun.tools.attach.VirtualMachine;
 
-import de.uni_hildesheim.sse.monitoring.runtime.ElschaLogger;
-
 /**
  * A class for automatically loading the agent loader (currently untested 
  * / unused).

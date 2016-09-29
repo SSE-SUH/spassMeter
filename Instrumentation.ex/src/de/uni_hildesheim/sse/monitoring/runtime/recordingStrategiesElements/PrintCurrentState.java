@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
 import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
-import de.uni_hildesheim.sse.monitoring.runtime.ElschaLogger;
+import de.uni_hildesheim.sse.monitoring.runtime.instrumentation.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.ProcessData;
 import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.
     RecorderStrategy;

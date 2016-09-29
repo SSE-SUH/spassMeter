@@ -14,7 +14,6 @@ import java.util.logging.Level;
 
 import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
 import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
-import de.uni_hildesheim.sse.monitoring.runtime.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.Helper;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.TimerState;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.DebugState;
@@ -24,6 +23,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.boot.StreamType;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.Configuration;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.
     MonitoringGroupConfiguration;
+import de.uni_hildesheim.sse.monitoring.runtime.instrumentation.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.
     MonitoringGroupBurstChangeListener;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.
