@@ -191,7 +191,7 @@ public class SystemMonitoring {
                 
                 int maxOutInterval = Configuration.INSTANCE.getOutInterval();
                 // start legacy
-                if (maxOutInterval > 0 && maxOutInterval < 500) {
+                if (maxOutInterval > 0) {
                     outIntervalCount++;
                     if (outIntervalCount >= maxOutInterval) {
                         outIntervalCount = 0;
