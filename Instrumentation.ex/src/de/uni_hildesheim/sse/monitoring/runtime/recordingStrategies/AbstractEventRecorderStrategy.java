@@ -53,7 +53,7 @@ public abstract class AbstractEventRecorderStrategy
 //    private LinkedList<RecordingStrategiesElement> elements 
 //        = new LinkedList<RecordingStrategiesElement>();
     private RecordingStrategiesElementLinkedList elements
-    	= new RecordingStrategiesElementLinkedList();
+        = new RecordingStrategiesElementLinkedList();
 
     /**
      * The internal lock for the message producer-consumer.

@@ -30,19 +30,19 @@ public class PluginRegistry {
      * Stores the monitoring group change listener.
      */
     private static MonitoringGroupChangeListener 
-    monitoringGroupChangeListener = null;
+        monitoringGroupChangeListener = null;
 
     /**
      * Stores the monitoring group change listener.
      */
     private static MonitoringGroupBurstChangeListener 
-    monitoringGroupBurstChangeListener = null;
+        monitoringGroupBurstChangeListener = null;
     
     /**
      * Stores the monitoring group change listener.
      */
     private static MonitoringGroupCreationListener 
-    monitoringGroupCreationListener = null;
+        monitoringGroupCreationListener = null;
     
     
     /**
@@ -146,7 +146,7 @@ public class PluginRegistry {
      * @since 1.00
      */
     public static final MonitoringGroupChangeListener 
-    getMonitoringGroupChangeListener() {
+        getMonitoringGroupChangeListener() {
         return monitoringGroupChangeListener;
     }
 
@@ -158,7 +158,7 @@ public class PluginRegistry {
      * @since 1.00
      */
     public static final MonitoringGroupBurstChangeListener 
-    getMonitoringGroupBurstChangeListener() {
+        getMonitoringGroupBurstChangeListener() {
         return monitoringGroupBurstChangeListener;
     }
 
@@ -171,7 +171,7 @@ public class PluginRegistry {
      * @since 1.00
      */
     public static final MonitoringGroupCreationListener 
-    getMonitoringGroupCreationListener() {
+        getMonitoringGroupCreationListener() {
         return monitoringGroupCreationListener;
     }
 
