@@ -195,7 +195,7 @@ public class SystemMonitoring {
                     outIntervalCount++;
                     ElschaLogger.info("CollectOnce with outIntervalCount = " + outIntervalCount + ", maxOutInterval = " + maxOutInterval);
                     if (outIntervalCount >= maxOutInterval) {
-                       outIntervalCount = -1;  //0;
+                        outIntervalCount = 0;
                     }
                     if (0 == outIntervalCount) {
                         RecorderFrontend.instance.printCurrentState();
