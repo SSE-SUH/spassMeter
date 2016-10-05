@@ -193,6 +193,7 @@ public class SystemMonitoring {
                 // start legacy
                 if (maxOutInterval > 0) {
                     outIntervalCount++;
+                    ElschaLogger.info("CollectOnce with outIntervalCount = " + outIntervalCount + ", maxOutInterval = " + maxOutInterval);
                     if (outIntervalCount >= maxOutInterval) {
                        outIntervalCount = -1;  //0;
                     }
