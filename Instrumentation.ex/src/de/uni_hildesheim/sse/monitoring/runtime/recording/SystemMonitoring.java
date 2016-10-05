@@ -194,7 +194,7 @@ public class SystemMonitoring {
                 if (maxOutInterval > 0) {
                     outIntervalCount++;
                     if (outIntervalCount >= maxOutInterval) {
-                        outIntervalCount = 0;
+                       outIntervalCount = -1;  //0;
                     }
                     if (0 == outIntervalCount) {
                         RecorderFrontend.instance.printCurrentState();
