@@ -122,6 +122,7 @@ public class Agent implements IObjectSizeProvider, IRecordingEndListener {
      * @param inst the instrumentation instance
      */
     public static void premain(String agentArgs, Instrumentation inst) {
+        ElschaPermanentLogger.info("Agent started with parameters = " + agentArgs);
         initialize(agentArgs, inst);
     }
 
