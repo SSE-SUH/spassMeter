@@ -37,13 +37,16 @@ public class ElschaLogger {
     }
 
     public static void printStackTrace() {
-        StringBuffer sb = new StringBuffer("Stack trace is:\n");
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-        for (int i = 0; i < stack.length; i++) {
-            sb.append(" - ");
-            sb.append(stack[i].toString());
+
+        if (null != stack && stack.length > 2) {
+            StringBuffer sb = new StringBuffer("Stack trace is:\n");
+            for (int i = 2; i < stack.length; i++) {
+                sb.append(" - ");
+                sb.append(stack[i].toString());
+                sb.append("\n");
+            }
+            info(sb.toString());
         }
-        sb.append("\n");
-        info(sb.toString());
     }
 }

@@ -149,7 +149,8 @@ public class SystemMonitoring {
          * @since 1.00
          */
         public boolean isRunning() {
-            return null != run;
+           return null != run && true == run;
+//            return null != run;
         }
         
         /**
