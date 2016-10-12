@@ -38,6 +38,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.configuration.ScopeType;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.xml.
     XMLConfiguration;
 import de.uni_hildesheim.sse.monitoring.runtime.instrumentation.lib.*;
+import de.uni_hildesheim.sse.monitoring.runtime.recording.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.recording.Recorder;
 
 /**
@@ -318,6 +319,7 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 }
             }
         }
+       ElschaLogger.info("GetMonitoringAnnotation for class = " + cl.getName() + ", result = " + result);
         return result;
     }
 
