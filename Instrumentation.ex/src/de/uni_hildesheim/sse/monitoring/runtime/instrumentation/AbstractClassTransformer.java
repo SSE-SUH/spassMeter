@@ -319,7 +319,6 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 }
             }
         }
-       ElschaLogger.info("GetMonitoringAnnotation for class = " + cl.getName() + ", result = " + result);
         return result;
     }
 
@@ -457,6 +456,7 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 boolean hasFinalizer = false;
                 MethodEditor methodEditor = 
                     MethodEditor.getFromPool(mGroup, false, this, false);
+               ElschaLogger.info("Meditor for class " + cl.getName() + " is " + methodEditor);
                 for (int m = 0; m < bCount; m++) {
                     IBehavior behavior = cl.getDeclaredBehavior(m);
                     if (!behavior.isAbstract() && !behavior.isNative()) {
@@ -484,6 +484,7 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                                 }
                             }
                         } catch (InstrumenterException e) {
+                           ElschaLogger.info("Caught Exception: " + e.getMessage());
                             if (!handleMethodInstrumentationException(e)) {
                                 throw e;
                             }
