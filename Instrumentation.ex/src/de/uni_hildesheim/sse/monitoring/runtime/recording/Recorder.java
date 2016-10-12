@@ -1308,6 +1308,7 @@ public class Recorder extends RecorderFrontend
             long tid = SystemMonitoring.getCurrentThreadId();
             long accMem = Lock.isStackTopMemoryAccounting(tid);
             ProcessData p = SystemMonitoring.getProcessData();
+            ElschaLogger.info("Send process data to " + STRATEGY);
             if (STRATEGY.printCurrentState(p)) {
                 ProcessData.release(p);
             }

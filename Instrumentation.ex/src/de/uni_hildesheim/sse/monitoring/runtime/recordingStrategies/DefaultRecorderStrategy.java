@@ -36,6 +36,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.plugins.ValueType;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.internal.Cleanup;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.internal.
     InternalPluginRegistry;
+import de.uni_hildesheim.sse.monitoring.runtime.recording.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap.Entry;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.LongHashMap;
@@ -1209,6 +1210,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
             }
         }
         if (null != listener) {
+           ElschaLogger.info("Sending system notification to " + listener);
             listener.notifyBurstChange(systemNotificationInstance, 
                 jvmNotificationInstance);
         }
