@@ -456,7 +456,6 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 boolean hasFinalizer = false;
                 MethodEditor methodEditor = 
                     MethodEditor.getFromPool(mGroup, false, this, false);
-               ElschaLogger.info("Meditor for class " + cl.getName() + " is " + methodEditor);
                 for (int m = 0; m < bCount; m++) {
                     IBehavior behavior = cl.getDeclaredBehavior(m);
                     if (!behavior.isAbstract() && !behavior.isNative()) {
@@ -470,8 +469,10 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                             methodEditor.setGroup(mSem, false, this, inherited);
                         }
                         try {
+                           ElschaLogger.info("Transforming " + cl.getName());
                             transformed |= doMethod(behavior, mSem, inherited, 
                                 type, methodEditor);
+                           ElschaLogger.info("Transformed " + cl.getName() + " = " + transformed);
                             if (0 == mainCount && "main".equals(
                                 behavior.getName())) {
                                 int pCount = behavior.getParameterCount();
@@ -484,7 +485,6 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                                 }
                             }
                         } catch (InstrumenterException e) {
-                           ElschaLogger.info("Caught Exception: " + e.getMessage());
                             if (!handleMethodInstrumentationException(e)) {
                                 throw e;
                             }
@@ -983,6 +983,12 @@ public class AbstractClassTransformer implements ISemanticsCollector {
             modifier.instrumentConstructor(behavior);
             modified = true;
         }
+        
+        if (behavior.getDeclaringClassName().contains("FamilyElement")) {
+            ElschaLogger.info("doMEthod with ecluded = " + isExcluded + ", mGroup = " + mGroupClass + ", inherited = " + inherited);
+        }
+        
+        
         if (!isExcluded) {
             if (null != mGroupClass && !inherited) {
                 modifier.instrumentTiming(behavior, mGroupClass, false, 
