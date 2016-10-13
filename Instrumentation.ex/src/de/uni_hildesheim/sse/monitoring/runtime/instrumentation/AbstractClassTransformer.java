@@ -509,6 +509,11 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                     || cl.isInstanceOf(Constants.JAVA_LANG_RUNNABLE)) {
                     transformed |= instrumentThreadRun(cl, type);
                 }
+                
+            if (cl.getDeclaringClassName().contains("FamilyElement")) {
+                ElschaLogger.info("Registering " + cl.getDeclaringClassName() + ", isInterface = " + cl.isInterface() + ", assignedSemantics = " + assignedSemantics);
+            }
+                
                 if (!cl.isInterface() && null == assignedSemantics) {
                     transformed |= registerRecorderId(mGroup, cl);
                 }
