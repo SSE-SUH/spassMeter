@@ -282,9 +282,9 @@ public class RecorderElementMap {
             }
         }
         int varId = -1;
-        if (className.contains("FamilyElement")) {
-            ElschaLogger.info("Recoder.put.1 " + className + ", mappingName = " + mappingName + ", !mappedClasses.containsKey(mappingName) = " + !mappedClasses.containsKey(mappingName));
-        }
+    if (className.contains("FamilyElement")) {
+        ElschaLogger.info("Recoder.put.1 " + className + ", mappingName = " + mappingName + ", !mappedClasses.containsKey(mappingName) = " + !mappedClasses.containsKey(mappingName));
+    }
         if (null != mappingName && !mappedClasses.containsKey(mappingName)) {
             PositionRecord posRecord = null;
             boolean isOverhead 
@@ -347,6 +347,9 @@ public class RecorderElementMap {
             registered.setVarId(varId);
             MonitoringGroupCreationListener listener 
                 = PluginRegistry.getMonitoringGroupCreationListener();
+        if (className.contains("FamilyElement")) {
+            ElschaLogger.info("Recoder.put.2 " + className + ", listener = " + listener + ", posRecord = " + posRecord);
+        }
             if (null != listener) {
                 if (null != posRecord) {
                     listener.configurationCreated(mappingName, registered);
