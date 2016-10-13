@@ -657,9 +657,18 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                     if (cl.getDeclaringClassName().contains("FamilyElement")) {
                         ElschaLogger.info("Will register  " + cl.getDeclaringClassName() + " at " + RecorderFrontend.instance);
                     }
-                    
+                    try {
                     RecorderFrontend.instance.registerForRecording(
                         cl.getName(), settings);
+                    } catch (Throwable t) {
+                        if (cl.getDeclaringClassName().contains("FamilyElement")) {
+                            ElschaLogger.info("Caught exception " + t.toString() + "\n" + t.getMessage());
+                        }
+                    } finally {
+                        if (cl.getDeclaringClassName().contains("FamilyElement")) {
+                            ElschaLogger.info("registering done for " + cl.getName());
+                        }
+                    }
                     MonitoringGroupSettings.release(settings);
                 }
             }

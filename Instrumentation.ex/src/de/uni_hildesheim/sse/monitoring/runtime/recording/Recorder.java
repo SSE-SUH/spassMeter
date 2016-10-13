@@ -289,6 +289,7 @@ public class Recorder extends RecorderFrontend
     @Override
     public final void registerForRecording(String className, 
         MonitoringGroupSettings settings) {
+       ElschaLogger.info("registerForRecording for " + className);
         Configuration mConf = Configuration.INSTANCE;
         long tid = SystemMonitoring.getCurrentThreadId();
         long accMem = Lock.isStackTopMemoryAccounting(tid);
