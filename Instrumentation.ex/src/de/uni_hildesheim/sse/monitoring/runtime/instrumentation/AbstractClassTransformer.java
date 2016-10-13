@@ -985,7 +985,7 @@ public class AbstractClassTransformer implements ISemanticsCollector {
         }
         
         if (behavior.getDeclaringClassName().contains("FamilyElement")) {
-            ElschaLogger.info("doMEthod with ecluded = " + isExcluded + ", mGroup = " + mGroupClass + ", inherited = " + inherited);
+            ElschaLogger.info("doMethod with excluded = " + isExcluded + ", mGroup = " + mGroupClass + ", inherited = " + inherited);
         }
         
         
@@ -994,6 +994,9 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 modifier.instrumentTiming(behavior, mGroupClass, false, 
                     null != mGroup);
                 modified = true;
+                if (behavior.getDeclaringClassName().contains("FamilyElement")) {
+                    ElschaLogger.info("timing instrumented for " + behavior.getDeclaringClassName() + " with " + modifier);
+                }
             }
             boolean configLocal = (GroupAccountingType.LOCAL 
                 == editor.getGroupAccountingType());
