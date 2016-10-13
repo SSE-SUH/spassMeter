@@ -187,6 +187,9 @@ public class StrategyStorage implements RecorderElementFactory {
                 if (null != id && 1 == id.length) {
                     recId = Helper.trimId(id[0]);
                 }
+            if (className.contains("FamilyElement")) {
+                ElschaLogger.info("StrategyStorage.registerForRecording.3 put " + className + ", recId = " + recId + ", conf = " + conf);
+            }
                 recorderElements.put(className, recId, conf);
                 // testing consistency
                 if (recorderElements.pseudoElementsSize() > 0) {

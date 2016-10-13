@@ -282,6 +282,9 @@ public class RecorderElementMap {
             }
         }
         int varId = -1;
+        if (className.contains("FamilyElement")) {
+            ElschaLogger.info("Recoder.put.1 " + className + ", mappingName = " + mappingName + ", !mappedClasses.containsKey(mappingName) = " + !mappedClasses.containsKey(mappingName));
+        }
         if (null != mappingName && !mappedClasses.containsKey(mappingName)) {
             PositionRecord posRecord = null;
             boolean isOverhead 
