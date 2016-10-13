@@ -511,7 +511,7 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                 }
                 
             if (cl.getDeclaringClassName().contains("FamilyElement")) {
-                ElschaLogger.info("Registering " + cl.getDeclaringClassName() + ", isInterface = " + cl.isInterface() + ", assignedSemantics = " + assignedSemantics);
+                ElschaLogger.info("Registering " + cl.getDeclaringClassName() + ", isInterface = " + cl.isInterface() + ", assignedSemantics = " + assignedSemantics + ", mGroup = " + mGroup);
             }
                 
                 if (!cl.isInterface() && null == assignedSemantics) {
