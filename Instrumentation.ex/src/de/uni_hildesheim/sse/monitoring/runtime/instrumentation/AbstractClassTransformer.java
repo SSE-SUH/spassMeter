@@ -617,7 +617,7 @@ public class AbstractClassTransformer implements ISemanticsCollector {
         Monitor mGroup, IClass cl) throws InstrumenterException {
         boolean modified = false;
         
-        ElschaLogger.info("First register call " + cl.getDeclaringClassName() + ", !Helper.ignore(mGroup) = " + !Helper.ignore(mGroup) + ", Helper.isId(mGroup, Helper.PROGRAM_ID) || Helper.isId(mGroup, Helper.RECORDER_ID) = " + (Helper.isId(mGroup, Helper.PROGRAM_ID) || Helper.isId(mGroup, Helper.RECORDER_ID)) + ", mGroup = " + mGroup);
+        ElschaLogger.info("First register call " + cl.getDeclaringClassName() + ", !Helper.ignore(mGroup) = " + !Helper.ignore(mGroup) + ", Helper.isId(mGroup, Helper.PROGRAM_ID) || Helper.isId(mGroup, Helper.RECORDER_ID) = " + (Helper.isId(mGroup, Helper.PROGRAM_ID) || Helper.isId(mGroup, Helper.RECORDER_ID)) + ", isStatic = " + isStatic + ", mGroup = " + mGroup);
         
         if (null != mGroup) {
             if (Helper.isId(mGroup, Helper.PROGRAM_ID) 
