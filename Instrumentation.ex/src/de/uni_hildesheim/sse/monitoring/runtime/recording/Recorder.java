@@ -312,6 +312,7 @@ public class Recorder extends RecorderFrontend
         }
         Lock.registerGroup(className, recId, conf);
         // boolean as parameter
+       ElschaLogger.info("Registering " + className + ", recId = " + recId + ", conf = " + conf + ", settings = " + settings);
         STRATEGY.registerForRecording(className, recId, conf, settings);
         Lock.setStackTopMemoryAccounting(tid, accMem);
     }   

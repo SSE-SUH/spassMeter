@@ -14,6 +14,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.configuration.
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.
     MonitoringGroupCreationListener;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.PluginRegistry;
+import de.uni_hildesheim.sse.monitoring.runtime.recording.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap.Entry;
 
@@ -347,6 +348,7 @@ public class RecorderElementMap {
                 if (null != posRecord) {
                     listener.configurationCreated(mappingName, registered);
                 } else {
+                   ElschaLogger.info("Configure listener " + listener + ", mappingName = " + mappingName + ", registered = " + registered);
                     listener.monitoringGroupCreated(mappingName, registered);
                 }
             }
