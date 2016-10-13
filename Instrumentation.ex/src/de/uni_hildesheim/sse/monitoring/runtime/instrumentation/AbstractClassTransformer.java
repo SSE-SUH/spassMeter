@@ -654,6 +654,10 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                         settings.setMulti(mGroup.distributeValues(), 
                             mGroup.considerContained());
                     }
+                    if (cl.getDeclaringClassName().contains("FamilyElement")) {
+                        ElschaLogger.info("Will register  " + cl.getDeclaringClassName() + " at " + RecorderFrontend.instance);
+                    }
+                    
                     RecorderFrontend.instance.registerForRecording(
                         cl.getName(), settings);
                     MonitoringGroupSettings.release(settings);
