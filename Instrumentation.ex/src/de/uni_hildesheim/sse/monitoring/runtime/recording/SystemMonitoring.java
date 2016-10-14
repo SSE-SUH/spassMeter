@@ -134,8 +134,6 @@ public class SystemMonitoring {
          */
         @Override
         public boolean cancel() {
-            ElschaLogger.info("CollectOnce stopped.");
-            ElschaLogger.printStackTrace();
             run = false;
             return super.cancel();
         }
@@ -157,8 +155,6 @@ public class SystemMonitoring {
          * Execute the data collection by calling {@link #collectOnce()}.
          */
         public void run() {
-            ElschaLogger.info("CollectOnce started.");
-            ElschaLogger.printStackTrace();
             run = true;
             collectOnce();
         }
@@ -198,7 +194,6 @@ public class SystemMonitoring {
                 // start legacy
                 if (maxOutInterval > 0) {
                     outIntervalCount++;
-                    ElschaLogger.info("CollectOnce with outIntervalCount = " + outIntervalCount + ", maxOutInterval = " + maxOutInterval);
                     if (outIntervalCount >= maxOutInterval) {
                         outIntervalCount = 0;
                     }
