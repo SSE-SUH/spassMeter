@@ -64,11 +64,11 @@ public class ClassLoaderTest {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } finally {
-        	try {
-				cl.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+            try {
+                cl.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
     

@@ -285,7 +285,10 @@ public class RecorderElementMap {
             PositionRecord posRecord = null;
             boolean isOverhead 
                 = mappingName.equals(Helper.RECORDER_ID);
-            if (!idToConfiguration.containsKey(mappingName) && !isOverhead) {
+            if (!idToConfiguration.containsKey(mappingName)
+                && Configuration.INSTANCE.measureVariantContributions()
+                && !isOverhead) {
+                
                 String idName = null;
                 char idValue = 1; // always active
                 int confPos = -1;

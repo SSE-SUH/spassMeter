@@ -147,8 +147,7 @@ public class SystemMonitoring {
          * @since 1.00
          */
         public boolean isRunning() {
-           return null != run && true == run;
-//            return null != run;
+            return Boolean.TRUE == run;
         }
         
         /**

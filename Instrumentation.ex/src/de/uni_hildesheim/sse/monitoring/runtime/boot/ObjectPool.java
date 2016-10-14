@@ -61,14 +61,13 @@ public class ObjectPool<T extends Poolable<T>> {
     * @since   SugiBib 1.20
     */    
     public final synchronized T getFromPool() {
-		int size = pool.size();
-		T result;
-		if (0 == size) { // || (maxSize > 0 && size >= maxSize)
-			result = prototype.create();
-		} else {
-			result = pool.remove(size - 1);
-		}
-//System.out.println("OBTAIN: " + System.identityHashCode(result) + " " + result.getClass() + "" + maxSize + " " + pool.size());
+        int size = pool.size();
+        T result;
+        if (0 == size) { // || (maxSize > 0 && size >= maxSize)
+            result = prototype.create();
+        } else {
+            result = pool.remove(size - 1);
+        }
         return result;
     }
 
@@ -79,13 +78,10 @@ public class ObjectPool<T extends Poolable<T>> {
     * @param instance the instance to be released (must not be <b>null</b>)
     */  
     public final synchronized void release(T instance) {
-//System.out.println("RELEASE?: " + System.identityHashCode(instance) + " " + instance.getClass() + " " + maxSize + " " + pool.size());
-		instance.clear();
+        instance.clear();
         if (maxSize == 0 || (maxSize > 0 && pool.size() < maxSize)) {
-//System.out.println("RELEASE: " + System.identityHashCode(instance) + " " + instance.getClass() + " " + maxSize + " " + pool.size());
             pool.add(instance);   
         } //else {
-//System.out.println("NO RELEASE: " + System.identityHashCode(instance) + " " + instance.getClass() + " " + maxSize + " " + pool.size());  
 //        }
     }
     
