@@ -203,7 +203,6 @@ public class SystemMonitoring {
                         outIntervalCount = 0;
                     }
                     if (0 == outIntervalCount) {
-                       ElschaLogger.info("Print current state via " + RecorderFrontend.instance);
                         RecorderFrontend.instance.printCurrentState();
                     }
                 }

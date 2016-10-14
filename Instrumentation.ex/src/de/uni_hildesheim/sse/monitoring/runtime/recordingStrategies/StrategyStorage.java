@@ -7,7 +7,6 @@ import de.uni_hildesheim.sse.monitoring.runtime.boot.MonitoringGroupSettings;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.Configuration;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.
     MonitoringGroupConfiguration;
-import de.uni_hildesheim.sse.monitoring.runtime.recording.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
 
 /**
@@ -149,18 +148,10 @@ public class StrategyStorage implements RecorderElementFactory {
      */
     public void registerForRecording(String className, String recId, 
         MonitoringGroupConfiguration conf, MonitoringGroupSettings settings) {
-    if (className.contains("FamilyElement")) {
-        ElschaLogger.info("StrategyStorage.registerForRecording.1 for " + className + ", !recorderElements.containsKey(className) = " + !recorderElements.containsKey(className));
-    }
-        
-        
         if (!recorderElements.containsKey(className)) {
             String[] id = settings.getId();
             Configuration.LOG.info("Mapping " + className + " -> " 
                 + Arrays.toString(id));
-        if (className.contains("FamilyElement")) {
-            ElschaLogger.info("StrategyStorage.registerForRecording.2 for " + className + ", id = " + Arrays.toString(id));
-        }
             if (null != id && id.length > 1) {
                 RecorderElement[] elements = new RecorderElement[id.length];
                 for (int i = 0; i < id.length; i++) {
@@ -187,9 +178,6 @@ public class StrategyStorage implements RecorderElementFactory {
                 if (null != id && 1 == id.length) {
                     recId = Helper.trimId(id[0]);
                 }
-            if (className.contains("FamilyElement")) {
-                ElschaLogger.info("StrategyStorage.registerForRecording.3 put " + className + ", recId = " + recId + ", conf = " + conf);
-            }
                 recorderElements.put(className, recId, conf);
                 // testing consistency
                 if (recorderElements.pseudoElementsSize() > 0) {

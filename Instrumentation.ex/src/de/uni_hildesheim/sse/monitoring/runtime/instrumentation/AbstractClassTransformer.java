@@ -38,7 +38,6 @@ import de.uni_hildesheim.sse.monitoring.runtime.configuration.ScopeType;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.xml.
     XMLConfiguration;
 import de.uni_hildesheim.sse.monitoring.runtime.instrumentation.lib.*;
-import de.uni_hildesheim.sse.monitoring.runtime.recording.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.recording.Recorder;
 
 /**
@@ -469,10 +468,8 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                             methodEditor.setGroup(mSem, false, this, inherited);
                         }
                         try {
-                           ElschaLogger.info("Transforming " + cl.getName());
                             transformed |= doMethod(behavior, mSem, inherited, 
                                 type, methodEditor);
-                           ElschaLogger.info("Transformed " + cl.getName() + " = " + transformed);
                             if (0 == mainCount && "main".equals(
                                 behavior.getName())) {
                                 int pCount = behavior.getParameterCount();
@@ -509,11 +506,6 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                     || cl.isInstanceOf(Constants.JAVA_LANG_RUNNABLE)) {
                     transformed |= instrumentThreadRun(cl, type);
                 }
-                
-            if (cl.getDeclaringClassName().contains("FamilyElement")) {
-                ElschaLogger.info("Registering " + cl.getDeclaringClassName() + ", isInterface = " + cl.isInterface() + ", assignedSemantics = " + assignedSemantics + ", mGroup = " + mGroup);
-            }
-                
                 if (!cl.isInterface() && null == assignedSemantics) {
                     transformed |= registerRecorderId(mGroup, cl);
                 }
@@ -616,9 +608,6 @@ public class AbstractClassTransformer implements ISemanticsCollector {
     private final synchronized boolean registerRecorderId(
         Monitor mGroup, IClass cl) throws InstrumenterException {
         boolean modified = false;
-        
-        ElschaLogger.info("First register call " + cl.getDeclaringClassName() + ", !Helper.ignore(mGroup) = " + !Helper.ignore(mGroup) + ", Helper.isId(mGroup, Helper.PROGRAM_ID) || Helper.isId(mGroup, Helper.RECORDER_ID) = " + (Helper.isId(mGroup, Helper.PROGRAM_ID) || Helper.isId(mGroup, Helper.RECORDER_ID)) + ", isStatic = " + isStatic + ", mGroup = " + mGroup);
-        
         if (null != mGroup) {
             if (Helper.isId(mGroup, Helper.PROGRAM_ID) 
                 || Helper.isId(mGroup, Helper.RECORDER_ID)) {
@@ -654,11 +643,8 @@ public class AbstractClassTransformer implements ISemanticsCollector {
                         settings.setMulti(mGroup.distributeValues(), 
                             mGroup.considerContained());
                     }
-                    if (cl.getDeclaringClassName().contains("FamilyElement")) {
-                        ElschaLogger.info("Will register  " + cl.getDeclaringClassName() + " at " + RecorderFrontend.instance);
-                    }
                     RecorderFrontend.instance.registerForRecording(
-                            cl.getName(), settings);
+                        cl.getName(), settings);
                     MonitoringGroupSettings.release(settings);
                 }
             }
@@ -994,20 +980,11 @@ public class AbstractClassTransformer implements ISemanticsCollector {
             modifier.instrumentConstructor(behavior);
             modified = true;
         }
-        
-        if (behavior.getDeclaringClassName().contains("FamilyElement")) {
-            ElschaLogger.info("doMethod with excluded = " + isExcluded + ", mGroup = " + mGroupClass + ", inherited = " + inherited);
-        }
-        
-        
         if (!isExcluded) {
             if (null != mGroupClass && !inherited) {
                 modifier.instrumentTiming(behavior, mGroupClass, false, 
                     null != mGroup);
                 modified = true;
-                if (behavior.getDeclaringClassName().contains("FamilyElement")) {
-                    ElschaLogger.info("timing instrumented for " + behavior.getDeclaringClassName() + " with " + modifier);
-                }
             }
             boolean configLocal = (GroupAccountingType.LOCAL 
                 == editor.getGroupAccountingType());

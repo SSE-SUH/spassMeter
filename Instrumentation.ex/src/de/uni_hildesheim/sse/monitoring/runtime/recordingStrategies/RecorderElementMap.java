@@ -14,7 +14,6 @@ import de.uni_hildesheim.sse.monitoring.runtime.configuration.
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.
     MonitoringGroupCreationListener;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.PluginRegistry;
-import de.uni_hildesheim.sse.monitoring.runtime.recording.ElschaLogger;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap.Entry;
 
@@ -282,9 +281,6 @@ public class RecorderElementMap {
             }
         }
         int varId = -1;
-    if (className.contains("FamilyElement")) {
-        ElschaLogger.info("Recoder.put.1 " + className + ", mappingName = " + mappingName + ", !mappedClasses.containsKey(mappingName) = " + !mappedClasses.containsKey(mappingName));
-    }
         if (null != mappingName && !mappedClasses.containsKey(mappingName)) {
             PositionRecord posRecord = null;
             boolean isOverhead 
@@ -347,14 +343,10 @@ public class RecorderElementMap {
             registered.setVarId(varId);
             MonitoringGroupCreationListener listener 
                 = PluginRegistry.getMonitoringGroupCreationListener();
-        if (className.contains("FamilyElement")) {
-            ElschaLogger.info("Recoder.put.2 " + className + ", listener = " + listener + ", posRecord = " + posRecord);
-        }
             if (null != listener) {
                 if (null != posRecord) {
                     listener.configurationCreated(mappingName, registered);
                 } else {
-                   ElschaLogger.info("Configure listener " + listener + ", mappingName = " + mappingName + ", registered = " + registered);
                     listener.monitoringGroupCreated(mappingName, registered);
                 }
             }

@@ -289,7 +289,6 @@ public class Recorder extends RecorderFrontend
     @Override
     public final void registerForRecording(String className, 
         MonitoringGroupSettings settings) {
-       ElschaLogger.info("registerForRecording for " + className);
         Configuration mConf = Configuration.INSTANCE;
         long tid = SystemMonitoring.getCurrentThreadId();
         long accMem = Lock.isStackTopMemoryAccounting(tid);
@@ -313,7 +312,6 @@ public class Recorder extends RecorderFrontend
         }
         Lock.registerGroup(className, recId, conf);
         // boolean as parameter
-       ElschaLogger.info("Registering " + className + ", recId = " + recId + ", conf = " + conf + ", settings = " + settings);
         STRATEGY.registerForRecording(className, recId, conf, settings);
         Lock.setStackTopMemoryAccounting(tid, accMem);
     }   
@@ -1310,7 +1308,6 @@ public class Recorder extends RecorderFrontend
             long tid = SystemMonitoring.getCurrentThreadId();
             long accMem = Lock.isStackTopMemoryAccounting(tid);
             ProcessData p = SystemMonitoring.getProcessData();
-            ElschaLogger.info("Send process data to " + STRATEGY);
             if (STRATEGY.printCurrentState(p)) {
                 ProcessData.release(p);
             }
