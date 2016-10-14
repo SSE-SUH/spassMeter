@@ -7,6 +7,8 @@ import java.io.IOException;
 import de.uni_hildesheim.sse.codeEraser.annotations.Operation;
 import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
 import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.ObjectPool;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.Poolable;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.StreamType;
 import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.
     RecorderStrategy;
@@ -15,14 +17,21 @@ import de.uni_hildesheim.sse.monitoring.runtime.utils.StreamUtilities;
 /**
  * Defines a ReadIoElement.
  * 
- * @author Stephan Dederichs
+ * @author Stephan Dederichs, Aike Sass
  * @since 1.00
  * @version 1.00
  */
 @Variability(id = { AnnotationConstants.STRATEGY_TCP, 
         AnnotationConstants.MONITOR_NET_IO, 
         AnnotationConstants.MONITOR_FILE_IO }, op = Operation.AND)
-public class IoElement extends RecordingStrategiesElement {
+public class IoElement extends RecordingStrategiesElement 
+    implements Poolable<IoElement> {
+    
+    /**
+     * Defines an object pool for this class.
+     */
+    public static final ObjectPool<IoElement> POOL = new ObjectPool<IoElement>(
+            new IoElement(), 1000);
     
     /**
      * Stores the recId.
@@ -59,7 +68,8 @@ public class IoElement extends RecordingStrategiesElement {
      * 
      * @since 1.00
      */
-    public IoElement() { 
+    IoElement() { 
+        // do not call this from outside, use the ObjectPools
     }
     
     /**
@@ -201,5 +211,72 @@ public class IoElement extends RecordingStrategiesElement {
      */
     @Override
     public void clear() {
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void release() {
+        POOL.release(this);
+    }
+
+    @Override
+    public IoElement create() {
+        return new IoElement();
+    }
+
+    /**
+     * Setter for the thread id.
+     * 
+     * @param threadId the id to be set
+     */
+    public void setThreadId(long threadId) {
+        this.threadId = threadId;
+    }
+
+    /**
+     * Setter for the caller.
+     * 
+     * @param caller the caller to be set
+     */
+    public void setCaller(String caller) {
+        this.caller = caller;
+    }
+
+    /**
+     * Setter for write or read access.
+     * 
+     * @param write true if write access else false
+     */
+    public void setWrite(boolean write) {
+        this.write = write;
+    }
+
+    /**
+     * Getter for the tread id.
+     * 
+     * @return the id of the thread
+     */
+    public long getThreadId() {
+        return threadId;
+    }
+
+    /**
+     * Getter for the caller.
+     * 
+     * @return the caller
+     */
+    public String getCaller() {
+        return caller;
+    }
+
+    /**
+     * Getter for write.
+     * 
+     * @return true if it is a write access else false
+     */
+    public boolean isWrite() {
+        return write;
     }
 }

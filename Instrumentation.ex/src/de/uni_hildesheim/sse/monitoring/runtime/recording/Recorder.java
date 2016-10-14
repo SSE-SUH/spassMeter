@@ -161,8 +161,6 @@ public class Recorder extends RecorderFrontend
             Object array = new Object[2];
             COLLECTION_ENTRY_SIZE 
                 = ObjectSizeProvider.getInstance().getObjectSize(array) / 2;
-            System.out.println("Map.Entry size " + MAP_ENTRY_SIZE 
-                + " ref size " + COLLECTION_ENTRY_SIZE);
         } else {
             MAP_ENTRY_SIZE = 24;
             COLLECTION_ENTRY_SIZE = 12;

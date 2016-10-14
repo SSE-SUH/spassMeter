@@ -219,9 +219,19 @@ public abstract class AbstractEventRecorderStrategy
      * {@inheritDoc}
      */
     @Override
-    public void readIo(String recId, String caller, long threadId, int bytes, 
-        StreamType type) {
-        add(new IoElement(recId, caller, threadId, bytes, type, false));
+    public void readIo(String recId, String caller, long threadId, int bytes, StreamType type) {
+        if (DOPOOLING) {
+            IoElement ioElement = IoElement.POOL.getFromPool();
+            ioElement.setRecId(recId);
+            ioElement.setCaller(caller);
+            ioElement.setThreadId(threadId);
+            ioElement.setBytes(bytes);
+            ioElement.setType(type);
+            ioElement.setWrite(true);
+            add(ioElement);
+        } else {
+            add(new IoElement(recId, caller, threadId, bytes, type, false));
+        }
     }
 
     /**
@@ -237,11 +247,21 @@ public abstract class AbstractEventRecorderStrategy
      * {@inheritDoc}
      */
     @Override
-    public void writeIo(String recId, String caller, long threadId, int bytes, 
-        StreamType type) {
-        add(new IoElement(recId, caller, threadId, bytes, type, true));
+    public void writeIo(String recId, String caller, long threadId, int bytes, StreamType type) {
+        if (DOPOOLING) {
+            IoElement ioElement = IoElement.POOL.getFromPool();
+            ioElement.setRecId(recId);
+            ioElement.setCaller(caller);
+            ioElement.setThreadId(threadId);
+            ioElement.setBytes(bytes);
+            ioElement.setType(type);
+            ioElement.setWrite(true);
+            add(ioElement);
+        } else {
+            add(new IoElement(recId, caller, threadId, bytes, type, true));
+        }
     }
-
+    
     /**
      * {@inheritDoc}
      */

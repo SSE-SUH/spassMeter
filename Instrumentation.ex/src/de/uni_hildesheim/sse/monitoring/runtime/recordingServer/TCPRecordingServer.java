@@ -171,7 +171,7 @@ public class TCPRecordingServer {
                         printStatistics++;
                         break;
                     case Constants.IO:
-                        e = new IoElement();
+                        e = IoElement.POOL.getFromPool();
                         io++;
                         break;
                     case Constants.STARTRECORDING:
