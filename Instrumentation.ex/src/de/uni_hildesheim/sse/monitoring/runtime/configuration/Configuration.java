@@ -16,6 +16,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.Helper;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.GroupAccountingType;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.InstanceIdentifierKind;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.MainDefaultType;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ResourceType;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.xml.
@@ -202,8 +203,7 @@ public class Configuration {
     /**
      * Stores the memory accounting type.
      */
-    private MemoryAccountingType memoryAccountingType 
-        = MemoryAccountingType.CREATION_UNALLOCATION;
+    private MemoryAccountingType memoryAccountingType = MemoryAccountingType.CREATION_UNALLOCATION;
 /*    
     {
         if (JBOSS_EXPERIMENT) {
@@ -216,14 +216,17 @@ public class Configuration {
     /**
      * Stores the group accounting type.
      */
-    private GroupAccountingType groupAccountingType 
-        = GroupAccountingType.DIRECT;
+    private GroupAccountingType groupAccountingType = GroupAccountingType.DIRECT;
 
+    /**
+     * Stores the instance identifier kind.
+     */
+    private InstanceIdentifierKind instanceIdentifierKind = InstanceIdentifierKind.DEFAULT;
+    
     /**
      * Stores the annotation search type.
      */
-    private AnnotationSearchType annotationSearchType 
-        = AnnotationSearchType.NONE;
+    private AnnotationSearchType annotationSearchType = AnnotationSearchType.NONE;
     
     /**
      * Stores the accountable resources (currently all).
@@ -339,6 +342,9 @@ public class Configuration {
         ConfigurationEntry.registerEntry("groupAccounting", 
             "groupAccountingType", ConfigurationEntry.Type.ENUM, 
             GroupAccountingType.class);
+        ConfigurationEntry.registerEntry("instanceIdentifierKind", 
+            "instanceIdentifierKind", ConfigurationEntry.Type.ENUM, 
+            InstanceIdentifierKind.class);        
         ConfigurationEntry.registerEntry("accountableResources", 
             "accountableResources", ConfigurationEntry.Type.ARRAY_ENUM, 
             ResourceType.class);        
@@ -555,6 +561,17 @@ public class Configuration {
      */
     public GroupAccountingType getGroupAccountingType() {
         return groupAccountingType;
+    }
+    
+    /**
+     * Returns the default instance identifier kind.
+     * 
+     * @return the default instance identifier kind
+     * 
+     * @since 1.20
+     */
+    public InstanceIdentifierKind getInstanceIdentifierKind() {
+        return instanceIdentifierKind;
     }
 
     /**

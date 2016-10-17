@@ -191,12 +191,15 @@ public class MonitoringGroupConfiguration {
             // replaced
             accounting = conf.getGroupAccountingType();
         }
+        if (InstanceIdentifierKind.DEFAULT == instanceIdentifierKind) {
+            instanceIdentifierKind = conf.getInstanceIdentifierKind();
+        }
         
         MonitoringGroupConfiguration result;
         boolean isDflt = accounting == DEFAULT.accounting;
         isDflt &= Arrays.deepEquals(resourceTypes, DEFAULT.resourceTypes);
         isDflt &= Arrays.deepEquals(debug, DEFAULT.debug);
-        isDflt &= (null == instanceIdentifierKind || InstanceIdentifierKind.NONE == instanceIdentifierKind);
+        isDflt &= (null == instanceIdentifierKind || InstanceIdentifierKind.DEFAULT == instanceIdentifierKind);
         if (isDflt) {
             // unify references and safe memory
             result = DEFAULT;
