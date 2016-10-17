@@ -227,7 +227,7 @@ public abstract class AbstractEventRecorderStrategy
             ioElement.setThreadId(threadId);
             ioElement.setBytes(bytes);
             ioElement.setType(type);
-            ioElement.setWrite(true);
+            ioElement.setWrite(false);
             add(ioElement);
         } else {
             add(new IoElement(recId, caller, threadId, bytes, type, false));

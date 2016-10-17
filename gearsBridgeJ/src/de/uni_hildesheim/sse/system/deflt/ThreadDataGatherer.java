@@ -132,7 +132,8 @@ public class ThreadDataGatherer implements IThreadDataGatherer {
         long count = 0;
         if (THREAD_CPU_TICKS_ENABLED) {
             for (Thread t : Thread.getAllStackTraces().keySet()) {
-                count += THREAD_MX.getThreadCpuTime(t.getId());
+                count += getCpuThreadTime0(t.getId());
+                //count += THREAD_MX.getThreadCpuTime(t.getId());
             }
         } else if (SUBSTITUTE_BY_PROCESS) {
             count = ThisProcessDataGatherer.getCurrentProcessKernelTimeTicks0() 
@@ -152,7 +153,8 @@ public class ThreadDataGatherer implements IThreadDataGatherer {
     public long getCurrentCpuTime() {
         long result = 0;
         if (THREAD_CPU_TICKS_ENABLED) {
-            result = THREAD_MX.getCurrentThreadCpuTime();
+            result = getCpuThreadTime0(Thread.currentThread().getId());
+            //result = THREAD_MX.getCurrentThreadCpuTime();
         } else if (SUBSTITUTE_BY_PROCESS) {
             return (ThisProcessDataGatherer.getCurrentProcessKernelTimeTicks0() 
                 + ThisProcessDataGatherer.getCurrentProcessUserTimeTicks0()) 

@@ -1,0 +1,199 @@
+diff --git a/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recording/Recorder.java b/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recording/Recorder.java
+index ddb43fc..54f5ed7 100644
+--- a/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recording/Recorder.java
++++ b/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recording/Recorder.java
+@@ -161,8 +161,6 @@
+             Object array = new Object[2];
+             COLLECTION_ENTRY_SIZE 
+                 = ObjectSizeProvider.getInstance().getObjectSize(array) / 2;
+-            System.out.println("Map.Entry size " + MAP_ENTRY_SIZE 
+-                + " ref size " + COLLECTION_ENTRY_SIZE );
+         } else {
+             MAP_ENTRY_SIZE = 24;
+             COLLECTION_ENTRY_SIZE = 12;
+diff --git a/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recordingServer/TCPRecordingServer.java b/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recordingServer/TCPRecordingServer.java
+index d093b6a..7cb8f3c 100644
+--- a/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recordingServer/TCPRecordingServer.java
++++ b/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recordingServer/TCPRecordingServer.java
+@@ -171,7 +171,7 @@
+                         printStatistics++;
+                         break;
+                     case Constants.IO:
+-                        e = new IoElement();
++                        e = IoElement.POOL.getFromPool();
+                         io++;
+                         break;
+                     case Constants.STARTRECORDING:
+diff --git a/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recordingStrategies/AbstractEventRecorderStrategy.java b/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recordingStrategies/AbstractEventRecorderStrategy.java
+index 0eb85c3..fb6cadc 100644
+--- a/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recordingStrategies/AbstractEventRecorderStrategy.java
++++ b/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recordingStrategies/AbstractEventRecorderStrategy.java
+@@ -219,9 +219,19 @@
+      * {@inheritDoc}
+      */
+     @Override
+-    public void readIo(String recId, String caller, long threadId, int bytes, 
+-        StreamType type) {
+-        add(new IoElement(recId, caller, threadId, bytes, type, false));
++    public void readIo(String recId, String caller, long threadId, int bytes, StreamType type) {
++        if (DOPOOLING) {
++            IoElement ioElement = IoElement.POOL.getFromPool();
++            ioElement.setRecId(recId);
++            ioElement.setCaller(caller);
++            ioElement.setThreadId(threadId);
++            ioElement.setBytes(bytes);
++            ioElement.setType(type);
++            ioElement.setWrite(false);
++            add(ioElement);
++        } else {
++            add(new IoElement(recId, caller, threadId, bytes, type, false));
++        }
+     }
+ 
+     /**
+@@ -237,11 +247,21 @@
+      * {@inheritDoc}
+      */
+     @Override
+-    public void writeIo(String recId, String caller, long threadId, int bytes, 
+-        StreamType type) {
+-        add(new IoElement(recId, caller, threadId, bytes, type, true));
++    public void writeIo(String recId, String caller, long threadId, int bytes, StreamType type) {
++        if (DOPOOLING) {
++            IoElement ioElement = IoElement.POOL.getFromPool();
++            ioElement.setRecId(recId);
++            ioElement.setCaller(caller);
++            ioElement.setThreadId(threadId);
++            ioElement.setBytes(bytes);
++            ioElement.setType(type);
++            ioElement.setWrite(true);
++            add(ioElement);
++        } else {
++            add(new IoElement(recId, caller, threadId, bytes, type, true));
++        }
+     }
+-
++    
+     /**
+      * {@inheritDoc}
+      */
+diff --git a/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recordingStrategiesElements/IoElement.java b/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recordingStrategiesElements/IoElement.java
+index b74c612..b12b030 100644
+--- a/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recordingStrategiesElements/IoElement.java
++++ b/Instrumentation.ex/src/de/uni_hildesheim/sse/monitoring/runtime/recordingStrategiesElements/IoElement.java
+@@ -7,6 +7,8 @@
+ import de.uni_hildesheim.sse.codeEraser.annotations.Operation;
+ import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
+ import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
++import de.uni_hildesheim.sse.monitoring.runtime.boot.ObjectPool;
++import de.uni_hildesheim.sse.monitoring.runtime.boot.Poolable;
+ import de.uni_hildesheim.sse.monitoring.runtime.boot.StreamType;
+ import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.
+     RecorderStrategy;
+@@ -15,14 +17,21 @@
+ /**
+  * Defines a ReadIoElement.
+  * 
+- * @author Stephan Dederichs
++ * @author Stephan Dederichs, Aike Sass
+  * @since 1.00
+  * @version 1.00
+  */
+ @Variability(id = { AnnotationConstants.STRATEGY_TCP, 
+         AnnotationConstants.MONITOR_NET_IO, 
+         AnnotationConstants.MONITOR_FILE_IO }, op = Operation.AND)
+-public class IoElement extends RecordingStrategiesElement {
++public class IoElement extends RecordingStrategiesElement 
++    implements Poolable<IoElement> {
++    
++    /**
++     * Defines an object pool for this class.
++     */
++    public static final ObjectPool<IoElement> POOL = new ObjectPool<IoElement>(
++            new IoElement(), 1000);
+     
+     /**
+      * Stores the recId.
+@@ -59,7 +68,8 @@
+      * 
+      * @since 1.00
+      */
+-    public IoElement() { 
++    IoElement() { 
++        // do not call this from outside, use the ObjectPools
+     }
+     
+     /**
+@@ -202,4 +212,71 @@
+     @Override
+     public void clear() {
+     }
++    
++    /**
++     * {@inheritDoc}
++     */
++    @Override
++    public void release() {
++        POOL.release(this);
++    }
++
++    @Override
++    public IoElement create() {
++        return new IoElement();
++    }
++
++    /**
++     * Setter for the thread id.
++     * 
++     * @param threadId the id to be set
++     */
++    public void setThreadId(long threadId) {
++        this.threadId = threadId;
++    }
++
++    /**
++     * Setter for the caller.
++     * 
++     * @param caller the caller to be set
++     */
++    public void setCaller(String caller) {
++        this.caller = caller;
++    }
++
++    /**
++     * Setter for write or read access.
++     * 
++     * @param write true if write access else false
++     */
++    public void setWrite(boolean write) {
++        this.write = write;
++    }
++
++    /**
++     * Getter for the tread id.
++     * 
++     * @return the id of the thread
++     */
++    public long getThreadId() {
++        return threadId;
++    }
++
++    /**
++     * Getter for the caller.
++     * 
++     * @return the caller
++     */
++    public String getCaller() {
++        return caller;
++    }
++
++    /**
++     * Getter for write.
++     * 
++     * @return true if it is a write access else false
++     */
++    public boolean isWrite() {
++        return write;
++    }
+ }
+\ No newline at end of file
