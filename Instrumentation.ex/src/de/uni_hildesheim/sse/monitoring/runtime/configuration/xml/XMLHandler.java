@@ -3,6 +3,7 @@ package de.uni_hildesheim.sse.monitoring.runtime.configuration.xml;
 import java.util.StringTokenizer;
 
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.InstanceIdentifierKind;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.ResourceType;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.AnnotationBuilder;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.Annotations;
@@ -20,7 +21,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.utils.xml.QdParserException;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.11
+ * @version 1.20
  */
 class XMLHandler implements DocHandler {
 
@@ -402,6 +403,7 @@ class XMLHandler implements DocHandler {
                             = Annotations.getTemplate(TAG_MONITOR);
                         if (null != templ) {
                             templ = templ.prepareForUse();
+                            setMonitorAnnotationConfigurationDefaults(templ, attributes);
                             String cPath = getCurrentPath(true);
                             if (null == pattern || 0 == pattern.length()) {
                                 cPath += ".*";
@@ -422,6 +424,30 @@ class XMLHandler implements DocHandler {
             if (null != template) {
                 template.startElement(tag, nested, attributes);
             }
+        }
+    }
+    
+    /**
+     * Sets configuration defaults for the monitor annotation.
+     * 
+     * @param builder the annotation builder
+     * @param attributes the actual attributes
+     * 
+     * @since 1.20
+     */
+    private void setMonitorAnnotationConfigurationDefaults(AnnotationBuilder<?> builder, 
+        HashMap<String, String> attributes) {
+        InstanceIdentifierKind kind = Configuration.INSTANCE.getInstanceIdentifierKind();
+        String iik = attributes.get("instanceIdentifierKind");
+        if (null != iik) {
+            try {
+                kind = InstanceIdentifierKind.valueOf(iik.toUpperCase());
+            } catch (NullPointerException e) {
+                // if value does not correspond to enum constant, ignore, use global 
+            }
+        }
+        if (kind != InstanceIdentifierKind.DEFAULT) {
+            builder.setData("instanceIdentifierKind", kind);    
         }
     }
 

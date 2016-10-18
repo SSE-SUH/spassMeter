@@ -2,15 +2,9 @@
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
      xmlns="http://sse.uni-hildesheim.de/instrumentation" 
      exclusive="true"
-     varContrib="true">
+     instanceIdentifierKind="IDENTITY_HASHCODE">
   <namespace name="test">
-    <module name="ConfigurationTest">
-      <module name="FileComponent">
-        <monitor id="comp@file"/>
-      </module>
-      <module name="URLComponent">
-        <monitor id="comp@url"/>
-      </module>
+    <module name="InstanceIdentifierTest2" typeOf="test.InstanceIdentifierTest2$InstanceIdentifierTestInterface">
       <behavior signature="main(java.lang.String[])">
         <startSystem/>
         <endSystem invoke="asserts"/>

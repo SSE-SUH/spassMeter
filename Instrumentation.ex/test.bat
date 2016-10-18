@@ -2,14 +2,14 @@
 set CP_BIN=bin
 set CP_TESTS=dist\tests.jar
 if not exist generated mkdir generated
-REM RUN ant jar-testAgent before
+echo Hint: run "ANT jar-testAgent" before
 
 REM bypass individual tests 
-REM GOTO all
+GOTO all
 REM check need for -rt.jar
 
-REM set TEST=InstanceIdentifierTest
-set TEST=MultiRecIdTest
+set TEST=InstanceIdentifierTest2
+REM set TEST=MultiRecIdTest
 REM java -classpath dist/win32/spass-meter-ant.jar de.uni_hildesheim.sse.monitoring.runtime.preprocess.Preprocess dist/tests.jar generated/tests-static.jar logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,out=generated/test.log
 REM java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,out=generated/test.log -Dbla=x -classpath %CP_TESTS% test.%TEST%
 REM java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,groupAccounting=INDIRECT,out=generated/test.log,iFactory=de.uni_hildesheim.sse.monitoring.runtime.instrumentation.asmTree.Factory -Dbla=x -Dindirect=true -classpath %CP_TESTS% test.%TEST%
@@ -26,8 +26,9 @@ GOTO end
 echo events
 FOR /F %%f in (src/test/tests) do (
   echo %%~nf
-  java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,out=generated/test.log -Dbla=x -classpath %CP_TESTS% test.%%~nf
-  java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,groupAccounting=INDIRECT,out=generated/test.log -Dbla=x -Dindirect=true -classpath %CP_TESTS% test.%%~nf
+  REM varContrib in first two lines is needed as default was set to false and the XML is taking care of it
+  java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,out=generated/test.log,varContrib=true -Dbla=x -classpath %CP_TESTS% test.%%~nf
+  java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,groupAccounting=INDIRECT,out=generated/test.log,varContrib=true -Dbla=x -Dindirect=true -classpath %CP_TESTS% test.%%~nf
   java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,out=generated/test.log,xmlconfig=src/test/%%~nf.xml -Dbla=x -classpath %CP_TESTS% test.%%~nf
   java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,groupAccounting=INDIRECT,out=generated/test.log,xmlconfig=src/test/%%~nf.xml -Dbla=x -Dindirect=true -classpath %CP_TESTS% test.%%~nf
 )
@@ -39,8 +40,9 @@ goto end
 echo synchronized
 FOR /F %%f in (src/test/tests) do (
   echo %%~nf
-  java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=false,out=generated/test.log -Dbla=x -classpath %CP_TESTS% test.%%~nf
-  java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=false,groupAccounting=INDIRECT,out=generated/test.log -Dbla=x -Dindirect=true -classpath %CP_TESTS% test.%%~nf
+  REM varContrib in first two lines is needed as default was set to false and the XML is taking care of it
+  java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=false,out=generated/test.log,varContrib=true -Dbla=x -classpath %CP_TESTS% test.%%~nf
+  java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=false,groupAccounting=INDIRECT,out=generated/test.log,varContrib=true -Dbla=x -Dindirect=true -classpath %CP_TESTS% test.%%~nf
   java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=false,out=generated/test.log,xmlconfig=src/test/%%~nf.xml -Dbla=x -classpath %CP_TESTS% test.%%~nf
   java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=false,groupAccounting=INDIRECT,out=generated/test.log,xmlconfig=src/test/%%~nf.xml -Dbla=x -Dindirect=true -classpath %CP_TESTS% test.%%~nf
 )
