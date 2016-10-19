@@ -357,6 +357,7 @@ public abstract class AbstractIntHashMap {
      * iter.next().<i>doSomethingToGet<b>T</b></i></code> or equivalently
      * <code>return iter.findNext(true).<i>doSomethingToGet<b>T</b></i></code>.
      * 
+     * @param <T> element type
      * @author Holger Eichelberger
      * @since 1.00
      * @version 1.00

@@ -15,8 +15,6 @@ public class ObjectSizeCache {
     /**
      * Implements a bucket entry.
      * 
-     * @param <K> the key type
-     * @param <V> the value type
      * @author from SUN/ORACLE
      * @since 1.00
      * @version 1.00
