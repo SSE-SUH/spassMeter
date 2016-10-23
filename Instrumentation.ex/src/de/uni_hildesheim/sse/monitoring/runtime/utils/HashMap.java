@@ -565,7 +565,7 @@ public class HashMap<K, V> {
     /**
      * Implements a generic iterator.
      * 
-     * @param <V> the type of elements to iterate over
+     * @param <I> the type of elements to iterate over
      * @author Holger Eichelberger
      * @since 1.00
      * @version 1.00
@@ -731,7 +731,7 @@ public class HashMap<K, V> {
     /**
      * A specific iterator for the keys.
      * 
-     * @param <K> the key type
+     * @param <I> the key type
      * @author Holger Eichelberger
      * @since 1.00
      * @version 1.00

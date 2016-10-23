@@ -363,6 +363,7 @@ public abstract class AbstractLongHashMap {
      * iter.next().<i>doSomethingToGet<b>T</b></i></code> or equivalently
      * <code>return iter.findNext(true).<i>doSomethingToGet<b>T</b></i></code>.
      * 
+     * @param <T> the element type to iterate over
      * @author Holger Eichelberger
      * @since 1.00
      * @version 1.00

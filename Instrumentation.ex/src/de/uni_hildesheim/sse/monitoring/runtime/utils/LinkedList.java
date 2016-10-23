@@ -15,6 +15,7 @@ public class LinkedList <T> {
     /**
      * Defines a list entry.
      * 
+     * @param <T> the entry type
      * @author Holger Eichelberger
      * @since 1.00
      * @version 1.00

@@ -320,8 +320,10 @@ public class SystemMonitoring {
     public static final LongLongHashMap getAllThreadTicks() {
         LongLongHashMap result = new LongLongHashMap();
         long[] threads = THREAD_DATA_GATHERER.getAllThreadIds();
-        for (int i = 0; i < threads.length; i++) {
-            result.put(threads[i], THREAD_DATA_GATHERER.getCpuTime(threads[i]));
+        if (null != threads) {
+            for (int i = 0; i < threads.length; i++) {
+                result.put(threads[i], THREAD_DATA_GATHERER.getCpuTime(threads[i]));
+            }
         }
         return result;
     }

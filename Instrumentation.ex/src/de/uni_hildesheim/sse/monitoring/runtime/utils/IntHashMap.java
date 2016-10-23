@@ -185,6 +185,8 @@ public class IntHashMap<T> extends AbstractIntHashMap {
     
    /**
     * Implements a map element storing the contents of the buckets.
+    * 
+    * @param <V> the value type
     */
     public static class MapElement <V> extends AbstractIntHashMap.MapElement {
 

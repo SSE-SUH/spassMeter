@@ -495,16 +495,20 @@ public class ProcessData {
             GathererFactory.getThisProcessDataGatherer();
         jvm.systemTime = tpdg.getCurrentProcessSystemTimeTicks();
         IoStatistics iostat = tpdg.getCurrentProcessIo();
-        jvm.ioRead = iostat.read;
-        jvm.ioWrite = iostat.write;
+        if (null != iostat) {
+            jvm.ioRead = iostat.read;
+            jvm.ioWrite = iostat.write;
+        }
         int status = 0;
         status = Flags.change(status, IMeasurements.STATUS_FILE, 
             tpdg.isFileIoDataIncluded(false));
         jvm.status = Flags.change(status, IMeasurements.STATUS_NET, 
             tpdg.isNetworkIoDataIncluded(false));
         iostat = tpdg.getAllProcessesIo();
-        system.ioRead = iostat.read;
-        system.ioWrite = iostat.write;
+        if (null != iostat) {
+            system.ioRead = iostat.read;
+            system.ioWrite = iostat.write;
+        }
         status = 0;
         status = Flags.change(status, 
             IMeasurements.STATUS_FILE, tpdg.isFileIoDataIncluded(true));

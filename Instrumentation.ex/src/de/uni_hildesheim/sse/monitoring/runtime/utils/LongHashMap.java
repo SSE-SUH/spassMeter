@@ -185,6 +185,8 @@ public class LongHashMap<T> extends AbstractLongHashMap {
     
    /**
     * Implements a map element storing the contents of the buckets.
+    * 
+    * @param <V> the value type
     */
     public static class MapElement <V> extends AbstractLongHashMap.MapElement {
 

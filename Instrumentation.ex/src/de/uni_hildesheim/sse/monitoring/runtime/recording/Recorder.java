@@ -401,9 +401,11 @@ public class Recorder extends RecorderFrontend
             long[] ids = SystemMonitoring.getAllThreadIds();
             long now = System.nanoTime();
             // register all JVM threads including the main thread
-            for (int i = 0; i < ids.length; i++) {
-                STRATEGY.register(ids[i], RecorderStrategy.REGISTER_FORCE, 
-                    SystemMonitoring.getTicks(ids[i]), now);
+            if (null != ids) {
+                for (int i = 0; i < ids.length; i++) {
+                    STRATEGY.register(ids[i], RecorderStrategy.REGISTER_FORCE, 
+                        SystemMonitoring.getTicks(ids[i]), now);
+                }
             }
             SystemMonitoring.startTimer();
             STRATEGY.startRecording(now, programThreadId, 

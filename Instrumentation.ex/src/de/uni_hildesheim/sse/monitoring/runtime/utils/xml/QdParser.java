@@ -371,7 +371,7 @@ public class QdParser {
     private void attributeEquals(int ch) throws QdParserException {
         if (ch == '=') {
             mode = Mode.ATTRIBUTE_RVALUE;
-        } else if ( !Character.isWhitespace((char) ch )) {
+        } else if ( !Character.isWhitespace((char) ch)) {
             exc("Error in attribute processing.");
         }
     }
@@ -454,7 +454,7 @@ public class QdParser {
             mode = popMode(st);
         } else if ( ch == '/' ) {
             mode = Mode.SINGLE_TAG;
-        } else if ( ch == '-' && same(sb, "!-" )) {
+        } else if ( ch == '-' && same(sb, "!-")) {
             mode = Mode.COMMENT;
         } else if ( ch == '[' && same(sb, "![CDATA")) {
             mode = Mode.CDATA;
