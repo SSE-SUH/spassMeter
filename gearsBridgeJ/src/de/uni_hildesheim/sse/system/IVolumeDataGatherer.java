@@ -15,7 +15,7 @@ public interface IVolumeDataGatherer {
     /**
      * Returns the maximum volume capacity.
      * 
-     * @return the maximum volume capacity in bytes
+     * @return the maximum volume capacity in bytes, negative if invalid
      * 
      * @since 1.00
      */
@@ -25,7 +25,8 @@ public interface IVolumeDataGatherer {
     /**
      * Returns the currently available volume capacity.
      * 
-     * @return the currently available volume capacity in bytes
+     * @return the currently available volume capacity in bytes, negative 
+     * if invalid
      * 
      * @since 1.00
      */
@@ -35,7 +36,7 @@ public interface IVolumeDataGatherer {
     /**
      * Returns the currently used volume capacity.
      * 
-     * @return the currently used volume capacity in bytes
+     * @return the currently used volume capacity in bytes, negative if invalid
      * 
      * @since 1.00
      */

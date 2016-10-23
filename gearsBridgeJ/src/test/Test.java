@@ -89,6 +89,8 @@ public class Test {
                 System.out.println("Param is no number (ignored).");
             }
         }
+        System.out.println("Factory: " + GathererFactory.getInstanceName());
+        System.out.println("Environment: " + System.getProperties());
         System.out.println("initial process load");
         
         GathererFactory.getThisProcessDataGatherer()
@@ -106,15 +108,19 @@ public class Test {
         IThisProcessDataGatherer pdg = 
             GathererFactory.getThisProcessDataGatherer();
         IoStatistics io = pdg.getCurrentProcessIo();
-        System.out.println("jvm read   " + io.read);
-        System.out.println("jvm write  " + io.write);
-        System.out.println("jvm user   " 
+        if (null != io) {
+            System.out.println("JVM read   " + io.read);
+            System.out.println("JVM write  " + io.write);
+        } else {
+            System.out.println("JVM read/write N/A");
+        }
+        System.out.println("JVM user   " 
             + pdg.getCurrentProcessUserTimeTicks());
-        System.out.println("jvm kernel " 
+        System.out.println("JVM kernel " 
             + pdg.getCurrentProcessKernelTimeTicks());
-        System.out.println("jvm mem    " 
+        System.out.println("JVM mem    " 
             + pdg.getCurrentProcessMemoryUse());
-        System.out.println("jvm system " 
+        System.out.println("JVM system " 
             + pdg.getCurrentProcessSystemTimeTicks());
         System.out.println();
         
@@ -134,14 +140,12 @@ public class Test {
             + GathererFactory.getMemoryDataGatherer().getCurrentMemoryAvail());
         System.out.println("mem capacity " 
             + GathererFactory.getMemoryDataGatherer().getMemoryCapacity());
-        if (GathererFactory.getDataGatherer().supportsJVMTI()) {
-            Object object = new Object();
-            System.out.println("object size " + GathererFactory.
-                getMemoryDataGatherer().getObjectSize(object));
-            System.out.println();
-        } else {
-            System.out.println("data size not supported"); 
-        }
+        Object object = new Object();
+        System.out.println("object size " + GathererFactory.
+            getMemoryDataGatherer().getObjectSize(object));
+        System.out.println();
+        System.out.println("JVMTI support: " 
+            + GathererFactory.getDataGatherer().supportsJVMTI()); 
 
         System.out.println("cur net speed " 
             + GathererFactory.getNetworkDataGatherer().getCurrentNetSpeed());
@@ -175,24 +179,32 @@ public class Test {
             + GathererFactory.getVolumeDataGatherer().getVolumeCapacity());
         System.out.println();
 
-        System.out.println("vm kernel time " 
+        System.out.println("JVM kernel time " 
             + pdg.getCurrentProcessKernelTimeTicks());
-        System.out.println("vm mem " 
+        System.out.println("JVM mem " 
             + pdg.getCurrentProcessMemoryUse());
-        System.out.println("vm load " 
+        System.out.println("JVM load " 
             + pdg.getCurrentProcessProcessorLoad());
-        System.out.println("vm sys time " 
+        System.out.println("JVM sys time " 
             + pdg.getCurrentProcessSystemTimeTicks());
-        System.out.println("vm sys time " 
+        System.out.println("JVM sys time " 
             + pdg.getCurrentProcessUserTimeTicks());
         IoStatistics stat = pdg.getCurrentProcessIo();
-        System.out.println("vm in " + stat.read + " out " + stat.write 
-            + " incl file " + pdg.isFileIoDataIncluded(false)
-            + " incl net " + pdg.isNetworkIoDataIncluded(false));
+        if (null != stat) {
+            System.out.println("VM in " + stat.read + " out " + stat.write 
+                + " incl file " + pdg.isFileIoDataIncluded(false)
+                + " incl net " + pdg.isNetworkIoDataIncluded(false));
+        } else {
+            System.out.println("VM I/O N/A");
+        }
         stat = GathererFactory.getThisProcessDataGatherer().getAllProcessesIo();
-        System.out.println("all in " + stat.read + " out " + stat.write
-            + " incl file " + pdg.isFileIoDataIncluded(true)
-            + " incl net " + pdg.isNetworkIoDataIncluded(true));
+        if (null != stat) {
+            System.out.println("all in " + stat.read + " out " + stat.write
+                + " incl file " + pdg.isFileIoDataIncluded(true)
+                + " incl net " + pdg.isNetworkIoDataIncluded(true));
+        } else {
+            System.out.println("all I/O N/A");
+        }
         
         System.out.println(Arrays.toString(
             GathererFactory.getThreadDataGatherer().getAllThreadIds()));

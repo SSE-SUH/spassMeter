@@ -46,13 +46,8 @@ public class DefaultGathererFactory
     public void setContext(Object context) {
     }
     
-    /**
-     * Provides the gatherer and operating system specific initialization
-     * of the variables in this class.
-     * 
-     * @since 1.00
-     */
-    public void initialize() {
+    @Override
+    public void initialize() throws IOException {
         if (null == System.getProperty(PROPERTY_EXTERNAL_LIB)) {
             // determine the name of the library dependent on the 
             // operating system and the underlying architecture
@@ -60,6 +55,7 @@ public class DefaultGathererFactory
             String osArch = System.getProperty("os.arch").toUpperCase();
             String infix = System.getProperty(PROPERTY_INFIX, "");
 
+            String error = "";
             String libName = "";
             String libExtension = "";
             if (osName.contains("LINUX")) {
@@ -68,29 +64,25 @@ public class DefaultGathererFactory
             } else if (osName.contains("WINDOWS")) {
                 libName = "locutor";
                 libExtension = ".dll";
-            } else if (osName.contains("MAC OS X")) {
-                libName = "locutor_osx";
-                libExtension = ".so";
-            } 
+            } else {
+                error = "no library fpr " + osName + " " + osArch;
+            }
+            /*else if (osName.contains("MAC OS X")) {
+            libName = "locutor_osx";
+            libExtension = ".so";
+            } */ 
+            // unknown combinations are handled by fallback gatherer
             
-            String error = "";
             boolean is64 = osArch.endsWith("64");
             if (is64) {
                 error = loadLibrary(libName + "_64" + libExtension, 
                     determineOutName(libName + "_64", infix, libExtension));    
-            }
-            if (null != error) {
-                String tmp = loadLibrary(libName + libExtension, 
+            } else {
+                error = loadLibrary(libName + libExtension, 
                     determineOutName(libName, infix,  libExtension));
-                if (null != tmp) {
-                    if (error.length() > 0) {
-                        error = "Error loading 64 bit library:\n" + error; 
-                    }
-                    error = tmp;
-                }
             }
             if (null != error && error.length() > 0) {
-                System.err.println("Error loading library: " + error);
+                throw new IOException("Error loading library: " + error);
             }
         }
     }
@@ -214,8 +206,8 @@ public class DefaultGathererFactory
                             }
                         }
                     });
-                } catch (Exception e) {
-                    error = e.getMessage();
+                } catch (Throwable t) {
+                    error = t.getMessage();
                 }
                 f.deleteOnExit();
             } else {
@@ -323,6 +315,17 @@ public class DefaultGathererFactory
      */
     protected IThreadDataGatherer createThreadDataGatherer() {
         return new ThreadDataGatherer();
+    }
+
+    @Override
+    protected String getInstanceInformation() {
+        String result = "";
+        if (null != nativeLib) {
+            result = "using native lib " + nativeLib.getAbsolutePath();
+        } else {
+            result = "no native lib";
+        }
+        return result;
     }
 
 }

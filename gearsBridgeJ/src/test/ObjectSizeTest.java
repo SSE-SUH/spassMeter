@@ -35,7 +35,7 @@ public class ObjectSizeTest {
         long mdg = GathererFactory.getMemoryDataGatherer()
             .getObjectSize(object);
         long est = ObjectSizeEstimator.getObjectSize(object);
-        boolean ok = (mdg == est);
+        boolean ok = mdg == est;
         System.out.printf("reference %d\testimated %d\t%b\t%s\n", 
             mdg, est, ok, description);
         return ok;

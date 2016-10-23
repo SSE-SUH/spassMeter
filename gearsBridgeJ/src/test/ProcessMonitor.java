@@ -220,5 +220,6 @@ public class ProcessMonitor {
         Timer timer = new Timer();
         timer.schedule(new Task(pid), 0, 500);
         System.out.println("monitoring " + pid);
+        s.close();
     }
 }

@@ -1,7 +1,10 @@
 package de.uni_hildesheim.sse.system;
 
+import java.io.IOException;
+
 import de.uni_hildesheim.sse.codeEraser.annotations.Operation;
 import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
+import de.uni_hildesheim.sse.system.fallback.FallbackGathererFactory;
 
 /**
  * Defines a factory for obtaining gatherer instances. Each gatherer
@@ -13,7 +16,7 @@ import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.20
  */
 public abstract class GathererFactory {
 
@@ -371,24 +374,29 @@ public abstract class GathererFactory {
                 try {
                     cls = Class.forName(factories[count++]);
                 } catch (ClassNotFoundException e) {
-                    // only a problem if none is found at all!
-                    // this is problem of deployment
+                    // ignore here, handle if none is found in else case 
+                    // for cls below
                 }
             } while (null == cls && count < factories.length);
+            String err = null;
             if (null != cls) {
                 try {
                     instance = (GathererFactory) cls.newInstance();
                     instance.initialize();
                 } catch (InstantiationException e) {
-                    e.printStackTrace();
+                    err = e.getMessage();
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    err = e.getMessage();
                 } catch (ClassCastException e) {
-                    e.printStackTrace();
+                    err = e.getMessage();
+                } catch (IOException e) {
+                    err = e.getMessage();
                 }
             } else {
-                System.err.println("No gatherer factory found. Exiting.");
-                System.exit(0);
+                err = "No gatherer factory found.";
+            }
+            if (null != err) {
+                instance = new FallbackGathererFactory();
             }
         }
         if (considerContext && null != instance) {
@@ -400,9 +408,11 @@ public abstract class GathererFactory {
     /**
      * Provides the gatherer and operating system specific initialization.
      * 
+     * @throws IOException if initializing the factory fails
+     * 
      * @since 1.00
      */
-    public abstract void initialize();
+    public abstract void initialize() throws IOException;
 
     /**
      * Is called in case that a (new) context is available.
@@ -414,6 +424,17 @@ public abstract class GathererFactory {
     public abstract void setContext(Object context);
 
     /**
+     * Returns additional (optional) information about the factory instance.
+     * 
+     * @return additional information, may be <b>null</b> for none
+     * 
+     * @since 1.20
+     */
+    protected String getInstanceInformation() {
+        return null;
+    }
+    
+    /**
      * Changes the current context.
      * 
      * @param context operating system specific object, may be <b>null</b>
@@ -422,6 +443,27 @@ public abstract class GathererFactory {
      */
     public static void changeContext(Object context) {
         instance.setContext(context);
+    }
+    
+    /**
+     * Returns the (class) name of the factory instance.
+     * 
+     * @return the class name
+     * 
+     * @since 1.20
+     */
+    public static String getInstanceName() {
+        String result = "";
+        if (null != instance) {
+            String add = instance.getInstanceInformation();
+            if (null != add && add.length() > 0) {
+                add = " " + add;
+            } else {
+                add = "";
+            }
+            result = instance.getClass().getName() + add;
+        }
+        return result;
     }
     
 }

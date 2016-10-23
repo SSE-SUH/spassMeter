@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GearsBridge
+Bundle-SymbolicName: GearsBridge
+Bundle-Version: 1.0.0
+Main-Class: test.Test
+Export-Package: de.uni_hildesheim.sse.io,
+ de.uni_hildesheim.sse.system,
+ de.uni_hildesheim.sse.util
+ 

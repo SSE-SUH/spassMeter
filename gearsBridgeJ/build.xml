@@ -81,6 +81,17 @@
             <fileset dir="${gbj.base}" includes="locutor_64.so"/>
         	<zipgroupfileset dir="${gbj.lib}" includes="eraser-runtime.jar"/>
         </jar>
+
+    	<delete file="${gbj.jars}/locutor-test-${version}.jar"/>
+        <jar jarfile="${gbj.jars}/locutor-test-${version}.jar" manifest="${gbj.base}/MANIFEST-test.MF"
+            excludes="*.jar *.zip **/*.html" 
+        	basedir="${gbj.bin}">
+            <fileset dir="${gbj.base}" includes="locutor.dll"/>
+            <fileset dir="${gbj.base}" includes="locutor_64.dll"/>
+            <fileset dir="${gbj.base}" includes="locutor.so"/>
+            <fileset dir="${gbj.base}" includes="locutor_64.so"/>
+        	<zipgroupfileset dir="${gbj.lib}" includes="eraser-runtime.jar"/>
+        </jar>
     	
     	<delete file="${gbj.jars}/locutorServer-${version}.jar"/>
         <jar jarfile="${gbj.jars}/locutorServer-${version}.jar"
