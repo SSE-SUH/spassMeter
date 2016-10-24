@@ -146,7 +146,14 @@
         	de/uni_hildesheim/sse/system/deflt/ProcessorDataGatherer*.class 
         	de/uni_hildesheim/sse/system/deflt/ThisProcessDataGatherer*.class 
         	de/uni_hildesheim/sse/system/deflt/ProcessDataGatherer*.class
-        	de/uni_hildesheim/sse/system/deflt/ThreadDataGatherer*.class"
+        	de/uni_hildesheim/sse/system/deflt/ThreadDataGatherer*.class
+        	de/uni_hildesheim/sse/system/fallback/DataGatherer*.class
+        	de/uni_hildesheim/sse/system/fallback/FallbackGathererFactory*.class
+        	de/uni_hildesheim/sse/system/fallback/MemoryDataGatherer*.class 
+        	de/uni_hildesheim/sse/system/fallback/ProcessorDataGatherer*.class 
+        	de/uni_hildesheim/sse/system/fallback/ThisProcessDataGatherer*.class 
+        	de/uni_hildesheim/sse/system/fallback/ProcessDataGatherer*.class
+        	de/uni_hildesheim/sse/system/fallback/ThreadDataGatherer*.class"
         	basedir="${gbj.bin}">
             <fileset dir="${gbj.bin}" includes="locutor.dll"/>
             <fileset dir="${gbj.bin}" includes="locutor_64.dll"/>
@@ -166,7 +173,14 @@
         	de/uni_hildesheim/sse/system/deflt/ProcessorDataGatherer*.class 
         	de/uni_hildesheim/sse/system/deflt/ThisProcessDataGatherer*.class 
         	de/uni_hildesheim/sse/system/deflt/ProcessDataGatherer*.class
-        	de/uni_hildesheim/sse/system/deflt/ThreadDataGatherer*.class"
+        	de/uni_hildesheim/sse/system/deflt/ThreadDataGatherer*.class
+        	de/uni_hildesheim/sse/system/fallback/DataGatherer*.class
+          de/uni_hildesheim/sse/system/fallback/FallbackGathererFactory*.class
+          de/uni_hildesheim/sse/system/fallback/MemoryDataGatherer*.class 
+          de/uni_hildesheim/sse/system/fallback/ProcessorDataGatherer*.class 
+          de/uni_hildesheim/sse/system/fallback/ThisProcessDataGatherer*.class 
+          de/uni_hildesheim/sse/system/fallback/ProcessDataGatherer*.class
+          de/uni_hildesheim/sse/system/fallback/ThreadDataGatherer*.class"
         	basedir="${gbj.bin}">
             <fileset dir="${gbj.bin}" includes="locutor.so"/>
 			<fileset dir="${gbj.bin}" includes="locutor_64.so"/>
