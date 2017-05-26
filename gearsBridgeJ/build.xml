@@ -160,7 +160,6 @@
         	de/uni_hildesheim/sse/system/fallback/ThreadDataGatherer*.class"
         	basedir="${gbj.bin}">
             <fileset dir="${gbj.bin}" includes="locutor.dll"/>
-        	<fileset dir="${gbj.bin}" includes="locutor_arm.so"/>
             <fileset dir="${gbj.bin}" includes="locutor_64.dll"/>
         </jar>
     	<delete file="${gbj.bin}/locutor.dll"/>
@@ -188,6 +187,7 @@
           de/uni_hildesheim/sse/system/fallback/ThreadDataGatherer*.class"
         	basedir="${gbj.bin}">
             <fileset dir="${gbj.bin}" includes="locutor.so"/>
+        	<fileset dir="${gbj.bin}" includes="locutor_arm.so"/>
 			<fileset dir="${gbj.bin}" includes="locutor_64.so"/>
         </jar>
     	<delete file="${gbj.bin}/locutor.so"/>
