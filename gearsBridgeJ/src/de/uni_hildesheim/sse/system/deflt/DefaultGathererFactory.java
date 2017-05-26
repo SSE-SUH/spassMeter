@@ -60,6 +60,9 @@ public class DefaultGathererFactory
             String libExtension = "";
             if (osName.contains("LINUX")) {
                 libName = "locutor";
+                if (osArch.equals("arm")) {
+                    libName += "_arm";
+                }
                 libExtension = ".so";
             } else if (osName.contains("WINDOWS")) {
                 libName = "locutor";

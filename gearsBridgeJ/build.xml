@@ -73,11 +73,12 @@
 
     	<delete file="${gbj.jars}/locutor-all-${version}.jar"/>
         <jar jarfile="${gbj.jars}/locutor-all-${version}.jar" manifest="${gbj.base}/MANIFEST.MF"
-            excludes="test/**.class *.jar *.zip **/*.html" 
+        	excludes="*.jar *.zip **/*.html *.dll *.so" 
         	basedir="${gbj.bin}">
             <fileset dir="${gbj.base}" includes="locutor.dll"/>
             <fileset dir="${gbj.base}" includes="locutor_64.dll"/>
             <fileset dir="${gbj.base}" includes="locutor.so"/>
+        	<fileset dir="${gbj.base}" includes="locutor_arm.so"/>
             <fileset dir="${gbj.base}" includes="locutor_64.so"/>
         	<zipgroupfileset dir="${gbj.lib}" includes="eraser-runtime.jar"/>
         </jar>
@@ -89,6 +90,7 @@
             <fileset dir="${gbj.base}" includes="locutor.dll"/>
             <fileset dir="${gbj.base}" includes="locutor_64.dll"/>
             <fileset dir="${gbj.base}" includes="locutor.so"/>
+        	<fileset dir="${gbj.base}" includes="locutor_arm.so"/>
             <fileset dir="${gbj.base}" includes="locutor_64.so"/>
         	<zipgroupfileset dir="${gbj.lib}" includes="eraser-runtime.jar"/>
         </jar>
@@ -124,6 +126,7 @@
             <fileset dir="${gbj.base}" includes="locutor.dll"/>
             <fileset dir="${gbj.base}" includes="locutor_64.dll"/>
             <fileset dir="${gbj.base}" includes="locutor.so"/>
+        	<fileset dir="${gbj.base}" includes="locutor_arm.so"/>
             <fileset dir="${gbj.base}" includes="locutor_64.so"/>
         </jar>
 
@@ -134,6 +137,7 @@
         </jar>
     	
     	<copy file="locutor-instrumenter.dll" tofile="${gbj.bin}/locutor.dll"/>
+    	<copy file="locutor-instrumenter_arm.so" tofile="${gbj.bin}/locutor_arm.so"/>
     	<copy file="locutor-instrumenter_64.dll" tofile="${gbj.bin}/locutor_64.dll"/>
     	<delete file="${gbj.jars}/locutor-instrumenter${version}.jar"/>
         <jar jarfile="${gbj.jars}/locutor-instrumenter${version}.jar"
@@ -156,6 +160,7 @@
         	de/uni_hildesheim/sse/system/fallback/ThreadDataGatherer*.class"
         	basedir="${gbj.bin}">
             <fileset dir="${gbj.bin}" includes="locutor.dll"/>
+        	<fileset dir="${gbj.bin}" includes="locutor_arm.so"/>
             <fileset dir="${gbj.bin}" includes="locutor_64.dll"/>
         </jar>
     	<delete file="${gbj.bin}/locutor.dll"/>
