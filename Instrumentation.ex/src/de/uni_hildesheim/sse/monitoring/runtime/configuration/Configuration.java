@@ -135,13 +135,7 @@ public class Configuration {
      * Stores the hostname for tcp recording.
      */
     @Variability(id = AnnotationConstants.STRATEGY_TCP)
-    private String tcpHostname = "";
-    
-    /**
-     * Stores the port for tcp recording.
-     */
-    @Variability(id = AnnotationConstants.STRATEGY_TCP)
-    private int tcpPort = -1;
+    private TcpConnectionInfo tcp = null;
 
     /**
      * If <code>true</code>, performs asynchronous event processing all the 
@@ -353,7 +347,8 @@ public class Configuration {
             ResourceType.class);        
         ConfigurationEntry.registerEntry("sumResources", 
             "sumResources", ConfigurationEntry.Type.ARRAY_ENUM, 
-            ResourceType.class);        
+            ResourceType.class);
+        ConfigurationEntry.registerEntry("tcp", ConfigurationEntry.Type.TCP_CONNECTION_INFO);
         ConfigurationEntry.registerEntry("outInterval", 
             "outInterval", ConfigurationEntry.Type.INTEGER);
         ConfigurationEntry.registerEntry("printStatistics", "printStatistics", 
@@ -943,26 +938,33 @@ public class Configuration {
      */
     @Variability(id = AnnotationConstants.STRATEGY_TCP)
     public void setTCPData(String hostname, int port) {
-        this.tcpHostname = hostname;
-        this.tcpPort = port;
+        try {
+            if (null == tcp) {
+                tcp = new TcpConnectionInfo(hostname, port);
+            } else {
+                tcp.setHostPort(hostname, port);
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
     }
     
     /**
      * Returns the hostname.
      * 
-     * @return The hostname
+     * @return The hostname (empty for unknown)
      */
     public String getTCPHostname() {
-        return tcpHostname;
+        return null == tcp ? "" : tcp.getHostname();
     }
     
     /**
      * Returns the port.
      * 
-     * @return The port
+     * @return The port (negative for unknown)
      */
     public int getTCPPort() {
-        return tcpPort;
+        return null == tcp ? -1 : tcp.getPort();
     }
    
     /**
@@ -1000,21 +1002,6 @@ public class Configuration {
                     printStatistics = Boolean.valueOf(value);
                 } else if ("out".equals(key)) {
                     setOutFileName(value);
-                } else if ("tcp".equals(key)) {
-                    String[] tcp = value.split(":");
-                    boolean error = false;
-                    try {
-                        if (tcp.length == 2) {
-                            setTCPData(tcp[0], Integer.parseInt(tcp[1]));
-                        } else {
-                            error = true;
-                        }
-                    } catch (NumberFormatException e) {
-                        error = true;
-                    }
-                    if (error) {
-                        System.out.println("wrong tcp args");
-                    }
                 } else {
                     ConfigurationEntry entry = ConfigurationEntry.getEntry(key);
                     if (null != entry) {

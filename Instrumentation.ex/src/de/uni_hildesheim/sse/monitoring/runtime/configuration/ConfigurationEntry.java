@@ -32,6 +32,12 @@ public class ConfigurationEntry {
         STRING(false),
         
         /**
+         * The entry is a TCP connection information, i.e., a string of host:port turned into 
+         * a {@link TcpConnectionInfo}.
+         */
+        TCP_CONNECTION_INFO(false),
+        
+        /**
          * The entry is an integer.
          */
         INTEGER(false),
@@ -310,6 +316,9 @@ public class ConfigurationEntry {
         case BOOLEAN:
         case ENUM:
             param = getPrimitiveValue(value, type, elemType);
+            break;
+        case TCP_CONNECTION_INFO:
+            param = new TcpConnectionInfo(value);
             break;
         case ARRAY_ENUM:
             StringTokenizer tokens = new StringTokenizer(value, ",");
