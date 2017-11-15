@@ -85,17 +85,20 @@
 	</target>
 
 	<target name="jar" depends="compile" unless="lobaris.flatBuild">
+	    <copy file="version" todir="${meter.bin}"/>
 		<mkdir dir="${meter.jars}"/>
 		<delete file="${meter.jars}/spass-meter-boot.jar"/>
         <jar jarfile="${meter.jars}/spass-meter-boot.jar"
         	includes="de/uni_hildesheim/sse/monitoring/runtime/boot/
-        	    de/uni_hildesheim/sse/monitoring/runtime/wrap/" 
+        	    de/uni_hildesheim/sse/monitoring/runtime/wrap/
+				version" 
         	basedir="${meter.bin}">
         </jar>
 		
 		<delete file="${meter.jars}/spass-meter.jar"/>
         <jar jarfile="${meter.jars}/spass-meter.jar"
-        	includes="de/uni_hildesheim/sse/monitoring/runtime/" 
+        	includes="de/uni_hildesheim/sse/monitoring/runtime/
+			    version" 
         	basedir="${meter.bin}" manifest="${meter.base}/MONITORING_MANIFEST.MF">
         </jar>
 
@@ -105,7 +108,8 @@
         	  de/uni_hildesheim/sse/monitoring/runtime/boot/DebugState.class
         	  de/uni_hildesheim/sse/monitoring/runtime/boot/BooleanValue.class
         	  de/uni_hildesheim/sse/monitoring/runtime/boot/GroupAccountingType.class
-        	  de/uni_hildesheim/sse/monitoring/runtime/boot/ResourceType.class"
+        	  de/uni_hildesheim/sse/monitoring/runtime/boot/ResourceType.class
+			  version"
         	basedir="${meter.bin}">
         	<zipgroupfileset dir="${meter.lib}" includes="eraser-annotations.jar"/>
         </jar>
@@ -116,7 +120,8 @@
         	          de/uni_hildesheim/sse/monitoring/runtime/configuration/
         	          de/uni_hildesheim/sse/monitoring/runtime/instrumentation/
 					  de/uni_hildesheim/sse/monitoring/runtime/utils/
-					  de/uni_hildesheim/sse/monitoring/runtime/utils/xml/" 
+					  de/uni_hildesheim/sse/monitoring/runtime/utils/xml/
+					  version" 
         	basedir="${meter.bin}" manifest="${meter.base}/MONITORING_MANIFEST.MF">
         </jar>
 
@@ -145,6 +150,7 @@
   	      <fileset dir="${meter.bin}">
   	        <include name="de/uni_hildesheim/sse/monitoring/runtime/annotations/"/>
   	        <include name="de/uni_hildesheim/sse/monitoring/runtime/"/>
+  	        <include name="version"/>
   	      </fileset>
 	      <fileset dir="${meter.base}">
 	        <include name="spass-meter.properties"/>
