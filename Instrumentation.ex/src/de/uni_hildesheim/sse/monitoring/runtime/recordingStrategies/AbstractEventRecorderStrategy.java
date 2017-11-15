@@ -4,6 +4,7 @@ import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
 import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.TimerState;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.StreamType;
+import de.uni_hildesheim.sse.monitoring.runtime.configuration.Configuration;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.ValueType;
 import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.AssignToAllElement;
 import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements.ClearTemporaryDataElement;
@@ -87,7 +88,10 @@ public abstract class AbstractEventRecorderStrategy
      */
     protected void start() {
         thread = new HandleThread();
-        thread.start();
+        // prevent starting endless event handling thread during static instrumentation
+        if (!Configuration.INSTANCE.isStaticInstrumentation()) {
+            thread.start();
+        }
     }
     
     /**
