@@ -32,6 +32,7 @@ public class Preprocess extends OnTheFlyJarProcessor {
         if (args.length < 2 || args.length > 3) {
             System.out.println("illegal number of arguments: " 
                 + "<in(s)> <out(dir)> [<params>]");
+            System.exit(0);
         }
         StringTokenizer tokens = new StringTokenizer(args[0], ",");
         String params = null;

@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Premain-Class: de.uni_hildesheim.sse.monitoring.runtime.instrumentation.Agent
+Main-Class: de.uni_hildesheim.sse.monitoring.runtime.preprocess.Preprocess
 Can-Redefine-Classes: true
 Can-Retransform-Classes: true
 Bundle-ManifestVersion: 2
@@ -10,6 +10,7 @@ Export-Package: de.uni_hildesheim.sse.monitoring.runtime,
  de.uni_hildesheim.sse.monitoring.runtime.annotations,
  de.uni_hildesheim.sse.monitoring.runtime.boot,
  de.uni_hildesheim.sse.monitoring.runtime.instrumentation,
+ de.uni_hildesheim.sse.monitoring.runtime.preprocess,
  de.uni_hildesheim.sse.monitoring.runtime.recording,
  de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies,
  de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements,
