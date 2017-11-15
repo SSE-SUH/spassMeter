@@ -472,7 +472,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
                 + "not running.");
         }
         formatter.clear();
-        return true; // release always
+        return null != pData; // release only if given
     }
     
     /**
@@ -1183,7 +1183,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
     /**
      * Prints the current (aggregated) state to the output formatter.
      * 
-     * @param pData additional information collected for system and JVM process
+     * @param pData additional information collected for system and JVM process (may be <b>null</b>)
      * @return <code>true</code> if the threadsInfo object should be released 
      *     to the pool, <code>false</code> if it should not be released
      * 
@@ -1202,8 +1202,10 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
             if (null == jvmNotificationInstance) {
                 jvmNotificationInstance = new ProcessData.Measurements();
             }
-            systemNotificationInstance.copyFrom(pData.getSystem());
-            jvmNotificationInstance.copyFrom(pData.getJvm());
+            if (null != pData) {
+                systemNotificationInstance.copyFrom(pData.getSystem());
+                jvmNotificationInstance.copyFrom(pData.getJvm());
+            }
             if (Configuration.INSTANCE.programUseFromJvm()) {
                 programRecord.updateMemoryFreedFromJvm();
             }
@@ -1224,7 +1226,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
             formatter.printCurrentStateStatistics(elts, 
                 programRecord, null);
         }
-        return true; // release always
+        return null != pData; // release if given
     }
 
     /**

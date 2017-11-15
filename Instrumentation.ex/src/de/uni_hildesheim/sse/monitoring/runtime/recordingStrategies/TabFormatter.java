@@ -56,59 +56,60 @@ public class TabFormatter extends AbstractResultFormatter {
      * 
      * @param description a description for the output (to be augmented by 
      *     "min", "max" and "avg")
-     * @param measure the instance to be printed
+     * @param measure the instance to be printed (may be <b>null</b>)
      * 
      * @since 1.00
      */
-    private void printProcessStatistics(String description, 
-        Measurements measure) {
-        print(description + " min");
-        print(measure.getMinMemUse()); // mem use
-        printSeparator(); // mem alloc
-        printSeparator(); // sys time
-        printSeparator(); // agg sys time
-        printSeparator(); // cpu time
-        printSeparator(); // io read
-        printSeparator(); // net in
-        printSeparator(); // file in
-        printSeparator(); // io write
-        printSeparator(); // net out
-        printSeparator(); // file out
-        printSeparator();
-        printPercentage(measure.getMinLoad());
-        println();
-
-        print(description + " avg");
-        print(measure.getAvgMemUse()); // mem use
-        printSeparator(); // mem alloc
-        printSeparator(); // sys time
-        printSeparator(); // agg sys time
-        printSeparator(); // cpu time
-        print(getIoRead(measure)); // io read
-        printSeparator(); // net in
-        printSeparator(); // file in
-        print(getIoWrite(measure)); // io write
-        printSeparator(); // net out
-        printSeparator(); // file out
-        printSeparator();
-        printPercentage(measure.getAvgLoad());
-        println();
-        
-        print(description + " max");
-        print(measure.getMaxMemUse()); // mem use
-        printSeparator(); // mem alloc
-        printSeparator(); // sys time
-        printSeparator(); // agg sys time
-        printSeparator(); // cpu time
-        printSeparator(); // io read
-        printSeparator(); // net in
-        printSeparator(); // file in
-        printSeparator(); // io write
-        printSeparator(); // net out
-        printSeparator(); // file out
-        printSeparator();
-        printPercentage(measure.getMaxLoad());
-        println();
+    private void printProcessStatistics(String description, Measurements measure) {
+        if (null != measure) {
+            print(description + " min");
+            print(measure.getMinMemUse()); // mem use
+            printSeparator(); // mem alloc
+            printSeparator(); // sys time
+            printSeparator(); // agg sys time
+            printSeparator(); // cpu time
+            printSeparator(); // io read
+            printSeparator(); // net in
+            printSeparator(); // file in
+            printSeparator(); // io write
+            printSeparator(); // net out
+            printSeparator(); // file out
+            printSeparator();
+            printPercentage(measure.getMinLoad());
+            println();
+    
+            print(description + " avg");
+            print(measure.getAvgMemUse()); // mem use
+            printSeparator(); // mem alloc
+            printSeparator(); // sys time
+            printSeparator(); // agg sys time
+            printSeparator(); // cpu time
+            print(getIoRead(measure)); // io read
+            printSeparator(); // net in
+            printSeparator(); // file in
+            print(getIoWrite(measure)); // io write
+            printSeparator(); // net out
+            printSeparator(); // file out
+            printSeparator();
+            printPercentage(measure.getAvgLoad());
+            println();
+            
+            print(description + " max");
+            print(measure.getMaxMemUse()); // mem use
+            printSeparator(); // mem alloc
+            printSeparator(); // sys time
+            printSeparator(); // agg sys time
+            printSeparator(); // cpu time
+            printSeparator(); // io read
+            printSeparator(); // net in
+            printSeparator(); // file in
+            printSeparator(); // io write
+            printSeparator(); // net out
+            printSeparator(); // file out
+            printSeparator();
+            printPercentage(measure.getMaxLoad());
+            println();
+        }
     }
     
     /**
@@ -132,7 +133,6 @@ public class TabFormatter extends AbstractResultFormatter {
     public void printIndividual(String description, 
         RecorderElement individual) {
         RecorderElement total = getTotal();
-        double jvmLoad = getJvmData().getAvgLoad();
         
         if (null != description) {
             print(description);
@@ -174,7 +174,12 @@ public class TabFormatter extends AbstractResultFormatter {
                         / ((double) total.getCpuTimeTicks());
                 }
                 printPercentage(100 * timeFraction);
-                printPercentage(jvmLoad * timeFraction);
+                Measurements jvm = getJvmData();
+                if (null != jvm) {
+                    printPercentage(jvm.getAvgLoad() * timeFraction);
+                } else {
+                    printSeparator();
+                }
             }
         }
         println();
@@ -216,73 +221,73 @@ public class TabFormatter extends AbstractResultFormatter {
      * @since 1.00
      */
     @Override
-    public void printCompare(String description, RecorderElement individual, 
-        boolean system) {
+    public void printCompare(String description, RecorderElement individual, boolean system) {
         RecorderElement total = getTotal();
         Measurements jvm = getJvmData();
         Measurements sys = getSystemData();
 
-        double jvmLoad = jvm.getAvgLoad();
-        double sysLoad = sys.getAvgLoad();
-        
-        print(description);
-        if (null == total || null == individual) {
-            //data.print("JVM");
-            printPercentage(jvm.getAvgMemUse(), sys.getAvgMemUse());
-            printSeparator(); // mem alloc
-            printSeparator(); // sys time
-            printSeparator(); // agg sys time
-            printSeparator(); // cpu time
-            printPercentage(getIoRead(jvm), getIoRead(sys));
-            printSeparator(); // net in
-            printSeparator(); // file in
-            printPercentage(getIoWrite(jvm), getIoWrite(sys));
-            printSeparator(); // net out
-            printSeparator(); // file out
-            printPercentage(jvmLoad);
-            printPercentage(sysLoad);
-        } else {
-            double memUse;
-            long ioRead;
-            long ioWrite;
-            if (system) {
-                memUse = sys.getAvgMemUse(); // was max before
-                ioRead = getIoRead(sys);
-                ioWrite = getIoWrite(sys);
+        if (null != jvm && null != sys) {
+            print(description);
+            double jvmLoad = jvm.getAvgLoad();
+            double sysLoad = sys.getAvgLoad();
+            if (null == total || null == individual) {
+                //data.print("JVM");
+                printPercentage(jvm.getAvgMemUse(), sys.getAvgMemUse());
+                printSeparator(); // mem alloc
+                printSeparator(); // sys time
+                printSeparator(); // agg sys time
+                printSeparator(); // cpu time
+                printPercentage(getIoRead(jvm), getIoRead(sys));
+                printSeparator(); // net in
+                printSeparator(); // file in
+                printPercentage(getIoWrite(jvm), getIoWrite(sys));
+                printSeparator(); // net out
+                printSeparator(); // file out
+                printPercentage(jvmLoad);
+                printPercentage(sysLoad);
             } else {
-                memUse = jvm.getAvgMemUse(); // was max before
-                ioRead = getIoRead(jvm);
-                ioWrite = getIoWrite(jvm);
+                double memUse;
+                long ioRead;
+                long ioWrite;
+                if (system) {
+                    memUse = sys.getAvgMemUse(); // was max before
+                    ioRead = getIoRead(sys);
+                    ioWrite = getIoWrite(sys);
+                } else {
+                    memUse = jvm.getAvgMemUse(); // was max before
+                    ioRead = getIoRead(jvm);
+                    ioWrite = getIoWrite(jvm);
+                }
+                
+                //out.print("\n - vs. sys: mem ");
+                printPercentage(individual.getMemUse(), memUse);
+                print(individual.getMemAllocated());
+                print(individual.getSystemTimeTicks());
+                print(0); // legacy
+                print(individual.getCpuTimeTicks());
+                printPercentage(individual.getIoRead(), ioRead);
+                print(individual.getNetIn());
+                print(individual.getFileIn());
+                printPercentage(individual.getIoWrite(), ioWrite);
+                print(individual.getNetOut());
+                print(individual.getFileOut());
+                double timeFraction;
+                if (0 == total.getCpuTimeTicks()) {
+                    timeFraction = 0;
+                } else {
+                    timeFraction = individual.getCpuTimeTicks() 
+                        / ((double) total.getCpuTimeTicks());
+                }
+                if (system) {
+                    printSeparator();
+                    printPercentage(jvmLoad * timeFraction);
+                } else {
+                    printPercentage(timeFraction * 100);
+                    printSeparator();
+                }
             }
-            
-            //out.print("\n - vs. sys: mem ");
-            printPercentage(individual.getMemUse(), memUse);
-            print(individual.getMemAllocated());
-            print(individual.getSystemTimeTicks());
-            print(0); // legacy
-            print(individual.getCpuTimeTicks());
-            printPercentage(individual.getIoRead(), ioRead);
-            print(individual.getNetIn());
-            print(individual.getFileIn());
-            printPercentage(individual.getIoWrite(), ioWrite);
-            print(individual.getNetOut());
-            print(individual.getFileOut());
-            double timeFraction;
-            if (0 == total.getCpuTimeTicks()) {
-                timeFraction = 0;
-            } else {
-                timeFraction = individual.getCpuTimeTicks() 
-                    / ((double) total.getCpuTimeTicks());
-            }
-            if (system) {
-                printSeparator();
-                printPercentage(jvmLoad * timeFraction);
-            } else {
-                printPercentage(timeFraction * 100);
-                printSeparator();
-            }
+            println();
         }
-        println();
     }
     
     /**
@@ -355,7 +360,6 @@ public class TabFormatter extends AbstractResultFormatter {
      * @since 1.00
      */
     private void printMeasurementsStatistics(Measurements measurements) {
-        print(measurements.getSystemTime());
         print(measurements.getAvgMemUse());
         print(getIoRead(measurements));
         print(getIoWrite(measurements));

@@ -57,7 +57,7 @@ public class RecordingStrategiesElementLinkedList {
     /**
      * Stores the {@link Entry} pool.
      */
-    private static ArrayList<Entry> entryPool = new ArrayList<Entry>(1000);
+    private static ArrayList<Entry> entryPool = new ArrayList<Entry>(2000);
     
     /**
      * Defines the dummy header element where to hook into further list 
@@ -88,14 +88,20 @@ public class RecordingStrategiesElementLinkedList {
      * 
      * @since 1.00
      */
-    private static final synchronized Entry getEntryFromPool(RecordingStrategiesElement value, 
+    private static final Entry getEntryFromPool(RecordingStrategiesElement value, 
         Entry next, Entry previous) {
-        int size = entryPool.size();
         Entry result;
-        if (0 == size) {
+        synchronized (entryPool) {
+            int size = entryPool.size();
+            if (size > 0) {
+                result = entryPool.remove(size - 1);
+            } else {
+                result = null;
+            }
+        }
+        if (null == result) {
             result = new Entry(value, next, previous);
         } else {
-            result = entryPool.remove(size - 1);
             result.value = value;
             result.next = next;
             result.previous = previous;
@@ -110,11 +116,13 @@ public class RecordingStrategiesElementLinkedList {
      * @param entry the {@link Entry} to be released (must not 
      *     be <b>null</b>)
      */  
-    private static final synchronized void releaseEntry(Entry entry) {
+    private static final void releaseEntry(Entry entry) {
         entry.value = null;
         entry.next = null;
         entry.previous = null;
-        entryPool.add(entry);
+        synchronized (entryPool) {
+            entryPool.add(entry);
+        }
     }    
 
     /**

@@ -49,7 +49,12 @@ public class PrintCurrentState extends RecordingStrategiesElement {
      */
     @Override
     public void send(DataOutputStream out) throws IOException {
-        data.send(out);
+        if (null != data) {
+            out.writeShort(1);
+            data.send(out);
+        } else {
+            out.writeShort(0);
+        }
     }
     
     /**
@@ -57,8 +62,12 @@ public class PrintCurrentState extends RecordingStrategiesElement {
      */
     @Override
     public void read(DataInputStream in) throws IOException {
-        data = ProcessData.getFromPool();
-        data.read(in);
+        if (1 == in.readShort()) {
+            data = ProcessData.POOL.getFromPool();
+            data.read(in);
+        } else {
+            data = null;
+        }
     }
 
     /**
@@ -82,6 +91,8 @@ public class PrintCurrentState extends RecordingStrategiesElement {
      */
     @Override
     public void clear() {
-        ProcessData.release(data);
+        if (null != data) {
+            ProcessData.POOL.release(data);
+        }
     }
 }

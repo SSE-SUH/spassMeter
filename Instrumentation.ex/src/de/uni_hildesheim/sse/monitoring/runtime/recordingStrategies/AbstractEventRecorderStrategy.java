@@ -50,8 +50,6 @@ public abstract class AbstractEventRecorderStrategy
     /**
      * Stores the generated elements for sending them to the specified server.
      */
-//    private LinkedList<RecordingStrategiesElement> elements 
-//        = new LinkedList<RecordingStrategiesElement>();
     private RecordingStrategiesElementLinkedList elements
         = new RecordingStrategiesElementLinkedList();
 

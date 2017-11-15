@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import de.uni_hildesheim.sse.monitoring.runtime.boot.RecorderFrontend;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.ResourceType;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.Configuration;
 import de.uni_hildesheim.sse.monitoring.runtime.configuration.
     ConfigurationListener;
@@ -15,6 +16,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies.ThreadsInfo;
 import de.uni_hildesheim.sse.monitoring.runtime.utils.LongLongHashMap;
 import de.uni_hildesheim.sse.system.GathererFactory;
 import de.uni_hildesheim.sse.system.IMemoryDataGatherer;
+import de.uni_hildesheim.sse.system.IProcessorDataGatherer;
 import de.uni_hildesheim.sse.system.IThisProcessDataGatherer;
 import de.uni_hildesheim.sse.system.IThreadDataGatherer;
 
@@ -33,16 +35,28 @@ public class SystemMonitoring {
     public static final long LOAD_COUNTER_PERIOD = 1000;
 
     /**
-     * Stores the thread data gatherer.
-     */
-    public static final IThreadDataGatherer THREAD_DATA_GATHERER 
-        = GathererFactory.getThreadDataGatherer();
-    
-    /**
      * Stores the memory data gatherer.
      */
     public static final IMemoryDataGatherer MEMORY_DATA_GATHERER 
         = GathererFactory.getMemoryDataGatherer();
+    
+    /**
+     * Stores the thread data gatherer.
+     */
+    private static final IThreadDataGatherer THREAD_DATA_GATHERER 
+        = GathererFactory.getThreadDataGatherer();
+
+    /**
+     * Stores the process data gatherer.
+     */
+    private static final IThisProcessDataGatherer PROCESS_DATA_GATHERER 
+        = GathererFactory.getThisProcessDataGatherer();
+
+    /**
+     * Stores the processor data gatherer.
+     */
+    private static final IProcessorDataGatherer PROCESSOR_DATA_GATHERER 
+        = GathererFactory.getProcessorDataGatherer();
     
     /**
      * Stores the central timer instance.
@@ -58,7 +72,7 @@ public class SystemMonitoring {
      * Stores the local process data object used for collecting minimum and
      * maximum information.
      */
-    private static ProcessData processData = ProcessData.getFromPool();
+    private static ProcessData processData = ProcessData.POOL.getFromPool();
         
     /**
      * Stores the sum of all JVM loads.
@@ -79,6 +93,21 @@ public class SystemMonitoring {
      * Stores the number of load ticks (probes) taken.
      */
     private static long loadTickCount = 0;
+    
+    /**
+     * Account for JVM I/O.
+     */
+    private static boolean accountForJvmIo = true;
+    
+    /**
+     * Account for System I/O.
+     */
+    private static boolean accountForSystemIo = true;
+
+    /**
+     * Account for process data.
+     */
+    private static boolean accountForProcessData = true;
     
     /**
      * Stores the number of elapsed out interval counts.
@@ -164,57 +193,49 @@ public class SystemMonitoring {
          * @since 1.00
          */
         public void collectOnce() {
-            synchronized (processData) {
-                IThisProcessDataGatherer pdg = 
-                    GathererFactory.getThisProcessDataGatherer();
-    
-                Measurements jvm = processData.getJvm();
-                Measurements sys = processData.getSystem();
-                
-                double load = pdg.getCurrentProcessProcessorLoad();
+            Measurements jvm = processData.getJvm();
+            Measurements sys = processData.getSystem();
+            
+            double load;
+            long memUse;
+            if (jvmLoadSum >= 0) {
+                load = PROCESS_DATA_GATHERER.getCurrentProcessProcessorLoad();
                 jvmLoadSum += load;
                 jvm.setMinMaxLoad(load);
+            }
 
-                load = GathererFactory.getProcessorDataGatherer()
-                    .getCurrentSystemLoad();
-                sysLoadSum += load;
-                sys.setMinMaxLoad(load);
-
-                long memUse = pdg.getCurrentProcessMemoryUse();
+            if (jvmMemUseSum >= 0) {
+                memUse = PROCESS_DATA_GATHERER.getCurrentProcessMemoryUse();
                 jvmMemUseSum += memUse;
                 jvm.setMinMaxMemUse(memUse);
-    
-                memUse = GathererFactory.getMemoryDataGatherer()
-                    .getCurrentMemoryUse();
+            }
+
+            if (sysLoadSum >= 0) {
+                load = PROCESSOR_DATA_GATHERER.getCurrentSystemLoad();
+                sysLoadSum += load;
+                sys.setMinMaxLoad(load);
+            }
+
+            if (sysMemUseSum >= 0) {
+                memUse = MEMORY_DATA_GATHERER.getCurrentMemoryUse();
                 sysMemUseSum += memUse;
                 sys.setMinMaxMemUse(memUse);
-                
-                int maxOutInterval = Configuration.INSTANCE.getOutInterval();
-                // start legacy
-                if (maxOutInterval > 0) {
-                    outIntervalCount++;
-                    if (outIntervalCount >= maxOutInterval) {
-                        outIntervalCount = 0;
-                    }
-                    if (0 == outIntervalCount) {
-                        RecorderFrontend.instance.printCurrentState();
-                    }
-                }
-                // end legacy
-                loadTickCount++;
-                /*
-                if (loadTickCount % 10 == 0) {
-                    IFactory.getInstance().cleanup();
-                }*/
-                RecorderFrontend.instance.clearTemporaryData();
-                /*
-                Cleanup clean = InternalPluginRegistry.getInstrumenterCleanup();
-                if (null != clean) {
-                    clean.cleanupIfRequired();
-                }*/
-                //IFactory.getInstance().cleanupIfRequired();
-
             }
+            
+            int maxOutInterval = Configuration.INSTANCE.getOutInterval();
+            // start legacy
+            if (maxOutInterval > 0) {
+                outIntervalCount++;
+                if (outIntervalCount >= maxOutInterval) {
+                    outIntervalCount = 0;
+                }
+                if (0 == outIntervalCount) {
+                    RecorderFrontend.instance.printCurrentState();
+                }
+            }
+            // end legacy
+            loadTickCount++;
+            RecorderFrontend.instance.clearTemporaryData();
         }
         
     }
@@ -255,11 +276,13 @@ public class SystemMonitoring {
          * @since 1.00
          */
         public void notifyOutIntervalChanged(int newValue) {
-            logEventTask.cancel();
-            timer.purge();
-            logEventTask = new LogEventTask();
-            if (newValue >= 500) {
-                timer.schedule(logEventTask, 0, newValue);
+            if (null != timer) {
+                logEventTask.cancel();
+                timer.purge();
+                logEventTask = new LogEventTask();
+                if (newValue >= 500) {
+                    timer.schedule(logEventTask, 0, newValue);
+                }
             }
         }
     }
@@ -268,7 +291,6 @@ public class SystemMonitoring {
      * Checks JMX capabilities and initializes the threads map.
      */
     static {
-        //THREADS.put(ThreadsInfo.REMAINDER_THREAD_ID, 0L);
         Configuration.INSTANCE.attachListener(
             new SystemConfigurationListener());
     }
@@ -338,7 +360,7 @@ public class SystemMonitoring {
     public static long[] getAllThreadIds() {
         return THREAD_DATA_GATHERER.getAllThreadIds();
     }
-
+    
     /**
      * Starts the load and statistics counting thread.
      * 
@@ -346,9 +368,28 @@ public class SystemMonitoring {
      */
     public static void startTimer() {
         if (null == timer) {
+            Configuration config = Configuration.INSTANCE;
+            if (!config.accountForGlobalResource(true, ResourceType.CPU_TIME)) {
+                jvmLoadSum = -1;
+            }
+            if (!config.accountForGlobalResource(true, ResourceType.MEMORY)) {
+                jvmMemUseSum = -1;
+            }
+            if (!config.accountForGlobalResource(false, ResourceType.CPU_TIME)) {
+                sysLoadSum = -1;
+            }
+            if (!config.accountForGlobalResource(false, ResourceType.MEMORY)) {
+                sysMemUseSum = -1;
+            }
+            accountForJvmIo = config.accountForGlobalResource(true, ResourceType.FILE_IO) 
+                || config.accountForGlobalResource(true, ResourceType.NET_IO);            
+            accountForSystemIo = config.accountForGlobalResource(false, ResourceType.FILE_IO) 
+                || config.accountForGlobalResource(false, ResourceType.NET_IO);
+            accountForProcessData = sysLoadSum >= 0 || jvmLoadSum >= 0 || jvmMemUseSum >= 0 || sysMemUseSum >= 0;
+            accountForProcessData |= accountForJvmIo || accountForSystemIo;
             timer = new Timer();
         }
-        if (!LOAD_COUNTER.isRunning()) {
+        if (!LOAD_COUNTER.isRunning()) { // as load counter also cleans up instrumenter, we cannot completely switch off
             timer.schedule(LOAD_COUNTER, 0, LOAD_COUNTER_PERIOD);
         }
         int outInterval = Configuration.INSTANCE.getOutInterval();
@@ -383,32 +424,8 @@ public class SystemMonitoring {
         if (null != timer) {
             timer.cancel();
         }
-        ProcessData.release(processData);
+        ProcessData.POOL.release(processData);
     }
-    
-    /**
-     * Estimates the time fraction for the given time difference of the current 
-     * thread.
-     * 
-     * @param timeDiff the time difference in nano seconds to be fractioned
-     * @param info the threads info containing information on the current timing
-     *     of threads
-     * @return the fraction of <code>timeDiff</code> for the current thread
-     * 
-     * @since 1.00
-     */
-    /*public static long estimateTimeFraction(long timeDiff, ThreadsInfo info) {
-        long result;
-        long curId = Thread.currentThread().getId();
-        if (info.containsKey(curId)) {
-            long curDiff = info.get(curId);
-            result = (long) (timeDiff 
-                * (curDiff / (double) info.getStoredTicks()));
-        } else {
-            result = timeDiff; // unsure, should not happen
-        }
-        return result;
-    }*/
     
     /**
      * Returns information about the currently running thread and other 
@@ -455,25 +472,36 @@ public class SystemMonitoring {
      * Creates a process data object with the data collected in this class.
      * 
      * @return a process data object, must be released by 
-     *     {@link ProcessData#release(ProcessData)}.
+     *     {@link ProcessData#POOL}, may be <b>null</b> if not available
      * 
      * @since 1.00
      */
     public static ProcessData getProcessData() {
-        ProcessData result = ProcessData.getFromPool();
-        synchronized (processData) {
+        ProcessData result;
+        if (accountForProcessData) {
+            result = ProcessData.POOL.getFromPool();
             result.copyFrom(processData);
+    
+            Measurements jvm = result.getJvm();
+            Measurements sys = result.getSystem();
+            if (loadTickCount > 0) {
+                if (sysLoadSum >= 0) {
+                    sys.setAvgLoad(Math.max(0.01, sysLoadSum / loadTickCount));
+                }
+                if (jvmLoadSum >= 0) {
+                    jvm.setAvgLoad(Math.max(0.01, jvmLoadSum / loadTickCount));
+                }
+                if (jvmMemUseSum >= 0) {
+                    jvm.setAvgMemUse(jvmMemUseSum / ((double) loadTickCount));
+                }
+                if (sysMemUseSum >= 0) {
+                    sys.setAvgMemUse(sysMemUseSum / ((double) loadTickCount));
+                }
+            }
+            result.readRemainingFromSystem(PROCESS_DATA_GATHERER, accountForJvmIo, accountForSystemIo);
+        } else {
+            result = null;
         }
-
-        Measurements jvm = result.getJvm();
-        Measurements sys = result.getSystem();
-        if (loadTickCount > 0) {
-            sys.setAvgLoad(Math.max(0.01, sysLoadSum / loadTickCount));
-            jvm.setAvgLoad(Math.max(0.01, jvmLoadSum / loadTickCount));
-            jvm.setAvgMemUse(jvmMemUseSum / ((double) loadTickCount));
-            sys.setAvgMemUse(sysMemUseSum / ((double) loadTickCount));
-        }
-        result.readRemainingFromSystem();
         return result;
     }
     

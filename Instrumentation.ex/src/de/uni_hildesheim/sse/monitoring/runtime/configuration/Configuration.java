@@ -33,7 +33,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.utils.StreamUtilities;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.11
+ * @version 1.21
  */
 public class Configuration {
 
@@ -820,6 +820,26 @@ public class Configuration {
      */
     public ResourceType[] getAnywayResources() {
         return anywayResources;
+    }
+    
+    /**
+     * Returns whether we shall account for a global SUM/System resource.
+     * 
+     * @param sum <code>true</code> for an answer for SUM-level, <code>false</code> for system level
+     * @param resource the resource to query for
+     * @return <code>true</code> for accounting, <code>false</code> else
+     * 
+     * @since 1.21
+     */
+    public boolean accountForGlobalResource(boolean sum, ResourceType resource) {
+        boolean account = ResourceType.contains(accountableResources, resource);
+        if (account) {
+            account = sum ? ResourceType.contains(sumResources, resource) : false;
+            if (!account) {
+                account = ResourceType.contains(anywayResources, resource);    
+            }
+        }
+        return account;
     }
     
     /**

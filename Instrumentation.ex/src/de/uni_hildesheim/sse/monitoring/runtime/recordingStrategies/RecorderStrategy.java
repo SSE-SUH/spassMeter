@@ -307,7 +307,7 @@ public interface RecorderStrategy {
     /**
      * Prints the current (aggregated) state to the output formatter.
      * 
-     * @param data additional information collected for system and JVM process
+     * @param data additional information collected for system and JVM process (may be <b>null</b>)
      * @return <code>true</code> if the threadsInfo object should be released 
      *     to the pool, <code>false</code> if it should not be released
      * 

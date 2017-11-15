@@ -9,7 +9,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.utils.CleaningLongHashMap;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.21
  */
 public class ThreadData {
 
@@ -29,7 +29,7 @@ public class ThreadData {
      * Defines the stack increment in case that there is no more space and also
      * the initial stack size.
      */
-    private static final int STACK_INCREMENT = 3;
+    private static final int STACK_INCREMENT = 12;
 
     /**
      * Stores the CPU time ticks when using this thread started. This 

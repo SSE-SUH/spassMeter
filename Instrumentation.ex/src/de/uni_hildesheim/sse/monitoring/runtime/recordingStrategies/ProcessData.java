@@ -4,10 +4,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import de.uni_hildesheim.sse.monitoring.runtime.boot.ArrayList;
 import de.uni_hildesheim.sse.monitoring.runtime.boot.Flags;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.ObjectPool;
+import de.uni_hildesheim.sse.monitoring.runtime.boot.Poolable;
 import de.uni_hildesheim.sse.monitoring.runtime.plugins.IMeasurements;
-import de.uni_hildesheim.sse.system.GathererFactory;
 import de.uni_hildesheim.sse.system.IThisProcessDataGatherer;
 import de.uni_hildesheim.sse.system.IoStatistics;
 
@@ -20,7 +20,7 @@ import de.uni_hildesheim.sse.system.IoStatistics;
  * @since 1.00
  * @version 1.00
  */
-public class ProcessData {
+public class ProcessData implements Poolable<ProcessData> {
 
     /**
      * Stores a set of measurements, i.e. one for the JVM process and one for 
@@ -76,7 +76,7 @@ public class ProcessData {
          * Stores the system time consumed by the process.
          */
         private long systemTime;
-
+        
         /**
          * Stores the amount of bytes read from I/O.
          */
@@ -108,7 +108,7 @@ public class ProcessData {
          * 
          * @since 1.00
          */
-        void clear() {
+        public void clear() {
             minLoad = Double.MAX_VALUE;
             avgLoad = 0;
             load = 0;
@@ -289,7 +289,7 @@ public class ProcessData {
         public long getMaxMemUse() {
             return maxMemUse;
         }
-
+        
         /**
          * Returns the duration of the process in system time.
          * 
@@ -394,8 +394,8 @@ public class ProcessData {
     /**
      * Stores the pooled instances.
      */
-    private static final ArrayList<ProcessData> POOL 
-        = new ArrayList<ProcessData>();
+    public static final ObjectPool<ProcessData> POOL 
+        = new ObjectPool<ProcessData>(new ProcessData(true), 10);
 
     /**
      * Stores the system measurement data.
@@ -417,47 +417,32 @@ public class ProcessData {
      * @since 1.00
      */
     private ProcessData() {
-        this.system = new Measurements();
+        this.system = new Measurements(); // don't pool, own pooling takes care of these instances
         this.jvm = new Measurements();
     }
     
     /**
-     * Returns an usable instance from the pool.
+     * Creates a prototype instance.
      * 
-     * @return an instance
+     * @param dummy ignored
      * 
-     * @since 1.00
+     * @since 1.21
      */
-    public static synchronized ProcessData getFromPool() {
-        ProcessData result;
-        if (POOL.size() > 0) {
-            result = POOL.remove(POOL.size() - 1);
-        } else {
-            result = new ProcessData();
-        }
-        return result;
+    private ProcessData(boolean dummy) {
+        // no initialization, this is a prototype instance
+    }
+
+    @Override
+    public ProcessData create() {
+        return new ProcessData();
     }
     
-    /**
-     * Releases the given <code>instance</code>. Note that when calling
-     * this method no references to {@link #getJvm()} and {@link #getSystem()}
-     * should be kept outside.
-     * 
-     * @param instance the instance to be released
-     * 
-     * @since 1.00
-     */
-    public static synchronized void release(ProcessData instance) {
-        instance.clear();
-        POOL.add(instance);
-    }
-        
     /**
      * Clears this instance.
      * 
      * @since 1.00
      */
-    void clear() {
+    public void clear() {
         system.clear();
         jvm.clear();
     }
@@ -488,32 +473,39 @@ public class ProcessData {
      * Reads data not obtained from monitoring directly from the underlying 
      * system using native methods.
      * 
+     * @param tpdg the process data gatherer
+     * @param jvmIo account for JVM I/O
+     * @param systemIo account for system I/O
+     * 
      * @since 1.00
      */
-    public void readRemainingFromSystem() {
-        IThisProcessDataGatherer tpdg = 
-            GathererFactory.getThisProcessDataGatherer();
+    public void readRemainingFromSystem(IThisProcessDataGatherer tpdg, boolean jvmIo, boolean systemIo) {
         jvm.systemTime = tpdg.getCurrentProcessSystemTimeTicks();
-        IoStatistics iostat = tpdg.getCurrentProcessIo();
-        if (null != iostat) {
-            jvm.ioRead = iostat.read;
-            jvm.ioWrite = iostat.write;
+        if (jvmIo) {
+            IoStatistics iostat = tpdg.getCurrentProcessIo();
+            if (null != iostat) {
+                jvm.ioRead = iostat.read;
+                jvm.ioWrite = iostat.write;
+            }
+            int status = 0;
+            status = Flags.change(status, IMeasurements.STATUS_FILE, 
+                tpdg.isFileIoDataIncluded(false));
+            jvm.status = Flags.change(status, IMeasurements.STATUS_NET, 
+                tpdg.isNetworkIoDataIncluded(false));
         }
-        int status = 0;
-        status = Flags.change(status, IMeasurements.STATUS_FILE, 
-            tpdg.isFileIoDataIncluded(false));
-        jvm.status = Flags.change(status, IMeasurements.STATUS_NET, 
-            tpdg.isNetworkIoDataIncluded(false));
-        iostat = tpdg.getAllProcessesIo();
-        if (null != iostat) {
-            system.ioRead = iostat.read;
-            system.ioWrite = iostat.write;
+
+        if (systemIo) {
+            IoStatistics iostat = tpdg.getAllProcessesIo();
+            if (null != iostat) {
+                system.ioRead = iostat.read;
+                system.ioWrite = iostat.write;
+            }
+            int status = 0;
+            status = Flags.change(status, 
+                IMeasurements.STATUS_FILE, tpdg.isFileIoDataIncluded(true));
+            system.status = Flags.change(status, 
+                IMeasurements.STATUS_NET, tpdg.isNetworkIoDataIncluded(true));
         }
-        status = 0;
-        status = Flags.change(status, 
-            IMeasurements.STATUS_FILE, tpdg.isFileIoDataIncluded(true));
-        system.status = Flags.change(status, 
-            IMeasurements.STATUS_NET, tpdg.isNetworkIoDataIncluded(true));
     }
 
     /**

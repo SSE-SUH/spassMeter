@@ -173,12 +173,12 @@ public abstract class AbstractResultFormatter implements ResultFormatter {
      * Returns the JVM data taken from the process data
      * stored by {@link #setProcessData(ProcessData)}.
      * 
-     * @return the JVM measurements object, do not keep this reference
+     * @return the JVM measurements object, do not keep this reference (may be <b>null</b>)
      * 
      * @since 1.00
      */
     protected Measurements getJvmData() {
-        return data.getJvm();
+        return null != data ? data.getJvm() : null;
     }
 
     /**
@@ -190,12 +190,12 @@ public abstract class AbstractResultFormatter implements ResultFormatter {
      * considers the values from {@link #total} in case that no network
      * or file statistics are provided.
      *
-     * @return the system measurements object, do not keep this reference
+     * @return the system measurements object, do not keep this reference (may be <b>null</b>)
      * 
      * @since 1.00
      */
     protected Measurements getSystemData() {
-        return data.getSystem();
+        return null != data ? data.getSystem() : null;
     }
 
     /**

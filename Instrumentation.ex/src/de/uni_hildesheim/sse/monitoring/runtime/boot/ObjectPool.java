@@ -12,12 +12,11 @@ public class ObjectPool<T extends Poolable<T>> {
     /**
     * Stores the pool.
     */
-    private ArrayList<T> pool = new ArrayList<T>(5);
+    private ArrayList<T> pool; // TODO check replace by linked list
     
     /**
      * Stores a prototype instance for creating instances.
      */
-    // TODO [performance] check if newInstaces from class is faster
     private T prototype;
     
     /**
@@ -36,6 +35,7 @@ public class ObjectPool<T extends Poolable<T>> {
      */
     public ObjectPool(T prototype) {
         this.prototype = prototype;
+        this.pool = new ArrayList<T>(10);
     }
     
     /**
@@ -50,6 +50,12 @@ public class ObjectPool<T extends Poolable<T>> {
     public ObjectPool(T prototype, int maxSize) {
         this.prototype = prototype;
         this.maxSize = maxSize;
+        // reversing the usual capacity increase of ArrayList
+        int poolSize = maxSize; // ((maxSize - 1) * 2) / 3 - 1;
+        if (poolSize < 10) {
+            poolSize = 10;
+        }
+        this.pool = new ArrayList<T>(poolSize);
     }
     
    /**
@@ -63,7 +69,7 @@ public class ObjectPool<T extends Poolable<T>> {
     public final synchronized T getFromPool() {
         int size = pool.size();
         T result;
-        if (0 == size) { // || (maxSize > 0 && size >= maxSize)
+        if (0 == size) {
             result = prototype.create();
         } else {
             result = pool.remove(size - 1);
@@ -81,8 +87,7 @@ public class ObjectPool<T extends Poolable<T>> {
         instance.clear();
         if (maxSize == 0 || (maxSize > 0 && pool.size() < maxSize)) {
             pool.add(instance);   
-        } //else {
-//        }
+        }
     }
     
     /**

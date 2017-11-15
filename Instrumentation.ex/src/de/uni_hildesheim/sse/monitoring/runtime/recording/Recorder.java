@@ -1309,7 +1309,7 @@ public class Recorder extends RecorderFrontend
             long accMem = Lock.isStackTopMemoryAccounting(tid);
             ProcessData p = SystemMonitoring.getProcessData();
             if (STRATEGY.printCurrentState(p)) {
-                ProcessData.release(p);
+                ProcessData.POOL.release(p);
             }
             Lock.setStackTopMemoryAccounting(tid, accMem);
         }
@@ -1326,7 +1326,7 @@ public class Recorder extends RecorderFrontend
         try {
             ProcessData p = SystemMonitoring.getProcessData();
             if (STRATEGY.printStatistics(p)) {
-                ProcessData.release(p);
+                ProcessData.POOL.release(p);
             }
         } catch (NullPointerException e) {
             // usually this happens only when the SUM is forcibly terminated

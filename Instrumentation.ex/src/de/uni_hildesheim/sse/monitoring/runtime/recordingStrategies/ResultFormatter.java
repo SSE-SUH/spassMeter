@@ -39,7 +39,7 @@ public interface ResultFormatter {
     /**
      * Sets the current process data object for comparisons.
      * 
-     * @param data the process data object with system and JVM measurements
+     * @param data the process data object with system and JVM measurements (may be <b>null</b>)
      * 
      * @since 1.00
      */

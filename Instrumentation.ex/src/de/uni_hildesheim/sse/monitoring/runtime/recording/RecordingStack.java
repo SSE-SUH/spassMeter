@@ -13,9 +13,15 @@ import de.uni_hildesheim.sse.monitoring.runtime.AnnotationConstants;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.21
  */
 public class RecordingStack {
+    
+    /**
+     * Defines the stack increment in case that there is no more space and also
+     * the initial stack size.
+     */
+    private static final int STACK_INCREMENT = 12;
     
     /**
      * Stores the accumulated memory allocations per entered recording group. 
@@ -65,11 +71,11 @@ public class RecordingStack {
      * @since 1.00
      */
     public RecordingStack(boolean unalloc) {
-        memAlloc = new long[10];
+        memAlloc = new long[STACK_INCREMENT];
         if (unalloc) {
-            recId = new int[10];
-            indirect = new boolean[10];
-            unallocationId = new int[10];
+            recId = new int[STACK_INCREMENT];
+            indirect = new boolean[STACK_INCREMENT];
+            unallocationId = new int[STACK_INCREMENT];
         }
     }
     
@@ -123,7 +129,7 @@ public class RecordingStack {
         //assert memAlloc.length == recId.length;
         if (size + 1 > memAlloc.length) {
             int curLen = memAlloc.length;
-            int newSize = curLen + 10;
+            int newSize = curLen + STACK_INCREMENT;
             long[] longTmp = new long[newSize];
             System.arraycopy(memAlloc, 0, longTmp, 0, curLen);
             memAlloc = longTmp;
@@ -175,7 +181,7 @@ public class RecordingStack {
         //assert null == recId || memAlloc.length == recId.length;
         if (from.size > 0) {
             if (size + 1 + from.size > memAlloc.length) {
-                int newLen = memAlloc.length + from.size + 10;
+                int newLen = memAlloc.length + from.size + STACK_INCREMENT;
                 long[] memAllocTmp = new long[newLen];
                 if (size > 0) {
                     System.arraycopy(memAlloc, 0, memAllocTmp, 0, size - 1);
@@ -306,9 +312,6 @@ public class RecordingStack {
             int pos = size - 1;
             if (indirect[pos]) {
                 return;
-                // TODO map to id
-                //SystemMonitoring.MEMORY_DATA_GATHERER.recordUnallocationByTag(
-                //    tag, allocSize, unallocationIdSize, unallocationId);
             } else {
                 SystemMonitoring.MEMORY_DATA_GATHERER.recordUnallocationByTag(
                     tag, allocSize, recId[pos]);
@@ -335,9 +338,6 @@ public class RecordingStack {
             int pos = size - 1;
             if (indirect[pos]) {
                 return;
-                // TODO map to id
-                //SystemMonitoring.MEMORY_DATA_GATHERER.recordUnallocation(
-                //    allocated, allocSize, unallocationIdSize, unallocationId);
             } else {
                 SystemMonitoring.MEMORY_DATA_GATHERER.recordUnallocation(
                     allocated, allocSize, recId[pos]);
