@@ -189,6 +189,7 @@
         	<zipgroupfileset dir="${meter.jars}" includes="spass-meter-static.jar"/>
         	<zipgroupfileset dir="${meter.lib}" includes="javassist.jar eraser-runtime.jar locutor-instrumenter1.00.jar"/>
 			<zipgroupfileset dir="${meter.lib}/asm" includes="${asm.lib}"/>
+			<zipgroupfileset dir="${meter.lib}/ant" includes="ant.jar"/>
 		</jar>
 		
 		<mkdir dir="${meter.jars}/linux"/>
@@ -224,6 +225,7 @@
         	<zipgroupfileset dir="${meter.jars}" includes="spass-meter-static.jar"/>
         	<zipgroupfileset dir="${meter.lib}" includes="javassist.jar eraser-runtime.jar locutor-instrumenter1.00-linux.jar"/>
 			<zipgroupfileset dir="${meter.lib}/asm" includes="${asm.lib}"/>
+			<zipgroupfileset dir="${meter.lib}/ant" includes="ant.jar"/>
 		</jar>
 		
 		<mkdir dir="${meter.jars}/all"/>
