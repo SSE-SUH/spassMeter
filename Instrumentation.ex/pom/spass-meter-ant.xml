@@ -4,5 +4,5 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.uni_hildesheim.sse.spassMeter</groupId>
   <artifactId>spass-meter-ant</artifactId>
-  <version>1.23</version>
+  <version>1.23-SNAPSHOT</version>
 </project>
