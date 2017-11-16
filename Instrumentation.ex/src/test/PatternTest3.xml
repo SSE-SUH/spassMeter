@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xmlns="http://sse.uni-hildesheim.de/instrumentation" exclusive="true">
+  <namespace pattern="te.*">
+    <module pattern="PatternTest\$Test[0-9]">
+    </module>
+    <module name="PatternTest">
+      <behavior signature="main(java.lang.String[])">
+        <startSystem/>
+        <endSystem invoke="asserts"/>
+      </behavior>
+    </module>
+  </namespace>
+</configuration>

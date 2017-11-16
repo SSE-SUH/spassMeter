@@ -21,7 +21,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.utils.xml.QdParserException;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.20
+ * @version 1.23
  */
 class XMLHandler implements DocHandler {
 
@@ -48,7 +48,7 @@ class XMLHandler implements DocHandler {
     private HashMap<String, Boolean> analyzeMembers;
     
     /**
-     * Stores if this configuration is exclusive, i.e. authoritive or if it may
+     * Stores if this configuration is exclusive, i.e. authoritative or if it may
      * overlap with source code annotations. Default is <code>true</code>.
      */
     private boolean exclusive = true;
@@ -58,6 +58,11 @@ class XMLHandler implements DocHandler {
      */
     private ArrayList<AnnotationBuilder<?>> templateStack 
         = new ArrayList<AnnotationBuilder<?>>();
+
+    /**
+     * Stores the actual stack of patterns as read from the XML file.
+     */
+    private ArrayList<Pattern> patternStack = new ArrayList<Pattern>();
     
     /**
      * Stores the current path of modules and namespaces.
@@ -199,6 +204,22 @@ class XMLHandler implements DocHandler {
     }
     
     /**
+     * Returns whether the current path contains a pattern.
+     * 
+     * @return <code>true</code> for pattern, <code>false</code> else
+     * 
+     * @since 1.23
+     */
+    private boolean currentPathContainsPattern() {
+        boolean contains = false;
+        int size = currentPath.size();
+        for (int e = 0; !contains && e < size; e++) {
+            contains = null != currentPath.get(e).getPattern();
+        }
+        return contains;
+    }
+    
+    /**
      * Returns the current path by calculating it from the path elements.
      * 
      * @param asRegEx should the result be given as a matching regular 
@@ -276,6 +297,9 @@ class XMLHandler implements DocHandler {
                         pathElementName = attributes.get("signature");
                     } else {
                         pathElementName = attributes.get("name");
+                        if (null == pathElementName) { // namespace/module without name (but pattern?)
+                            pathElementName = "";
+                        }
                     }
                 }
             }
@@ -335,6 +359,7 @@ class XMLHandler implements DocHandler {
     @Override
     public void startElement(String tag, HashMap<String, String> attributes) 
         throws QdParserException {        
+        Pattern pat = null;
         if ("groupConfiguration".equals(tag)) {
             String id = attributes.get("id");
             if (null == id) {
@@ -378,6 +403,20 @@ class XMLHandler implements DocHandler {
             setPlainTime();
         } else {
             PathElement.Type type = modifyPath(tag, attributes);
+            if (null != type && type.isMember()) {
+                pat = getClosestPattern();
+                String name;
+                if (PathElement.Type.BEHVIOUR == type) {
+                    name = attributes.get("signature");
+                    name = name.replace("[", "\\[").replace("(", "\\(").replace(")", "\\)").replace("]", "\\]");
+                } else {
+                    name = attributes.get("name");
+                }
+                if (null != pat && null != pat.getPattern() && null != name) {
+                    pat = new Pattern(pat.getPattern() + "." + name, null);
+                    patterns.add(0, pat); // more specific ones first
+                }
+            }
             AnnotationBuilder<?> template = Annotations.getTemplate(tag);
             boolean nested = false;
             if (null != template) {
@@ -398,17 +437,19 @@ class XMLHandler implements DocHandler {
                     || type == PathElement.Type.MODULE) {
                     String pattern = attributes.get("pattern");
                     String typeOf = attributes.get("typeOf");
-                    if (null != pattern || null != typeOf) {
+                    boolean definesPattern = null != pattern || null != typeOf;
+                    if (definesPattern || currentPathContainsPattern()) {
                         AnnotationBuilder<?> templ 
                             = Annotations.getTemplate(TAG_MONITOR);
                         if (null != templ) {
                             templ = templ.prepareForUse();
                             setMonitorAnnotationConfigurationDefaults(templ, attributes);
                             String cPath = getCurrentPath(true);
+                            // in default cases match everything. Else, we are matching against a signature; add .*
                             if (null == pattern || 0 == pattern.length()) {
                                 cPath += ".*";
                             }
-                            parsePatterns(cPath, typeOf, templ);
+                            pat = parsePatterns(type, cPath, typeOf, templ);
                             hasPatterns = true;
                             // no defaultsOnly as implicit
                         }
@@ -423,8 +464,31 @@ class XMLHandler implements DocHandler {
             }
             if (null != template) {
                 template.startElement(tag, nested, attributes);
+                Pattern p = getClosestPattern();
+                if (null != p) {
+                    p.register(template.getInstanceClass(), template);
+                }
             }
         }
+        patternStack.add(pat);
+    }
+
+    /**
+     * Returns the closest pattern.
+     * 
+     * @return the closest pattern (may be <b>null</b> for none)
+     * 
+     * @since 1.21
+     */
+    private Pattern getClosestPattern() {
+        Pattern result = null;
+        for (int i = patternStack.size() - 1; null == result && i > 0; i--) {
+            Pattern tmp = patternStack.get(i);
+            if (null != tmp) {
+                result = tmp;
+            }
+        }
+        return result;
     }
     
     /**
@@ -455,25 +519,31 @@ class XMLHandler implements DocHandler {
      * Registers the given pattern for the current path and parses, if provided,
      * the type restrictions in <code>typeOf</code>.
      * 
+     * @param type the type of the path element
      * @param currentPath the current path (to the specified elements)
      * @param typeOf the type restriction (may be multiple separated by commas, 
      *     may be one, may be empty, may be <b>null</b>)
      * @param template the annotation template
+     * @return the created pattern (may be <b>null</b> for none)
      * @throws QdParserException in case of any parsing/interpretation error
      * 
      * @since 1.00
      */
-    private void parsePatterns(String currentPath, String typeOf, 
+    private Pattern parsePatterns(PathElement.Type type, String currentPath, String typeOf, 
         AnnotationBuilder<?> template) throws QdParserException {
+        Pattern result = null;
         if (null == typeOf) {
-            registerPattern(currentPath, null, template);
+            if (PathElement.Type.NAMESPACE != type) { // will be composed to qualified path pattern
+                result = registerPattern(currentPath, null, template);
+            }
         } else {
             StringTokenizer typeOfTokens = new StringTokenizer(typeOf, ",");
             while (typeOfTokens.hasMoreTokens()) {
                 String tOf = typeOfTokens.nextToken();
-                registerPattern(currentPath, tOf, template);
+                result = registerPattern(currentPath, tOf, template);
             }
         }
+        return result;
     }
     
     /**
@@ -484,11 +554,12 @@ class XMLHandler implements DocHandler {
      * @param typeOf a type restriction, i.e. the name of an interface or a 
      *     class or <b>null</b>
      * @param template the annotation template
+     * @return the created pattern object
      * @throws QdParserException in case of any parsing/interpretation error
      * 
      * @since 1.00
      */
-    private void registerPattern(String currentPath, String typeOf, 
+    private Pattern registerPattern(String currentPath, String typeOf, 
         AnnotationBuilder<?> template) throws QdParserException {
         Pattern pat = new Pattern(currentPath, typeOf);
         patterns.add(pat);
@@ -496,6 +567,7 @@ class XMLHandler implements DocHandler {
         Configuration.LOG.config("registered: pattern " 
             + typeOf + " annotation: " 
             + template.getInstanceClass().getName());
+        return pat;
     }
 
     /**
@@ -521,6 +593,7 @@ class XMLHandler implements DocHandler {
             template.endElement(tag, nested);
         }
         modifyPath(tag, null);
+        patternStack.remove(patternStack.size() - 1);
     }
     
     /**

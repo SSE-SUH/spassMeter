@@ -33,6 +33,9 @@ FOR /F %%f in (src/test/tests) do (
   java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,groupAccounting=INDIRECT,out=generated/test.log,xmlconfig=src/test/%%~nf.xml -Dbla=x -Dindirect=true -classpath %CP_TESTS% test.%%~nf
 )
 
+echo PatternTest
+java -javaagent:dist/win32/spass-meter-ia.jar=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,out=generated/test.log,xmlconfig=src/test/PatternTest3.xml -Dbla=x -classpath %CP_TESTS% test.PatternTest
+
 REM skip for the moment synchronous recorder may stop while shutting down JVM
 goto end
 
