@@ -4,5 +4,22 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.uni_hildesheim.sse.spassMeter</groupId>
   <artifactId>spass-meter-static</artifactId>
-  <version>1.24-SNAPSHOT</version>
+  <version>1.24</version>
+  
+  <name>SPASS-meter (static)</name>
+  <description>The static instrumentation library of SPASS-meter.</description>
+  <url>https://www.sse.uni-hildesheim.de/en/research/projects/spass-meter/</url>
+ 
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
+  <scm>
+    <url>https://github.com/SSEHUB/spassMeter.git</url>
+  </scm>
+  
 </project>
