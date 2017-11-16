@@ -269,9 +269,8 @@ class AllDelegatingEditor extends ExprEditor
             try {
                 expression.replace(tmp.toString());
             } catch (CannotCompileException e) {
-                if (!(e.getCause() instanceof ClassCircularityError)) { // typically in JDK...
-                    throw Utils.warnOrConvert(e);
-                }
+                throw Utils.warnOrConvert(e);
+            } catch (ClassCircularityError e) { // typically in JDK, does not occur always
             }
         }
     }

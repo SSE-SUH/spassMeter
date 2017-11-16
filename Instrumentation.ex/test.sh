@@ -19,3 +19,8 @@ do
   #$JAVA -javaagent:$AGENTPATH=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=false,groupAccounting=INDIRECT,out=generated/test.log,xmlconfig=src/test/$CLASS.xml -Dbla=x -Dindirect=true -classpath $CLASSPATH test.$CLASS
   #$JAVA -javaagent:$AGENTPATH=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,groupAccounting=INDIRECT,out=generated/test.log,xmlconfig=src/test/$CLASS.xml -Dbla=x -Dindirect=true -classpath $CLASSPATH test.$CLASS
 done
+
+echo PatternTests
+$JAVA -javaagent:$AGENTPATH=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,out=generated/test.log,xmlconfig=src/test/PatternTest1.xml -Dbla=x -classpath $CLASSPATH test.PatternTest
+$JAVA -javaagent:$AGENTPATH=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,out=generated/test.log,xmlconfig=src/test/PatternTest2.xml -Dbla=x -classpath $CLASSPATH test.PatternTest
+$JAVA -javaagent:$AGENTPATH=logLevel=SEVERE,overhead=false,configDetect=false,localEventProcessing=true,out=generated/test.log,xmlconfig=src/test/PatternTest3.xml -Dbla=x -classpath $CLASSPATH test.PatternTest
