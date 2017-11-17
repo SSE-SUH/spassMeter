@@ -35,6 +35,12 @@ Implementation hints:
   as they require Javassist runtime support which, in turn, increases runtime and 
   complicates using OSGi. 
 
+Release tasks:
+- edit verion file
+- edit .MF files
+- edit POM files in pom (snapshot -> version -> snapshot)
+- edit manual.docx, export PDF
+
 Release history
 - version 1.0
   released to GITHUB at the end of FP7 INDENICA
@@ -42,3 +48,7 @@ Release history
   - monitoring of multiple JVMs on the same machine
   - relaxed thread monitoring for serialized runnables (preliminary)
   - spass-meter-rt.jar not required anymore in classpath (packaging changed)
+- version 1.2 (monitoring individual instances)
+  - version file in Jar (inspired by H. Knoche)
+  - static instrumentation dependency and file name patterns (reported by M. Keunecke)
+  - pattern improvement for namespace/module (reported by A. Krafczyk)
