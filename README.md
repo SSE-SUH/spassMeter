@@ -18,9 +18,9 @@ SPASS-meter monitoring framework (release version 1.23, development version 1.24
 Maven [repository](https://projects.sse.uni-hildesheim.de/qm/maven/):
 ```
 <dependency>
- <groupId>de.uni_hildesheim.sse.spassMeter</groupId>
+ <groupId>de.uni-hildesheim.sse.spassMeter</groupId>
  <artifactId>spass-meter</artifactId>
- <version>1.23</version>
+ <version>1.25</version>
 </dependency>
 ```
 Similarly, the other JARs are available as individual artifacts: spass-meter-annotations, spass-meter-ant, spass-meter-boot, spass-meter-ia, spass-meter-rt, spass-meter-static.
