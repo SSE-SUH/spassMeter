@@ -53,7 +53,7 @@ public class RecorderAccess {
     /**
      * Register the given input stream as overhead stream, i.e. set the 
      * attribute added by instrumentation via reflection so that the recorder
-     * is notified via {@link Recorder.OverheadStreamIoNotifier}. 
+     * is notified. 
      * 
      * @param in the stream to be registered
      * 
@@ -69,7 +69,7 @@ public class RecorderAccess {
     /**
      * Register the given output stream as overhead stream, i.e. set the 
      * attribute added by instrumentation via reflection so that the recorder
-     * is notified via {@link Recorder.OverheadStreamIoNotifier}. 
+     * is notified. 
      * 
      * @param out the stream to be registered
      * 

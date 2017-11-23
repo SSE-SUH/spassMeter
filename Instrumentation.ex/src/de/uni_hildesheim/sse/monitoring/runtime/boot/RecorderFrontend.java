@@ -14,7 +14,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.annotations.TimerState;
  * loading and have negative effects on the instrumented program. Thus, the
  * instrumentation is responsible for setting {@link #instance} properly and
  * instrumented code needs to call methods of the recorder (frontend) via this
- * class.<br/>
+ * class.<p>
  * Methods intended for Java monitoring are tagged with [Java call] and should
  * not be called during native monitoring. Methods tagged with [native call] are
  * intended for native monitoring and should not be called during Java 
@@ -65,7 +65,7 @@ public abstract class RecorderFrontend {
     /**
      * Register the given input stream as overhead stream, i.e. set the 
      * attribute added by instrumentation via reflection so that the recorder
-     * is notified via {@link Recorder.OverheadStreamIoNotifier}. [Java call]
+     * is notified. [Java call]
      * 
      * @param in the stream to be registered
      * 
@@ -77,7 +77,7 @@ public abstract class RecorderFrontend {
     /**
      * Register the given output stream as overhead stream, i.e. set the 
      * attribute added by instrumentation via reflection so that the recorder
-     * is notified via {@link Recorder.OverheadStreamIoNotifier}. [Java call]
+     * is notified. [Java call]
      * 
      * @param out the stream to be registered
      * 

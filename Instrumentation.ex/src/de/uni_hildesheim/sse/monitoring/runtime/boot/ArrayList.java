@@ -64,7 +64,7 @@ public class ArrayList<E> {
      * Appends the specified element to the end of this list.
      *
      * @param element element to be appended to this list
-     * @return <tt>true</tt> (as specified by {@link Collection#add})
+     * @return <tt>true</tt>
      */
     public boolean add(E element) {
         ensureCapacity(size + 1);  // Increments modCount!!
@@ -79,7 +79,7 @@ public class ArrayList<E> {
      *
      * @param index index at which the specified element is to be inserted
      * @param element element to be inserted
-     * @throws IndexOutOfBoundsException
+     * @throws IndexOutOfBoundsException if <code>index&lt;0 || index&gt;={@link #size()}</code>
      */
     public void add(int index, E element) {
         ensureCapacity(size + 1);  // Increments modCount!!
