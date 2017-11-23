@@ -8,8 +8,8 @@ import de.uni_hildesheim.sse.codeEraser.annotations.Variability;
 /**
  * Represents the physical data of a WiFi access point. Some of the data 
  * in an instance of this class may not be available through a physical
- * interfaces and thus be set to invalid values.<br/>
- * Instances of this class are intended to be read only.<br/>
+ * interfaces and thus be set to invalid values.<p>
+ * Instances of this class are intended to be read only.<p>
  * <b>Do not rename or move this class or its members are referenced
  * from native code.</b>
  * 

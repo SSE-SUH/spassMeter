@@ -109,7 +109,7 @@ public interface IMemoryDataGatherer extends IObjectSizeDataGatherer {
 
     /**
      * Receives information about unallocations. 
-     * {@link IMemoryUnallocationReceiver#unallocated(String, long)} is called
+     * {@link IMemoryUnallocationReceiver#unallocated(int, long)} is called
      * for each stored recording identification.
      * 
      * @param receiver the receiver instance

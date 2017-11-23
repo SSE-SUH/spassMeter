@@ -6,6 +6,7 @@
     <property name="gbj.base" value="."/>
     <property name="gbj.src" value="${gbj.base}/src"/>
     <property name="gbj.bin" value="${gbj.base}/bin"/>
+    <property name="gbj.doc" value="${gbj.base}/doc"/>
     <property name="gbj.jars" value="${gbj.base}/dist"/>
     <property name="gbj.tools" value="${gbj.base}/tools"/>
     <property name="gbj.lib" value="${gbj.base}/libs"/>
@@ -59,7 +60,7 @@
     </target>
 
     <target name="jar" 
-    	depends="compile"
+    	depends="compile, javadoc"
     	unless="lobaris.flatBuild"
         description="builds all binary distribution archives">
 
@@ -81,6 +82,14 @@
         	<fileset dir="${gbj.base}" includes="locutor_arm.so"/>
             <fileset dir="${gbj.base}" includes="locutor_64.so"/>
         	<zipgroupfileset dir="${gbj.lib}" includes="eraser-runtime.jar"/>
+        </jar>
+
+    	<delete file="${gbj.jars}/locutor-all-sources-${version}.jar"/>
+        <jar jarfile="${gbj.jars}/locutor-all-sources-${version}.jar" basedir="${gbj.src}">
+        </jar>
+
+    	<delete file="${gbj.jars}/locutor-all-javadoc-${version}.jar"/>
+        <jar jarfile="${gbj.jars}/locutor-all-javadoc-${version}.jar" basedir="${gbj.doc}">
         </jar>
 
     	<delete file="${gbj.jars}/locutor-test-${version}.jar"/>
@@ -229,5 +238,11 @@
 	   	  jarfile="${gbj.jars}/locutor-jniBinding1.00.jar" 
 	   	  outfile="tmp/locutor-jniBinding1.00-gen.jar"/>
 	</target>
+	
+    <target name="javadoc">
+    	<delete dir="${gbj.doc}"/>
+    	<mkdir dir="${gbj.doc}"/>
+        <javadoc access="private" author="true" classpath="libs/eraser-runtime.jar;libs/json-lobaris.jar" destdir="${gbj.doc}" doctitle="Locutor/GearsBridgeJ" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src\overview.html" packagenames="de.uni_hildesheim.sse.util,de.uni_hildesheim.sse.system,de.uni_hildesheim.sse.util,de.uni_hildesheim.sse.system.deflt,de.uni_hildesheim.sse.util,de.uni_hildesheim.sse.system.fallback,de.uni_hildesheim.sse.util" source="1.6" sourcepath="src" splitindex="true" use="false" version="true"/>
+    </target>
 	
 </project>

@@ -114,7 +114,7 @@ class MemoryDataGatherer implements IMemoryDataGatherer {
 
     /**
      * Receives information about unallocations. 
-     * {@link IMemoryUnallocationReceiver#unallocated(String, long)} is called
+     * {@link IMemoryUnallocationReceiver#unallocated(int, long)} is called
      * for each stored recording identification.
      * 
      * @param receiver the receiver instance
