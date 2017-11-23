@@ -29,7 +29,7 @@ public class Agent {
     }
 
     /**
-     * JVM hook to statically load the javaagent at startup.<br/>
+     * JVM hook to statically load the javaagent at startup.<p>
      *
      * After the Java Virtual Machine (JVM) has initialized, the premain method
      * will be called. Then the real application main method will be called.
@@ -43,7 +43,7 @@ public class Agent {
     }
 
     /**
-     * JVM hook to dynamically load javaagent at runtime.<br/>
+     * JVM hook to dynamically load javaagent at runtime.<p>
      *
      * The agent class may have an agentmain method for use when the agent is
      * started after VM startup.
@@ -59,7 +59,7 @@ public class Agent {
     }
 
     /**
-     * JVM hook to dynamically load javaagent at runtime.<br/>
+     * JVM hook to dynamically load javaagent at runtime.<p>
      *
      * The agent class may have an agentmain method for use when the agent is
      * started after VM startup.
