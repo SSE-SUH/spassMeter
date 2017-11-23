@@ -627,7 +627,7 @@ public class HashMap<K, V> {
         }
 
         /**
-         * Searches for the next element, either in {@link #map} or in the
+         * Searches for the next element in the
          * map element chains and returns the current element ({@link #next} 
          * before call). This method modifies {@link #next} as a side effect.
          * 

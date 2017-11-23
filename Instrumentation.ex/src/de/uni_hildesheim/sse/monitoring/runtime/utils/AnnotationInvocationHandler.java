@@ -13,7 +13,7 @@ import java.util.Arrays;
  * Class that handles the method calls for a java.lang.reflect.Proxy that
  * implements an annotation.
  * 
- * The generated handler takes a Map<String,Object> as a constructor argument
+ * The generated handler takes a Map&lt;String,Object&gt; as a constructor argument
  * with the keys equal to the annotation method names. For Annotation, array and
  * Enum types the values must exactly match the return type or a
  * ClassCastException will result.

@@ -243,7 +243,7 @@ public abstract class AbstractIntHashMap {
         Iterable<MapElement> {
         
         /**
-         * Stores the position relative to {@link AbstractHashMap#map}.
+         * Stores the position.
          */
         private int pos = 0;
         
