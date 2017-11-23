@@ -95,7 +95,7 @@ public class Constants {
     public static final int NOTIFYTIMER = 17;
  
     /**
-     * Stores the identification for {@link NotifyValueElement}.
+     * Stores the identification for {@link NotifyValueChangeElement}.
      */
     public static final int NOTIFYVALUE = 18;
 
