@@ -181,7 +181,8 @@ class XMLHandler implements DocHandler {
     }
     
     /**
-     * Sets {@link #isPlainTime} based on already read configuration settings.
+     * Sets {@link #analyzeMembers} based on already read configuration settings, in particular whether we are 
+     * instrumenting for plain time resources only.
      * 
      * @since 1.13
      */

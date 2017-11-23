@@ -20,6 +20,8 @@ public @interface MethodInstrumented {
      * Stores the number of instrumentation runs which currently require
      * the instrumentation for memory resources.
      * 
+     * @return the number of instrumentation runs
+     * 
      * @since 1.00
      */
     public int mem() default 0;

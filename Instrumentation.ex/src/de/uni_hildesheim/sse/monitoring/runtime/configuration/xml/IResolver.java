@@ -3,7 +3,7 @@ package de.uni_hildesheim.sse.monitoring.runtime.configuration.xml;
 
 /**
  * Defines a type resolver as a binding between 
- * {@link AnnotationBuilder} and the low-level instrumenter (with type 
+ * annotations and the low-level instrumenter (with type 
  * resolution).
  * 
  * @author Holger Eichelberger

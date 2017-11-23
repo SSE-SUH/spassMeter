@@ -1045,9 +1045,9 @@ public class Configuration {
     
     /**
      * Ensures that the {@link #defaultGroupResources} is a subset of 
-     * {@link #accountableResources}. Adjust {@link #memoryAccountingType}
-     * and {@link #isFileIoAccountable} as well as {@link #isNetIoAccountable}
-     * accordingly.
+     * {@link #accountableResources}. Adjusts {@link #memoryAccountingType}
+     * and {@link #defaultGroupResources}, {@link #sumResources} as well as 
+     * {@link #anywayResources} accordingly.
      * 
      * @since 1.00
      */
