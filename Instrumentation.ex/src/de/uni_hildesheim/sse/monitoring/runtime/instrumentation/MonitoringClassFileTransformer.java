@@ -119,7 +119,7 @@ public class MonitoringClassFileTransformer extends AbstractClassTransformer
     }
     
     /**
-     * Top-level call of {@link #transform(String, IClass, boolean)}.
+     * Top-level call of {@link #transform(String, IClass, TransformationType)}.
      * 
      * @param name the name of the class given in the 
      *   internal form of fully qualified class and interface names as defined 

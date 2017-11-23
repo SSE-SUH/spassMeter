@@ -169,8 +169,7 @@ public class MethodEditor extends BehaviorEditor {
     /**
      * Releases the given instance.
      * 
-     * @param editor the instance to release (to be released by 
-     *   {@link #release(OverheadMethodEditor)}
+     * @param editor the instance to release
      * 
      * @since 1.00
      */

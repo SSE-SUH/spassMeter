@@ -21,12 +21,12 @@ import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
 /**
  * A Java agent to instrument classes for runtime monitoring. The agent is 
  * called on a virtual machine using the following virtual machine argument
- * <br/><br/>
+ * <p>
  * 
  * <code>-javaagent:<i>location-of-instrumentation-jar</i>=<i>parameter</i>
  *   </code>
  *   
- * <br/><br/>whereby the parameters are described in {@link Configuration here}.
+ * <p>whereby the parameters are described in {@link Configuration here}.
  * 
  * @author Holger Eichelberger
  * @since 1.00
@@ -113,7 +113,7 @@ public class Agent implements IObjectSizeProvider, IRecordingEndListener {
     }
     
     /**
-     * JVM hook to statically load the javaagent at startup.<br/>
+     * JVM hook to statically load the javaagent at startup.<p>
      *
      * After the Java Virtual Machine (JVM) has initialized, the premain method
      * will be called. Then the real application main method will be called.
@@ -138,7 +138,7 @@ public class Agent implements IObjectSizeProvider, IRecordingEndListener {
     }
  
     /**
-     * JVM hook to dynamically load javaagent at runtime.<br/>
+     * JVM hook to dynamically load javaagent at runtime.<p>
      *
      * The agent class may have an agentmain method for use when the agent is
      * started after VM startup.
