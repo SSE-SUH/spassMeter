@@ -9,7 +9,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.annotations.ValueChange;
 
 /**
  * Performs some simple tests on being notified about value changes on
- * static / instance attributes.<br/>
+ * static / instance attributes.<p>
  * Monitoring must be enabled via the agent JVM parameter!
  * 
  * @author Holger Eichelberger

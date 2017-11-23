@@ -13,11 +13,11 @@ import de.uni_hildesheim.sse.monitoring.runtime.annotations.StartSystem;
 
 /**
  * Perform simple network IO testing of the monitoring infrastructure. This
- * class realizes a simple TCP client as well as a simple server.<br/>
- * Monitoring must be enabled via the agent JVM parameter!<br/>
+ * class realizes a simple TCP client as well as a simple server.<p>
+ * Monitoring must be enabled via the agent JVM parameter!<p>
  * Note that this class reuses {@link AbstractNetIoTest} so that the inner
  * classes defined there are accounted by an own monitoring group and the 
- * entire program.<br/>
+ * entire program.<p>
  * This class may cause fileIO as it reads internal Java security policies.
  * 
  * @author Holger Eichelberger

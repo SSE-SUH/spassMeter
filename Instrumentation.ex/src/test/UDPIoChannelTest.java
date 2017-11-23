@@ -14,7 +14,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.annotations.Monitor;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.StartSystem;
 
 /**
- * Perform simple UDP IO testing of the monitoring infrastructure. <br/>
+ * Perform simple UDP IO testing of the monitoring infrastructure. <p>
  * Monitoring must be enabled via the agent JVM parameter!
  * 
  * @author Holger Eichelberger, Stephan Dederichs

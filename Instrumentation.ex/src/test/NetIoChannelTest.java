@@ -17,7 +17,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.annotations.StartSystem;
 /**
  * Perform simple network IO testing of the monitoring infrastructure. This
  * class realizes a simple TCP client as well as a simple server over NIO 
- * channels.<br/>
+ * channels.<p>
  * Monitoring must be enabled via the agent JVM parameter!
  * 
  * @author Robin Gawenda, Yilmaz Eldogan

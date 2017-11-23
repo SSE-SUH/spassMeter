@@ -14,7 +14,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.annotations.Monitor;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.StartSystem;
 
 /**
- * Performs simple tests on excluded methods.<br/>
+ * Performs simple tests on excluded methods.<p>
  * Monitoring must be enabled via the agent JVM parameter!
  * 
  * @author Holger Eichelberger

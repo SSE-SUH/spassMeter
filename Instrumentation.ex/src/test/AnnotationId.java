@@ -45,12 +45,12 @@ public class AnnotationId {
     public static final String ID_NET_IO = "netIoTest";
 
     /**
-     * The recorder id for {@link UdpIoTest}.
+     * The recorder id for {@link UDPIoTest}.
      */
     public static final String ID_UDP_IO = "udpIoTest";
 
     /**
-     * The recorder id for the server in {@link UdpIoTest}.
+     * The recorder id for the server in {@link UDPIoTest}.
      */
     public static final String ID_UDP_IO_SERVER = "udpIoTest-Server";
     

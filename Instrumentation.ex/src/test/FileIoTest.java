@@ -19,7 +19,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.annotations.Monitor;
 import de.uni_hildesheim.sse.monitoring.runtime.annotations.StartSystem;
 
 /**
- * Performs some simple tests on reader/writer and stream based I/O.<br/>
+ * Performs some simple tests on reader/writer and stream based I/O.<p>
  * Monitoring must be enabled via the agent JVM parameter!
  * 
  * @author Holger Eichelberger
