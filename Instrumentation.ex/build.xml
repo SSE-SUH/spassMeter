@@ -96,8 +96,8 @@
         	basedir="${meter.bin}">
         </jar>
 
-		<delete file="${meter.jars}/spass-meter-boot-src.jar"/>
-	        <jar jarfile="${meter.jars}/spass-meter-boot-src.jar" 
+		<delete file="${meter.jars}/spass-meter-boot-sources.jar"/>
+	        <jar jarfile="${meter.jars}/spass-meter-boot-sources.jar" 
 	        	includes="de/uni_hildesheim/sse/monitoring/runtime/boot/
 	        	    de/uni_hildesheim/sse/monitoring/runtime/wrap/
 					version" 
@@ -107,8 +107,8 @@
 	  	      </fileset>
         </jar>
 
-    	<delete file="${meter.jars}/spass-meter-boot-doc.jar"/>
-        <jar jarfile="${meter.jars}/spass-meter-boot-doc.jar" basedir="${meter.doc}/boot">
+    	<delete file="${meter.jars}/spass-meter-boot-javadoc.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-boot-javadoc.jar" basedir="${meter.doc}/boot">
   	      <fileset dir="${meter.base}">
   	        <include name="version"/>
   	      </fileset>
@@ -121,8 +121,8 @@
         	basedir="${meter.bin}" manifest="${meter.base}/MONITORING_MANIFEST.MF">
         </jar>
 
-		<delete file="${meter.jars}/spass-meter-src.jar"/>
-        <jar jarfile="${meter.jars}/spass-meter-src.jar" 
+		<delete file="${meter.jars}/spass-meter-sources.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-sources.jar" 
         	includes="de/uni_hildesheim/sse/monitoring/runtime/
 			    version" 
 			basedir="${meter.src}">
@@ -131,8 +131,8 @@
   	      </fileset>
         </jar>
 
-    	<delete file="${meter.jars}/spass-meter-doc.jar"/>
-        <jar jarfile="${meter.jars}/spass-meter-doc.jar" basedir="${meter.doc}/spass-meter">
+    	<delete file="${meter.jars}/spass-meter-javadoc.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-javadoc.jar" basedir="${meter.doc}/spass-meter">
 	      <fileset dir="${meter.base}">
 	        <include name="version"/>
 	      </fileset>
@@ -150,8 +150,8 @@
         	<zipgroupfileset dir="${meter.lib}" includes="eraser-annotations.jar"/>
         </jar>
 
-		<delete file="${meter.jars}/spass-meter-annotations-src.jar"/>
-        <jar jarfile="${meter.jars}/spass-meter-annotations-src.jar" 
+		<delete file="${meter.jars}/spass-meter-annotations-sources.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-annotations-sources.jar" 
         	includes="de/uni_hildesheim/sse/monitoring/runtime/annotations/
         	  de/uni_hildesheim/sse/monitoring/runtime/boot/DebugState.java
         	  de/uni_hildesheim/sse/monitoring/runtime/boot/BooleanValue.java
@@ -164,8 +164,8 @@
   	      </fileset>
         </jar>
 
-    	<delete file="${meter.jars}/spass-meter-annotations-doc.jar"/>
-        <jar jarfile="${meter.jars}/spass-meter-annotations-doc.jar" basedir="${meter.doc}/annotations">
+    	<delete file="${meter.jars}/spass-meter-annotations-javadoc.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-annotations-javadoc.jar" basedir="${meter.doc}/annotations">
 	      <fileset dir="${meter.base}">
 	        <include name="version"/>
 	      </fileset>
@@ -182,8 +182,8 @@
         	basedir="${meter.bin}" manifest="${meter.base}/MONITORING_MANIFEST.MF">
         </jar>
 
-		<delete file="${meter.jars}/spass-meter-ia-src.jar"/>
-        <jar jarfile="${meter.jars}/spass-meter-ia-src.jar" 
+		<delete file="${meter.jars}/spass-meter-ia-sources.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-ia-sources.jar" 
         	includes="de/uni_hildesheim/sse/monitoring/runtime/annotations/
         	          de/uni_hildesheim/sse/monitoring/runtime/configuration/
         	          de/uni_hildesheim/sse/monitoring/runtime/instrumentation/
@@ -196,8 +196,8 @@
   	      </fileset>
         </jar>
 
-    	<delete file="${meter.jars}/spass-meter-ia-doc.jar"/>
-        <jar jarfile="${meter.jars}/spass-meter-ia-doc.jar" basedir="${meter.doc}/ia">
+    	<delete file="${meter.jars}/spass-meter-ia-javadoc.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-ia-javadoc.jar" basedir="${meter.doc}/ia">
 	      <fileset dir="${meter.base}">
 	        <include name="version"/>
 	      </fileset>
@@ -215,8 +215,8 @@
         	basedir="${meter.bin}">
         </jar>
 
-		<delete file="${meter.jars}/spass-meter-rt-src.jar"/>
-        <jar jarfile="${meter.jars}/spass-meter-rt-src.jar" 
+		<delete file="${meter.jars}/spass-meter-rt-sources.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-rt-sources.jar" 
         	excludes="de/uni_hildesheim/sse/monitoring/runtime/instrumentation/
         	    de/uni_hildesheim/sse/monitoring/runtime/configuration/
    	            de/uni_hildesheim/sse/monitoring/runtime/boot/
@@ -229,8 +229,8 @@
   	      </fileset>
         </jar>
 
-    	<delete file="${meter.jars}/spass-meter-rt-doc.jar"/>
-        <jar jarfile="${meter.jars}/spass-meter-rt-doc.jar" basedir="${meter.doc}/rt">
+    	<delete file="${meter.jars}/spass-meter-rt-javadoc.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-rt-javadoc.jar" basedir="${meter.doc}/rt">
 	      <fileset dir="${meter.base}">
 	        <include name="version"/>
 	      </fileset>
@@ -243,8 +243,8 @@
         	basedir="${meter.bin}">
         </jar>
 
-		<delete file="${meter.jars}/spass-meter-static-src.jar"/>
-        <jar jarfile="${meter.jars}/spass-meter-static-src.jar" 
+		<delete file="${meter.jars}/spass-meter-static-sources.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-static-sources.jar" 
         	excludes="de/uni_hildesheim/sse/monitoring/runtime/recordingServer/**/*.java"
 			basedir="${meter.src}">
   	      <fileset dir="${meter.base}">
@@ -252,8 +252,8 @@
   	      </fileset>
         </jar>
 
-    	<delete file="${meter.jars}/spass-meter-static-doc.jar"/>
-        <jar jarfile="${meter.jars}/spass-meter-static-doc.jar" basedir="${meter.doc}/spass-meter">
+    	<delete file="${meter.jars}/spass-meter-static-javadoc.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-static-javadoc.jar" basedir="${meter.doc}/spass-meter">
 	      <fileset dir="${meter.base}">
 	        <include name="version"/>
 	      </fileset>
@@ -271,8 +271,8 @@
 	      </fileset>
         </jar>
 
-		<delete file="${meter.jars}/spass-meter-ant-src.jar"/>
-        <jar jarfile="${meter.jars}/spass-meter-ant-src.jar">
+		<delete file="${meter.jars}/spass-meter-ant-sources.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-ant-sources.jar">
     	      <fileset dir="${meter.src}">
     	        <include name="de/uni_hildesheim/sse/monitoring/runtime/annotations/"/>
     	        <include name="de/uni_hildesheim/sse/monitoring/runtime/"/>
@@ -280,8 +280,8 @@
     	      </fileset>
         </jar>
 
-		<delete file="${meter.jars}/spass-meter-ant-doc.jar"/>
-        <jar jarfile="${meter.jars}/spass-meter-ant-doc.jar" basedir="${meter.doc}/spass-meter">
+		<delete file="${meter.jars}/spass-meter-ant-javadoc.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-ant-javadoc.jar" basedir="${meter.doc}/spass-meter">
 	      <fileset dir="${meter.base}">
 	        <include name="version"/>
 	      </fileset>
