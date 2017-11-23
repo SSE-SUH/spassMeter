@@ -330,7 +330,7 @@ public abstract class RecorderElement implements IMonitoringGroup {
     
     /**
      * Returns whether indirect accounting is activated, either in this 
-     * instance or (if {@link #groupAccounting is GroupAccountingType#DEFAULT})
+     * instance or (if {@link #getGroupAccounting()} is {@link GroupAccountingType#DEFAULT})
      * than in {@link Configuration#getGroupAccountingType()}.
      * 
      * @return <code>true</code> if indirect is activated, 

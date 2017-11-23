@@ -748,7 +748,7 @@ public class DefaultRecorderStrategy extends AbstractRecorderStrategy {
  */
 
     /**
-     * Returns or registers a thread to {@link #runningThreads} if not 
+     * Returns or registers a thread to {@link #threads} if not 
      * registered before.
      * 
      * @param id the Java thread id

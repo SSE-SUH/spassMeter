@@ -53,8 +53,8 @@ public class TCPRecorderStrategy extends AbstractEventRecorderStrategy {
     /**
      * Creates the connection to the server. This method also brings the
      * {@link Configuration} to send their informations to the server and starts
-     * a {@link SendThread} which parallel sends the gathered information to the
-     * server.
+     * a thread which sends the gathered information to the
+     * server in parallel.
      * 
      * @since 1.00
      */

@@ -426,8 +426,8 @@ public class ThreadData {
      * Returns a the stack without duplicates. This method uses shared memory
      * in order to reduce memory usage, i.e. on same stack constellations 
      * excluding duplicates the same array may be returned. Instances returned 
-     * by this method must be released by 
-     * {@link #releaseStackCopy(RecorderElement[])}
+     * by this method must be released via 
+     * {@link #STACKPOOL}
      * 
      * @return the current stack (do <b>not</b> modify)
      * 

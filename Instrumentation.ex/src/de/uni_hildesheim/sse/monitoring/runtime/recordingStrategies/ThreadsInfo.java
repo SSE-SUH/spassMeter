@@ -49,7 +49,7 @@ public class ThreadsInfo implements Poolable<ThreadsInfo> {
      * for transporting and passing the current values to the receiver method
      * (possibly over network). The parameters are not determined automatically
      * in this constructor, because the instance creation can also be done with 
-     * transmitted data on a remote machine.<br/>
+     * transmitted data on a remote machine.<p>
      * Do <b>not</b> call this constructor from outside as the instances of this
      * class are pooled {@link #POOL}!
      * 

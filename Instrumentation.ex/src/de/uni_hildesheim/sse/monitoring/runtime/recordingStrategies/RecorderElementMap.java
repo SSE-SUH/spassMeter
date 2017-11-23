@@ -21,7 +21,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap.Entry;
  * Implements a double indirected map which may assign {@link RecorderElement 
  * recorder elements} to class names which then can be referenced by ids, i.e.
  * a recorder element may be retrieved by its class name or by a grouping id 
- * which represents multiple class names.<br/>
+ * which represents multiple class names.<p>
  * The interface of this class is incomplete as (nearly) only required methods
  * are realized (pragmatic agility).
  * 

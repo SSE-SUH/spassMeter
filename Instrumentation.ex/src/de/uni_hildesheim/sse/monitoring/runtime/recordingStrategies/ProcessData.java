@@ -89,8 +89,8 @@ public class ProcessData implements Poolable<ProcessData> {
         
         /**
          * Stores the data acquisition status for this process. Combination
-         * of {@link ProcessData#STATUS_FILE}, 
-         * {@link ProcessData#STATUS_NET}.
+         * of {@link IMeasurements#STATUS_FILE}, 
+         * {@link IMeasurements#STATUS_NET}.
          */
         private int status;
 
@@ -180,8 +180,8 @@ public class ProcessData implements Poolable<ProcessData> {
         
         /**
          * Changes the status flags as combination of 
-         * of {@link ProcessData#STATUS_FILE}, 
-         * {@link ProcessData#STATUS_NET}.
+         * of {@link IMeasurements#STATUS_FILE}, 
+         * {@link IMeasurements#STATUS_NET}.
          * 
          * @param status the new status
          * 
@@ -195,8 +195,8 @@ public class ProcessData implements Poolable<ProcessData> {
 
         /**
          * Returns the status flags as combination of 
-         * of {@link ProcessData#STATUS_FILE}, 
-         * {@link ProcessData#STATUS_NET}. 
+         * of {@link IMeasurements#STATUS_FILE}, 
+         * {@link IMeasurements#STATUS_NET}. 
          * 
          * @return the current new status
          * 
@@ -412,7 +412,7 @@ public class ProcessData implements Poolable<ProcessData> {
     private Measurements jvm;
     
     /**
-     * Creates a new process data object. Use {@link #getFromPool()}.
+     * Creates a new process data object. Use {@link #POOL}.
      * 
      * @since 1.00
      */

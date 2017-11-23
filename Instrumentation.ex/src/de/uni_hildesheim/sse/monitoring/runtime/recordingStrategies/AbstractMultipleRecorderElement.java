@@ -370,8 +370,7 @@ public abstract class AbstractMultipleRecorderElement extends RecorderElement {
     /**
      * Returns the first non-null element.
      * 
-     * @return the first element (might be <b>null</b>, but not
-     *   if {@link #count} > 0).
+     * @return the first element (might be <b>null</b>).
      * 
      * @since 1.00
      */
