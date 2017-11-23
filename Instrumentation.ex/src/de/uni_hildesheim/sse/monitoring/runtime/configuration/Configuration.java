@@ -81,7 +81,7 @@ public class Configuration {
 
     /**
      * Stores the interval (in 500ms units) used for incrementally printing 
-     * aggregated events.<br/>
+     * aggregated events.<p>
      * This value must be &gt; 0, otherwise this function will be disabled.
      * @since 1.00
      */
