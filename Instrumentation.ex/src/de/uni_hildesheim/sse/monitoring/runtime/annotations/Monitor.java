@@ -33,6 +33,7 @@ public @interface Monitor {
      * interpreted as identifier of a variability, <i>name2</i> as name of a 
      * variant implementing the variability.
      * 
+     * @return the ids, use the class name if empty
      * @since 1.00
      */
     public String[] id() default "";
@@ -41,6 +42,7 @@ public @interface Monitor {
      * Define any combination of debug states for additional information to
      * be emitted during monitoring.
      * 
+     * @return the debug states, empty by default
      * @since 1.00
      */
     public DebugState[] debug() default { };
@@ -50,6 +52,7 @@ public @interface Monitor {
      * to {@link GroupAccountingType#DEFAULT} and, therefore, taken from the 
      * global configuration.
      * 
+     * @return the group accounting type, the default type by default
      * @since 1.00
      */
     public GroupAccountingType groupAccounting() 
@@ -58,7 +61,8 @@ public @interface Monitor {
     /**
      * Defines the resources to be accounted. By default, all resources defined
      * as default in the configuration shall be accounted.
-     * 
+     *
+     * @return the specific resources to be accounted, by default all (empty) 
      * @since 1.00
      */
     public ResourceType[] resources() default { };
@@ -68,6 +72,7 @@ public @interface Monitor {
      * the contained values or whether the entire value should be added to each
      * group.
      * 
+     * @return whether values should be distributed
      * @since 1.00
      */
     public BooleanValue distributeValues() default BooleanValue.DEFAULT;
@@ -77,6 +82,7 @@ public @interface Monitor {
      * is authoritative (<code>false</code>) or weather the contained groups 
      * should be considered (<code>true</code>).
      * 
+     * @return whether contained groups shall be considered
      * @since 1.00
      */
     public BooleanValue considerContained() default BooleanValue.DEFAULT;
@@ -84,6 +90,7 @@ public @interface Monitor {
     /**
      * Returns the instance identifier to be used for more detailed monitoring.
      * 
+     * @return which identifier kind shall be used, none by default
      * @since 1.20
      */
     public InstanceIdentifierKind instanceIdentifierKind() default InstanceIdentifierKind.NONE;

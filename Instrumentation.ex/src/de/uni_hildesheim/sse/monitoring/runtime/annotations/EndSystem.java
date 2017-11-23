@@ -21,6 +21,8 @@ public @interface EndSystem {
 
     /**
      * Specifies a method to be invoked at the end of monitoring.
+     *
+     * @return the command to invoke, none if empty
      * 
      * @since 1.00
      */

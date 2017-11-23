@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * May be used to mark a class which was instrumented. Intended, to mark 
  * classes processed by static pre-instrumentation, i.e. to avoid double 
  * instrumentation in case of mixed monitoring (some classes instrumented
- * statically, some at runtime).<br/>
+ * statically, some at runtime).<p>
  * This annotation shall be moved to <code>de.uni_hildesheim.sse
  * .monitoring.runtime.annotations.internal</code>.
  * 

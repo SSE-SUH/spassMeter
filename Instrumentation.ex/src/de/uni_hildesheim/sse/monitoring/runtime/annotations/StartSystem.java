@@ -22,6 +22,8 @@ public @interface StartSystem {
     /**
      * Ignored.
      * 
+     * @return ignored
+     * 
      * @since 1.00
      */
     int statisticsInterval() default 0;
@@ -29,15 +31,19 @@ public @interface StartSystem {
     /**
      * Ignored.
      * 
+     * @return ignored
+     * 
      * @since 1.00
      */
     boolean swingTimer() default false;
     
     /**
-     * Specifies whether a shutdown should be inserted instead of 
+     * Specifies whether a shutdown hook should be inserted instead of 
      * {@link EndSystem}. It is recommended to use {@link EndSystem} instead
      * as this may lead to locking the JVM at the end, particularly when waiting
      * for events to be processed.
+     * 
+     * @return <code>true</code> insert a shutdown hook, <code>false</code> else
      * 
      * @since 1.00
      */
@@ -46,6 +52,8 @@ public @interface StartSystem {
     /**
      * Specifies a method to be invoked at the end of monitoring in case
      * of a shutdown hook.
+     * 
+     * @return the method to be invoked, none if empty
      * 
      * @since 1.00
      */

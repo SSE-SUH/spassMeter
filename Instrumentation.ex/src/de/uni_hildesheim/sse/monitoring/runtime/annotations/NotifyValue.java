@@ -46,6 +46,7 @@ public @interface NotifyValue {
     /**
      * The monitoring group to be notified.
      * 
+     * @return the group identification
      * @see Monitor
      * 
      * @since 1.00
@@ -59,12 +60,16 @@ public @interface NotifyValue {
      * require only method calls to be supported - calculations can be done
      * in static methods being excluded from monitoring.
      * 
+     * @return return the expression determining the value
+     * 
      * @since 1.00
      */
     String expression();
     
     /**
      * The value to be modified.
+     * 
+     * @return the value/resource
      * 
      * @since 1.00
      */
@@ -77,6 +82,8 @@ public @interface NotifyValue {
      * {@link MeasurementValue#MEM_ALLOCATED} or 
      * {@link MeasurementValue#MEM_UNALLOCATED}.
      * 
+     * @return the memory tag, none if empty (default)
+     * 
      * @since 1.00
      */
     String tagExpression() default "";
@@ -84,6 +91,8 @@ public @interface NotifyValue {
     /**
      * Notify the value itself or the difference between entering the method
      * and exiting it.
+     * 
+     * @return <code>true</code> for difference, <code>false</code> else (default)
      * 
      * @since 1.00
      */

@@ -22,6 +22,8 @@ public @interface ValueContext {
     /**
      * Defines an identification for this field. May end with @ in order to
      * denote a variability (value is appended).
+     * 
+     * @return the identification
      */
     public String id();
 

@@ -31,12 +31,16 @@ public @interface Timer {
      * An arbitrary id representing the associated timer. In case of "*" the 
      * id is determined by the innermost {@link ValueContext}.
      * 
+     * @return the id
+     * 
      * @since 1.00
      */
     String id();
     
     /**
      * Defines the next state of the timer.
+     * 
+     * @return the timer state
      * 
      * @since 1.00
      */
@@ -47,6 +51,8 @@ public @interface Timer {
      * to {@link TimerPosition#DEFAULT}, i.e. 
      * {@link TimerState#getDefaultPosition()}.
      * 
+     * @return the timer position
+     * 
      * @since 1.00
      */
     TimerPosition affectAt() default TimerPosition.DEFAULT;
@@ -55,6 +61,8 @@ public @interface Timer {
      * Should be <code>false</code> (default) if <code>id</code> is
      * thread save and threads must not be considered explicitly, 
      * <code>false</code> else.
+     * 
+     * @return <code>true</code> for considering threads, <code>false else</code>
      */
     boolean considerThreads() default false;
     

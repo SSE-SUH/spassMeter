@@ -24,6 +24,8 @@ public @interface ValueChange {
      * Defines an identification for this field. May end with @ in order to
      * denote a variability (value is appended). In case of "*" the id is
      * determined by the innermost {@link ValueContext}.
+     * 
+     * @return the identification
      */
     public String id();
 

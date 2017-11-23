@@ -24,7 +24,9 @@ public @interface ConfigurationChange {
 
     /**
      * A fixed id denoting the new configuration. If not empty, it overrides
-     * the {@link #valueExpression()}. 
+     * the {@link #valueExpression()}.
+     * 
+     * @return the id expression, none if empty
      * 
      * @since 1.00
      */
@@ -36,6 +38,8 @@ public @interface ConfigurationChange {
      * this for instance methods nor null for static methods. Currently, we 
      * require only method calls to be supported - calculations can be done
      * in static methods being excluded from monitoring.
+     * 
+     * @return the value expression
      * 
      * @since 1.00
      */
