@@ -46,7 +46,7 @@ public class RecordingStack {
     private boolean[] indirect;
     
     /**
-     * Stores the number of elements in {@link #data}.
+     * Stores the number of elements in {@link #memAlloc}.
      */
     private int size;
     

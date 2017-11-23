@@ -155,7 +155,7 @@ public class Lock {
      * Returns whether the top element on the stack enables memory accounting.
      * As a side effect, this method disables memory accounting for the top
      * element (lock). Memory accounting needs to be enabled explicitly using
-     * {@link #setStackTopMemoryAccounting(long, boolean)}.
+     * {@link #setStackTopMemoryAccounting(long, long)}.
      * 
      * @param threadId the thread identification
      * @return the current value, negative if disabled

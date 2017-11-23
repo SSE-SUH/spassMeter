@@ -326,7 +326,7 @@ public class LongRecordingStackHashMap {
      * @param key the key to search for
      * @return the stored value, <b>null</b> if not found
      *
-     * @see #put(Object, Object)
+     * @see #put(long, RecordingStack)
      */
     public RecordingStack get(long key) {
         int hash = hash(key);
