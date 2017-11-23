@@ -10,6 +10,7 @@
 
 	<property name="bridge.jars" value="${bridge.home}/dist"/>
     <property name="meter.src" value="${meter.base}/src"/>
+	<property name="meter.doc" value="${meter.base}/doc"/>
     <property name="meter.bin" value="${meter.base}/bin"/>
     <property name="meter.jars" value="${meter.base}/dist"/>
     <property name="meter.lib" value="${meter.base}/lib"/>
@@ -84,7 +85,7 @@
 		</javac>
 	</target>
 
-	<target name="jar" depends="compile" unless="lobaris.flatBuild">
+	<target name="jar" depends="compile, javadoc" unless="lobaris.flatBuild">
 	    <copy file="version" todir="${meter.bin}"/>
 		<mkdir dir="${meter.jars}"/>
 		<delete file="${meter.jars}/spass-meter-boot.jar"/>
@@ -94,12 +95,47 @@
 				version" 
         	basedir="${meter.bin}">
         </jar>
+
+		<delete file="${meter.jars}/spass-meter-boot-src.jar"/>
+	        <jar jarfile="${meter.jars}/spass-meter-boot-src.jar" 
+	        	includes="de/uni_hildesheim/sse/monitoring/runtime/boot/
+	        	    de/uni_hildesheim/sse/monitoring/runtime/wrap/
+					version" 
+				basedir="${meter.src}">
+	  	      <fileset dir="${meter.base}">
+	  	        <include name="version"/>
+	  	      </fileset>
+        </jar>
+
+    	<delete file="${meter.jars}/spass-meter-boot-doc.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-boot-doc.jar" basedir="${meter.doc}/boot">
+  	      <fileset dir="${meter.base}">
+  	        <include name="version"/>
+  	      </fileset>
+        </jar>
 		
 		<delete file="${meter.jars}/spass-meter.jar"/>
         <jar jarfile="${meter.jars}/spass-meter.jar"
         	includes="de/uni_hildesheim/sse/monitoring/runtime/
 			    version" 
         	basedir="${meter.bin}" manifest="${meter.base}/MONITORING_MANIFEST.MF">
+        </jar>
+
+		<delete file="${meter.jars}/spass-meter-src.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-src.jar" 
+        	includes="de/uni_hildesheim/sse/monitoring/runtime/
+			    version" 
+			basedir="${meter.src}">
+  	      <fileset dir="${meter.base}">
+  	        <include name="version"/>
+  	      </fileset>
+        </jar>
+
+    	<delete file="${meter.jars}/spass-meter-doc.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-doc.jar" basedir="${meter.doc}/spass-meter">
+	      <fileset dir="${meter.base}">
+	        <include name="version"/>
+	      </fileset>
         </jar>
 
 		<delete file="${meter.jars}/spass-meter-annotations.jar"/>
@@ -114,6 +150,27 @@
         	<zipgroupfileset dir="${meter.lib}" includes="eraser-annotations.jar"/>
         </jar>
 
+		<delete file="${meter.jars}/spass-meter-annotations-src.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-annotations-src.jar" 
+        	includes="de/uni_hildesheim/sse/monitoring/runtime/annotations/
+        	  de/uni_hildesheim/sse/monitoring/runtime/boot/DebugState.java
+        	  de/uni_hildesheim/sse/monitoring/runtime/boot/BooleanValue.java
+        	  de/uni_hildesheim/sse/monitoring/runtime/boot/GroupAccountingType.java
+        	  de/uni_hildesheim/sse/monitoring/runtime/boot/ResourceType.java
+			  version"
+			basedir="${meter.src}">
+  	      <fileset dir="${meter.base}">
+  	        <include name="version"/>
+  	      </fileset>
+        </jar>
+
+    	<delete file="${meter.jars}/spass-meter-annotations-doc.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-annotations-doc.jar" basedir="${meter.doc}/annotations">
+	      <fileset dir="${meter.base}">
+	        <include name="version"/>
+	      </fileset>
+        </jar>
+
 		<delete file="${meter.jars}/spass-meter-ia.jar"/>
         <jar jarfile="${meter.jars}/spass-meter-ia.jar"
         	includes="de/uni_hildesheim/sse/monitoring/runtime/annotations/
@@ -123,6 +180,27 @@
 					  de/uni_hildesheim/sse/monitoring/runtime/utils/xml/
 					  version" 
         	basedir="${meter.bin}" manifest="${meter.base}/MONITORING_MANIFEST.MF">
+        </jar>
+
+		<delete file="${meter.jars}/spass-meter-ia-src.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-ia-src.jar" 
+        	includes="de/uni_hildesheim/sse/monitoring/runtime/annotations/
+        	          de/uni_hildesheim/sse/monitoring/runtime/configuration/
+        	          de/uni_hildesheim/sse/monitoring/runtime/instrumentation/
+					  de/uni_hildesheim/sse/monitoring/runtime/utils/
+					  de/uni_hildesheim/sse/monitoring/runtime/utils/xml/
+					  version" 
+			basedir="${meter.src}">
+  	      <fileset dir="${meter.base}">
+  	        <include name="version"/>
+  	      </fileset>
+        </jar>
+
+    	<delete file="${meter.jars}/spass-meter-ia-doc.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-ia-doc.jar" basedir="${meter.doc}/ia">
+	      <fileset dir="${meter.base}">
+	        <include name="version"/>
+	      </fileset>
         </jar>
 
 		<delete file="${meter.jars}/spass-meter-rt.jar"/>
@@ -137,13 +215,50 @@
         	basedir="${meter.bin}">
         </jar>
 
+		<delete file="${meter.jars}/spass-meter-rt-src.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-rt-src.jar" 
+        	excludes="de/uni_hildesheim/sse/monitoring/runtime/instrumentation/
+        	    de/uni_hildesheim/sse/monitoring/runtime/configuration/
+   	            de/uni_hildesheim/sse/monitoring/runtime/boot/
+        	    de/uni_hildesheim/sse/monitoring/runtime/wrap/
+       	        de/uni_hildesheim/sse/monitoring/runtime/annotations/
+   		        de/uni_hildesheim/sse/monitoring/runtime/recordingServer/" 
+			basedir="${meter.src}">
+  	      <fileset dir="${meter.base}">
+  	        <include name="version"/>
+  	      </fileset>
+        </jar>
+
+    	<delete file="${meter.jars}/spass-meter-rt-doc.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-rt-doc.jar" basedir="${meter.doc}/rt">
+	      <fileset dir="${meter.base}">
+	        <include name="version"/>
+	      </fileset>
+        </jar>
+
 		<delete file="${meter.jars}/spass-meter-static.jar"/>
         <jar jarfile="${meter.jars}/spass-meter-static.jar"
         	excludes="de/uni_hildesheim/sse/monitoring/runtime/recordingServer/**/*.class
         		linux/** test/** win32/** **/*.jar **/*.html" 
         	basedir="${meter.bin}">
         </jar>
-		
+
+		<delete file="${meter.jars}/spass-meter-static-src.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-static-src.jar" 
+        	excludes="de/uni_hildesheim/sse/monitoring/runtime/recordingServer/**/*.java"
+			basedir="${meter.src}">
+  	      <fileset dir="${meter.base}">
+  	        <include name="version"/>
+  	      </fileset>
+        </jar>
+
+    	<delete file="${meter.jars}/spass-meter-static-doc.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-static-doc.jar" basedir="${meter.doc}/spass-meter">
+	      <fileset dir="${meter.base}">
+	        <include name="version"/>
+	      </fileset>
+        </jar>
+
 		<delete file="${meter.jars}/spass-meter-ant.jar"/>
         <jar jarfile="${meter.jars}/spass-meter-ant.jar">
   	      <fileset dir="${meter.bin}">
@@ -155,6 +270,24 @@
 	        <include name="spass-meter.properties"/>
 	      </fileset>
         </jar>
+
+		<delete file="${meter.jars}/spass-meter-ant-src.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-ant-src.jar">
+    	      <fileset dir="${meter.src}">
+    	        <include name="de/uni_hildesheim/sse/monitoring/runtime/annotations/"/>
+    	        <include name="de/uni_hildesheim/sse/monitoring/runtime/"/>
+    	        <include name="version"/>
+    	      </fileset>
+        </jar>
+
+		<delete file="${meter.jars}/spass-meter-ant-doc.jar"/>
+        <jar jarfile="${meter.jars}/spass-meter-ant-doc.jar" basedir="${meter.doc}/spass-meter">
+	      <fileset dir="${meter.base}">
+	        <include name="version"/>
+	      </fileset>
+        </jar>
+		
+		<!-- WIN -->
 		
 		<mkdir dir="${meter.jars}/win32"/>
 		<copy file="${meter.jars}/spass-meter-boot.jar" todir="${meter.jars}/win32"/>
@@ -191,7 +324,9 @@
 			<zipgroupfileset dir="${meter.lib}/asm" includes="${asm.lib}"/>
 			<zipgroupfileset dir="${meter.lib}/ant" includes="ant.jar"/>
 		</jar>
-		
+
+		<!-- LINUX -->
+
 		<mkdir dir="${meter.jars}/linux"/>
 		<copy file="${meter.jars}/spass-meter-boot.jar" todir="${meter.jars}/linux"/>
 		<copy file="${meter.jars}/spass-meter-annotations.jar" todir="${meter.jars}/linux"/>
@@ -506,7 +641,13 @@
 	</target>
 	
     <target name="javadoc">
-        <javadoc access="private" author="true" classpath="lib/locutor-instrumenter1.00.jar;lib/eraser-runtime.jar;lib/asm-3.3.jar;${tools};lib/javassist.jar" destdir="doc" doctitle="SPASS-meter" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src\de\uni_hildesheim\sse\monitoring\runtime\overview.html" packagenames="de.uni_hildesheim.sse.monitoring.runtime.recording,de.uni_hildesheim.sse.monitoring.runtime.recordingServer,implementation,de.uni_hildesheim.sse.monitoring.runtime,de.uni_hildesheim.sse.monitoring.runtime.boot,de.uni_hildesheim.sse.monitoring.runtime.instrumentation,de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements,test,de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies,de.uni_hildesheim.sse.monitoring.runtime.annotations,de.uni_hildesheim.sse.monitoring.runtime.utils" source="1.6" sourcepath="src" splitindex="true" use="false" version="true"/>
+    	<delete dir="${meter.doc}"/>
+    	<mkdir dir="${meter.doc}"/>
+        <javadoc access="private" author="true" classpath="lib/locutor-instrumenter1.00.jar;lib/eraser-runtime.jar;lib/asm-3.3.jar;${tools};lib/javassist.jar" destdir="${meter.doc}/spass-meter" doctitle="SPASS-meter" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src\de\uni_hildesheim\sse\monitoring\runtime\overview.html" packagenames="de.uni_hildesheim.sse.monitoring.runtime.recording,de.uni_hildesheim.sse.monitoring.runtime.recordingServer,implementation,de.uni_hildesheim.sse.monitoring.runtime,de.uni_hildesheim.sse.monitoring.runtime.configuration,de.uni_hildesheim.sse.monitoring.runtime.boot,de.uni_hildesheim.sse.monitoring.runtime.instrumentation,de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements,test,de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies,de.uni_hildesheim.sse.monitoring.runtime.annotations,de.uni_hildesheim.sse.monitoring.runtime.utils,de.uni_hildesheim.sse.monitoring.runtime.utils.xml,de.uni_hildesheim.sse.monitoring.runtime.plugins,de.uni_hildesheim.sse.monitoring.runtime.internal,de.uni_hildesheim.sse.monitoring.runtime.plugins,de.uni_hildesheim.sse.monitoring.runtime.configuration.xml,de.uni_hildesheim.sse.monitoring.runtime.annotations.internal,de.uni_hildesheim.sse.monitoring.runtime.wrap" source="1.6" sourcepath="src" splitindex="true" use="false" version="true"/>
+        <javadoc access="private" author="true" classpath="lib/locutor-instrumenter1.00.jar;lib/eraser-runtime.jar;lib/asm-3.3.jar;${tools};lib/javassist.jar" destdir="${meter.doc}/annotations" doctitle="SPASS-meter (annotations)" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src\de\uni_hildesheim\sse\monitoring\runtime\overview.html" packagenames="de.uni_hildesheim.sse.monitoring.runtime.boot,de.uni_hildesheim.sse.monitoring.runtime.annotations,de.uni_hildesheim.sse.monitoring.runtime.annotations.internal" source="1.6" sourcepath="src" splitindex="true" use="false" version="true"/>
+        <javadoc access="private" author="true" classpath="lib/locutor-instrumenter1.00.jar;lib/eraser-runtime.jar;lib/asm-3.3.jar;${tools};lib/javassist.jar" destdir="${meter.doc}/boot" doctitle="SPASS-meter (boot)" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src\de\uni_hildesheim\sse\monitoring\runtime\overview.html" packagenames="de.uni_hildesheim.sse.monitoring.runtime.boot,de.uni_hildesheim.sse.monitoring.runtime.wrap" source="1.6" sourcepath="src" splitindex="true" use="false" version="true"/>
+    	<javadoc access="private" author="true" classpath="lib/locutor-instrumenter1.00.jar;lib/eraser-runtime.jar;lib/asm-3.3.jar;${tools};lib/javassist.jar" destdir="${meter.doc}/ia" doctitle="SPASS-meter (ia)" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src\de\uni_hildesheim\sse\monitoring\runtime\overview.html" packagenames="de.uni_hildesheim.sse.monitoring.runtime.utils,de.uni_hildesheim.sse.monitoring.runtime.utils.xmlde.uni_hildesheim.sse.monitoring.runtime.annotations,de.uni_hildesheim.sse.monitoring.runtime.annotations.internal,de.uni_hildesheim.sse.monitoring.runtime.configuration,de.uni_hildesheim.sse.monitoring.runtime.configuration.xml,de.uni_hildesheim.sse.monitoring.runtime.instrumentation" source="1.6" sourcepath="src" splitindex="true" use="false" version="true"/>
+        <javadoc access="private" author="true" classpath="lib/locutor-instrumenter1.00.jar;lib/eraser-runtime.jar;lib/asm-3.3.jar;${tools};lib/javassist.jar" destdir="${meter.doc}/rt" doctitle="SPASS-meter (rt)" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" overview="src\de\uni_hildesheim\sse\monitoring\runtime\overview.html" packagenames="de.uni_hildesheim.sse.monitoring.runtime.recording,implementation,de.uni_hildesheim.sse.monitoring.runtime,de.uni_hildesheim.sse.monitoring.runtime.recordingStrategiesElements,test,de.uni_hildesheim.sse.monitoring.runtime.recordingStrategies,de.uni_hildesheim.sse.monitoring.runtime.utils,de.uni_hildesheim.sse.monitoring.runtime.utils.xml,de.uni_hildesheim.sse.monitoring.runtime.plugins,de.uni_hildesheim.sse.monitoring.runtime.internal,de.uni_hildesheim.sse.monitoring.runtime.plugins," source="1.6" sourcepath="src" splitindex="true" use="false" version="true"/>
     </target>
 	
 	<target name="asmTest">
