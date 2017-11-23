@@ -66,8 +66,8 @@
     	<mkdir dir="deploy/locutor"/>
         <copy file="pom/locutor-all.xml" toFile="deploy/locutor/pom.xml" overwrite="true"/>
         <copy todir="deploy/locutor/locutor.jar" overwrite="true" file="${meter.lib}/locutor-all-1.00.jar"/>
-        <!--<copy todir="deploy/locutor/locutor-sources.jar" overwrite="true" file="${meter.lib}/locutor-all-sources-1.00.jar"/>
-        <copy todir="deploy/locutor/locutor-javadoc.jar" overwrite="true" file="${meter.lib}/locutor-all-javadoc-1.00.jar"/>-->
+        <copy todir="deploy/locutor/locutor-sources.jar" overwrite="true" file="${meter.lib}/locutor-all-sources-1.00.jar"/>
+        <copy todir="deploy/locutor/locutor-javadoc.jar" overwrite="true" file="${meter.lib}/locutor-all-javadoc-1.00.jar"/>
     	<mvnDeploy folderName="locutor" jarFolder="deploy/locutor" jarFile="locutor.jar"/>
     </target>
     
