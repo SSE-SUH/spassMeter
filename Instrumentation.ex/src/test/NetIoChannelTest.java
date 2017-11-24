@@ -204,7 +204,7 @@ public class NetIoChannelTest {
             write += TestHelper.getUtfLen(testString) + NET_OVERHEAD_STRING;
         }
         int read = 0;
-        //Bei folgender Zeile hängt er
+        //Bei folgender Zeile haengt er
         int serverRead = in.readInt(); //FEHLER
         read += NET_SIZE_INT;
         int serverWrite = in.readInt();
