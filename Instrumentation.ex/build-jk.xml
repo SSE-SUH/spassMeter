@@ -17,57 +17,57 @@
     	<mkdir dir="deploy/annotations"/>
         <copy file="pom/spass-meter-annotations.xml" toFile="deploy/annotations/pom.xml" overwrite="true"/>
         <copy todir="deploy/annotations" overwrite="true">
-        	<fileset dir="${meter.jars}/all" includes="spass-meter-annotations*.java"/>
+        	<fileset dir="${meter.jars}" includes="spass-meter-annotations*.java"/>
         </copy>
         <mvnDeploy folderName="${ant.project.name}-annotations" jarFolder="deploy/annotations" jarFile="spass-meter-annotations.jar" pomFile="deploy/annotations/pom.xml"/>
 
     	<mkdir dir="deploy/ant"/>
         <copy file="pom/spass-meter-ant.xml" toFile="deploy/ant/pom.xml" overwrite="true"/>
         <copy todir="deploy/ant" overwrite="true">
-        	<fileset dir="${meter.jars}/all" includes="spass-meter-ant*.jar"/>
+        	<fileset dir="${meter.jars}" includes="spass-meter-ant*.jar"/>
         </copy>
     	<mvnDeploy folderName="${ant.project.name}-ant" jarFolder="deploy/ant" jarFile="spass-meter-ant.jar" pomFile="deploy/ant/pom.xml"/>
     	
     	<mkdir dir="deploy/boot"/>
         <copy file="pom/spass-meter-boot.xml" toFile="deploy/boot/pom.xml" overwrite="true"/>
         <copy todir="deploy/boot" overwrite="true">
-        	<fileset dir="${meter.jars}/all" includes="spass-meter-boot*.jar"/>
+        	<fileset dir="${meter.jars}" includes="spass-meter-boot*.jar"/>
         </copy>
     	<mvnDeploy folderName="${ant.project.name}-boot" jarFolder="deploy/boot" jarFile="spass-meter-boot.jar" pomFile="deploy/boot/pom.xml"/>
     	
     	<mkdir dir="deploy/ia"/>
         <copy file="pom/spass-meter-ia.xml" toFile="deploy/ia/pom.xml" overwrite="true"/>
         <copy todir="deploy/ia" overwrite="true">
-        	<fileset dir="${meter.jars}/all" includes="spass-meter-ia*.jar"/>
+        	<fileset dir="${meter.jars}" includes="spass-meter-ia*.jar"/>
         </copy>
         <mvnDeploy folderName="${ant.project.name}-ia" jarFolder="deploy/ia" jarFile="spass-meter-ia.jar" pomFile="deploy/ia/pom.xml"/>
     	
     	<mkdir dir="deploy/rt"/>
         <copy file="pom/spass-meter-rt.xml" toFile="deploy/rt/pom.xml" overwrite="true"/>
         <copy todir="deploy/rt" overwrite="true">
-        	<fileset dir="${meter.jars}/all" includes="spass-meter-rt*.jar"/>
+        	<fileset dir="${meter.jars}" includes="spass-meter-rt*.jar"/>
         </copy>
         <mvnDeploy folderName="${ant.project.name}" jarFolder="deploy/rt" jarFile="spass-meter-rt.jar" pomFile="deploy/rt/pom.xml"/>
     	
     	<mkdir dir="deploy/static"/>
         <copy file="pom/spass-meter-static.xml" toFile="deploy/static/pom.xml" overwrite="true"/>
         <copy todir="deploy/static" overwrite="true">
-        	<fileset dir="${meter.jars}/all" includes="spass-meter-static*.jar"/>
+        	<fileset dir="${meter.jars}" includes="spass-meter-static*.jar"/>
         </copy>
     	<mvnDeploy folderName="${ant.project.name}" jarFolder="deploy/static" jarFile="spass-meter-static.jar" pomFile="deploy/static/pom.xml"/>
     	
     	<mkdir dir="deploy/all"/>
         <copy file="pom/spass-meter.xml" toFile="deploy/all/pom.xml" overwrite="true"/>
         <copy todir="deploy/all" overwrite="true">
-        	<fileset dir="${meter.jars}/all" includes="spass-meter.jar spass-meter-javadoc.jar spass-meter-sources.jar"/>
+        	<fileset dir="${meter.jars}" includes="spass-meter.jar spass-meter-javadoc.jar spass-meter-sources.jar"/>
         </copy>
     	<mvnDeploy folderName="${ant.project.name}" jarFolder="deploy/all" jarFile="spass-meter.jar" pomFile="deploy/all/pom.xml"/>
 
     	<mkdir dir="deploy/locutor"/>
         <copy file="pom/locutor-all.xml" toFile="deploy/locutor/pom.xml" overwrite="true"/>
-        <copy todir="deploy/locutor/locutor.jar" overwrite="true" file="${meter.lib}/locutor-all-1.00.jar"/>
-        <copy todir="deploy/locutor/locutor-sources.jar" overwrite="true" file="${meter.lib}/locutor-all-sources-1.00.jar"/>
-        <copy todir="deploy/locutor/locutor-javadoc.jar" overwrite="true" file="${meter.lib}/locutor-all-javadoc-1.00.jar"/>
+        <copy tofile="deploy/locutor/locutor.jar" overwrite="true" file="${meter.lib}/locutor-all-1.00.jar"/>
+        <copy tofile="deploy/locutor/locutor-sources.jar" overwrite="true" file="${meter.lib}/locutor-all-sources-1.00.jar"/>
+        <copy tofile="deploy/locutor/locutor-javadoc.jar" overwrite="true" file="${meter.lib}/locutor-all-javadoc-1.00.jar"/>
     	<mvnDeploy folderName="locutor" jarFolder="deploy/locutor" jarFile="locutor.jar" pomFile="deploy/locutor/pom.xml"/>
     </target>
     
