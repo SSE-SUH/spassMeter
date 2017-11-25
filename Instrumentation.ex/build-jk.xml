@@ -9,7 +9,6 @@
     
     <import file="build.xml"/>
     
-    <!-- Creates a jar file -->
     <target name="deploy" depends="jar">
     	<delete dir="deploy"/>
     	<mkdir dir="deploy"/>
@@ -17,7 +16,7 @@
     	<mkdir dir="deploy/annotations"/>
         <copy file="pom/spass-meter-annotations.xml" toFile="deploy/annotations/pom.xml" overwrite="true"/>
         <copy todir="deploy/annotations" overwrite="true">
-        	<fileset dir="dist" includes="spass-meter-annotations*.java"/>
+        	<fileset dir="dist" includes="spass-meter-annotations*.jar"/>
         </copy>
         <mvnDeploy folderName="${ant.project.name}-annotations" jarFolder="deploy/annotations" jarFile="spass-meter-annotations.jar" pomFile="deploy/annotations/pom.xml"/>
 
