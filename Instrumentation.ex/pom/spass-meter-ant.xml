@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.uni-hildesheim.sse.spassMeter</groupId>
   <artifactId>spass-meter-ant</artifactId>
-  <version>1.26</version>
+  <version>1.27-SNAPSHOT</version>
   
   <name>SPASS-meter (ANT)</name>
   <description>The ANT tasks for running the static instrumentation of SPASS-meter.</description>
