@@ -114,7 +114,7 @@ public class ArrayList<E> {
      *
      * @param  index index of the element to return
      * @return the element at the specified position in this list
-     * @throws IndexOutOfBoundsException {@inheritDoc}
+     * @throws IndexOutOfBoundsException if <code>index &lt; 0 || index &gt;={@link #size()}</code>
      */
     @SuppressWarnings("unchecked")
     public E get(int index) {
@@ -162,7 +162,7 @@ public class ArrayList<E> {
      *
      * @param index the index of the element to be removed
      * @return the element that was removed from the list
-     * @throws IndexOutOfBoundsException {@inheritDoc}
+     * @throws IndexOutOfBoundsException if <code>index &lt; 0 || index &gt;={@link #size()}</code>
      */
     @SuppressWarnings("unchecked")
     public E remove(int index) {
