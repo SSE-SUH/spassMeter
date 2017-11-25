@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.uni-hildesheim.sse.spassMeter</groupId>
   <artifactId>locutor</artifactId>
-  <version>1.10-SNAPSHOT</version>
+  <version>1.10</version>
   
   <name>Locutor</name>
   <description>The SSE Java native library for accessing operating system level information, 

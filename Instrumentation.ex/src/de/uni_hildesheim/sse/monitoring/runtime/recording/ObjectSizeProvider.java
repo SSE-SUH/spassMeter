@@ -54,8 +54,7 @@ public class ObjectSizeProvider implements IObjectSizeProvider {
     }
     
     /**
-     * Changes the singleton instance (may be done by 
-     * {@link de.uni_hildesheim.sse.monitoring.runtime.instrumentation.Agent}).
+     * Changes the singleton instance (may be done by the instrumentation Agent).
      * 
      * @param newInstance the new singleton instance (must not be <b>null</b>).
      * @throws IllegalArgumentException in case that 
