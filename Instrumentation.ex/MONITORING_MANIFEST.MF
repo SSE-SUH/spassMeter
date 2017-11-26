@@ -5,7 +5,7 @@ Can-Retransform-Classes: true
 Bundle-ManifestVersion: 2
 Bundle-Name: SpassMeter
 Bundle-SymbolicName: SpassMeter
-Bundle-Version: 1.27.0
+Bundle-Version: 1.28.0
 Export-Package: de.uni_hildesheim.sse.monitoring.runtime,
  de.uni_hildesheim.sse.monitoring.runtime.annotations,
  de.uni_hildesheim.sse.monitoring.runtime.boot,

@@ -9,7 +9,7 @@ REM run this script
 REM goto https://oss.sonatype.org/#welcome, staging repositories, deuni-hildesheim...*, close for check/deploy
 
 SET LOCALREPO=http://projects.sse.uni-hildesheim.de/qm/maven/de/uni-hildesheim/sse/spassMeter
-SET SPASS_VERSION=1.26
+SET SPASS_VERSION=1.27
 SET LOCUTOR_VERSION=1.11
 SET DIR=.
 SET TARGET=https://oss.sonatype.org/service/local/staging/deploy/maven2
