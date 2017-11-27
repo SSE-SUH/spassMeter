@@ -15,7 +15,10 @@ SPASS-meter monitoring framework (release version 1.23, development version 1.24
 * InstrumentationWildCAT/gearsBridgeWildCAT: binding of native data gatherer / SPASS-meter to OW2 WildCAT
 * LoadPlugin: SPASS-meter specific extension of the JMX Console
 
-Maven [repository](https://projects.sse.uni-hildesheim.de/qm/maven/):
+Spass-Meter is available as Maven artifacts (all supported operating systems)
+* releases on [Maven central](https://repo1.maven.org/maven2/de/uni-hildesheim/sse/spassMeter/) 
+* releases and snapshots on [repository](https://projects.sse.uni-hildesheim.de/qm/maven/)
+
 ```
 <dependency>
  <groupId>de.uni-hildesheim.sse.spassMeter</groupId>
@@ -23,4 +26,4 @@ Maven [repository](https://projects.sse.uni-hildesheim.de/qm/maven/):
  <version>1.25</version>
 </dependency>
 ```
-Similarly, the other JARs are available as individual artifacts: spass-meter-annotations, spass-meter-ant, spass-meter-boot, spass-meter-ia, spass-meter-rt, spass-meter-static.
+Similarly for the other artifacts: spass-meter-annotations, spass-meter-ant, spass-meter-boot, spass-meter-ia, spass-meter-rt, spass-meter-static.
