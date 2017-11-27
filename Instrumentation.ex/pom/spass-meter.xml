@@ -18,6 +18,22 @@
     </license>
   </licenses>
   
+  <developers>
+    <developer>
+      <id>eichelbe</id>
+      <name>Holger Eichelberger</name>
+      <email>eichelberger@sse.uni-hildesheim.de</email>
+      <url>https://sse.uni-hildesheim.de/mitglieder/dr-holger-eichelberger/</url>
+      <organization>SUH</organization>
+      <organizationUrl>https://sse.uni-hildesheim.de/</organizationUrl>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+      <timezone>Europe/Berlin</timezone>
+    </developer>
+  </developers>
+    
   <scm>
     <url>https://github.com/SSEHUB/spassMeter.git</url>
   </scm>
