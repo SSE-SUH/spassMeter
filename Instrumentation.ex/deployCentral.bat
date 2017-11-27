@@ -9,7 +9,8 @@ REM run this script
 REM goto https://oss.sonatype.org/#welcome, staging repositories, deuni-hildesheim...*, close for check/deploy
 
 SET LOCALREPO=http://projects.sse.uni-hildesheim.de/qm/maven/de/uni-hildesheim/sse/spassMeter
-SET SPASS_VERSION=1.28
+SET SPASS_VERSION=1.29
+REM uncomment locutor deployment if changed significantly
 SET LOCUTOR_VERSION=1.12
 SET DIR=.
 SET TARGET=https://oss.sonatype.org/service/local/staging/deploy/maven2
@@ -24,7 +25,7 @@ call :DeployArtifact spass-meter-boot %SPASS_VERSION%
 call :DeployArtifact spass-meter-ia %SPASS_VERSION%
 call :DeployArtifact spass-meter-rt %SPASS_VERSION%
 call :DeployArtifact spass-meter-static %SPASS_VERSION%
-call :DeployArtifact locutor %LOCUTOR_VERSION%
+REM call :DeployArtifact locutor %LOCUTOR_VERSION%
 
 REM done here, don't go into "sub-program"
 goto :end
