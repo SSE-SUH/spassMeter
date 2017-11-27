@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.uni-hildesheim.sse.spassMeter</groupId>
   <artifactId>spass-meter</artifactId>
-  <version>1.28</version>
+  <version>1.29-SNAPSHOT</version>
   
   <name>SPASS-meter</name>
   <description>The full binary version of SPASS-meter.</description>
