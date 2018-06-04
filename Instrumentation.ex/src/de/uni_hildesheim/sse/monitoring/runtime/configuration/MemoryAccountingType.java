@@ -78,7 +78,7 @@ public enum MemoryAccountingType {
      * Based on object creations with array creations including unallocation.
      */
     @Variability(id = AnnotationConstants.MONITOR_MEMORY_USAGE)
-    CREATION_UNALLOCATION_ARRAYS (AT_OBJECT_CREATION | AT_FINALIZER 
+    CREATION_UNALLOCATION_ARRAYS(AT_OBJECT_CREATION | AT_FINALIZER 
         | AT_ARRAY_CREATION),
 
     /**
@@ -86,13 +86,13 @@ public enum MemoryAccountingType {
      * unallocation.
      */
     @Variability(id = AnnotationConstants.MONITOR_MEMORY_USAGE_NATIVE)
-    CREATION_NATIVEUNALLOCATION_ARRAYS (AT_OBJECT_CREATION 
+    CREATION_NATIVEUNALLOCATION_ARRAYS(AT_OBJECT_CREATION 
         | NATIVE_UNALLOCATION | AT_ARRAY_CREATION),
 
     /**
      * Based on object creations with array creations excluding unallocation.
      */
-    CREATION_ARRAYS (AT_OBJECT_CREATION | AT_ARRAY_CREATION);
+    CREATION_ARRAYS(AT_OBJECT_CREATION | AT_ARRAY_CREATION);
     
     /**
      * Stores the flags.
