@@ -973,7 +973,8 @@ public class CodeModifier implements ICodeModifier, Opcodes {
             instr.add(new LdcInsnNode(behavior.expandInvoke(invoke)));
             instr.add(booleanToNode(Configuration.INSTANCE.printStatistics()));
             instr.add(createMethodInsnNode(INVOKESPECIAL, shutdownMonitor, 
-                "<init>", "(" + classLoaderDescr + STRING_DESCR + "Z)V"));
+                ABehavior.CONSTRUCTOR_NAME, 
+                "(" + classLoaderDescr + STRING_DESCR + "Z)V"));
 
             instr.add(createMethodInsnNode(INVOKEVIRTUAL, runtime, 
                 "addShutdownHook", "(" + threadDescr + ")V"));
@@ -1061,7 +1062,6 @@ public class CodeModifier implements ICodeModifier, Opcodes {
      */
     private void insertSelfMemoryCallBeforeReturn(IBehavior method, 
         boolean allocated) throws InstrumenterException {
-// TODO validate
         MethodNode mNode = ((ABehavior) method).getNode();
         InsnList instructions = mNode.instructions;
         int maxStack = 0;
@@ -1069,6 +1069,7 @@ public class CodeModifier implements ICodeModifier, Opcodes {
         int tmp = appendRecorderCallProlog(instr, false);
         maxStack = Math.max(maxStack, Utils.getLSB(tmp));
         instr.add(new VarInsnNode(ALOAD, 0));
+        maxStack++;
         String name;
         if (allocated) {
             name = "memoryAllocated";
@@ -1078,7 +1079,7 @@ public class CodeModifier implements ICodeModifier, Opcodes {
         tmp = appendRecorderCall(instr, name, MEMORY_DESCR);
         maxStack = Math.max(maxStack, Utils.getLSB(tmp));
         insertBeforeReturn(instr, instructions, -1, null);
-        mNode.maxStack = Math.max(mNode.maxStack, maxStack);
+        mNode.maxStack += maxStack;
     }
 
     /**
@@ -1638,13 +1639,13 @@ public class CodeModifier implements ICodeModifier, Opcodes {
      * @since 1.00
      */
     private static String getDescriptorName(boolean isStatic) {
-        String searchName;
+        String result;
         if (isStatic) {
-            searchName = "<clinit>";
+            result = ABehavior.STATIC_CONSTRUCTOR_NAME;
         } else {
-            searchName = "<init>";
+            result = ABehavior.CONSTRUCTOR_NAME;
         }
-        return searchName;
+        return result;
     }
     
     /**

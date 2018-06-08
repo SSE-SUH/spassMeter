@@ -24,6 +24,11 @@ public class ABehavior implements IBehavior {
     static final String CONSTRUCTOR_NAME = "<init>";
 
     /**
+     * Stores the internal name of a static (class) constructor.
+     */
+    static final String STATIC_CONSTRUCTOR_NAME = "<clinit>";
+
+    /**
      * Stores the node represented by this class.
      */
     private MethodNode node;

@@ -30,9 +30,19 @@ import de.uni_hildesheim.sse.monitoring.runtime.utils.HashMap;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.30
  */
 public class Agent implements IObjectSizeProvider, IRecordingEndListener {
+
+    /**
+     * The name of the agent jar.
+     */
+    public static final String JAR_IA = "spass-meter-ia.jar";
+    
+    /**
+     * The param prefix for the installation dir.
+     */
+    public static final String INSTALLDIR_PARAM = "installDir=";
     
     /**
      * Stores the instrumentation instance.
@@ -206,26 +216,29 @@ public class Agent implements IObjectSizeProvider, IRecordingEndListener {
      * @since 1.00
      */
     private static void initialize(String args, Instrumentation inst) {
-        String classpath = System.getProperty("java.class.path");
-        if (null != classpath) {
-            int posIa = classpath.indexOf("spass-meter-ia.jar");
-            int posAll = classpath.indexOf("spass-meter.jar");
-            if (posIa < 0 && posAll < 0) {
-                System.err.println("configuration error: neither " 
-                    + "spass-meter-ia.jar nor spass-meter.jar on class path");
-                System.exit(0);
-            } else if (posIa > 0) {
-                int pos1 = classpath.lastIndexOf(File.pathSeparator, posIa);
-                if (pos1 < 0) {
-                    pos1 = 0; // beginning of classpath
-                } else {
-                    pos1++; // skip pathSeparator
+        String err = initializeClasspath(System.getProperty("java.class.path"), 
+            "class path", inst);
+        if (null == err || err.length() > 0) { // no property/not found
+            String path = ""; // Fallback since Java 9
+            File f = new File(System.getProperty("user.dir", ""), JAR_IA);
+            if (f.exists()) {
+                path = f.getAbsolutePath();
+            } else {
+                int lPos = args.indexOf(INSTALLDIR_PARAM);
+                if (lPos >= 0) {
+                    lPos += INSTALLDIR_PARAM.length();
+                    int rPos = args.indexOf(",", lPos);
+                    rPos = rPos < 0 ? args.length() : rPos; 
+                    path = args.substring(lPos, rPos) + "/" + JAR_IA;
                 }
-                String spassPath = classpath.substring(pos1, posIa);
-                appendToPath(inst, spassPath + "spass-meter-boot.jar", true);
-                appendToPath(inst, spassPath + "spass-meter-rt.jar", false);
             }
-        }
+            String err2 = initializeClasspath(path, "user dir / install path", 
+                inst);
+            if (null == err2 || err2.length() > 0) { // not found
+                System.err.println(err + "; " + err2);
+                System.exit(0);
+            }
+        } // found on classpath, JDK < 9
         OnCreationJarProvider.setInstance(new JarProvider());
         Configuration conf = Configuration.INSTANCE;
         conf.readFromAgentArguments(args);
@@ -246,6 +259,42 @@ public class Agent implements IObjectSizeProvider, IRecordingEndListener {
         if (ScopeType.GROUP_INHERIT != Configuration.INSTANCE.getScopeType()) {
             retransformLoadedClasses(RETRANSFORM, true);
         }
+    }
+    
+    /**
+     * Tries to initialize the classpath.
+     * 
+     * @param path the path to check
+     * @param pathName the name of the path
+     * @param inst the instrumentation instance
+     * @return <b>null</b> if <code>path</code> is <b>null</b>, an empty string
+     * for success, an error message else
+     * 
+     * @since 1.30
+     */
+    private static String initializeClasspath(String path, String pathName, 
+        Instrumentation inst) {
+        String result = null;
+        if (null != path) {
+            int posIa = path.indexOf(JAR_IA);
+            int posAll = path.indexOf("spass-meter.jar");
+            if (posIa < 0 && posAll < 0) {
+                result = "configuration error: neither " + JAR_IA 
+                    + " nor spass-meter.jar on " + pathName;
+            } else if (posIa > 0) {
+                int pos1 = path.lastIndexOf(File.pathSeparator, posIa);
+                if (pos1 < 0) {
+                    pos1 = 0; // beginning of classpath
+                } else {
+                    pos1++; // skip pathSeparator
+                }
+                String spassPath = path.substring(pos1, posIa);
+                appendToPath(inst, spassPath + "spass-meter-boot.jar", true);
+                appendToPath(inst, spassPath + "spass-meter-rt.jar", false);
+                result = "";
+            }
+        }
+        return result;
     }
     
     /**

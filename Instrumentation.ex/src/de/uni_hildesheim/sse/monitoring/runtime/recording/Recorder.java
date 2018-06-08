@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 
@@ -254,7 +255,8 @@ public class Recorder extends RecorderFrontend
         try {
             Class<?> pluginClass = Class.forName(className);
             if (Plugin.class.isAssignableFrom(pluginClass)) {
-                Plugin plugin = (Plugin) pluginClass.newInstance(); 
+                Plugin plugin = (Plugin) pluginClass.getConstructor()
+                    .newInstance(); 
                 plugins.add(plugin);
                 plugin.start(params);
             }
@@ -266,6 +268,19 @@ public class Recorder extends RecorderFrontend
         } catch (IllegalAccessException e) {
             Configuration.LOG.info("Plugin class " + className 
                 + " cannot be instantiated (illegal access)");
+        } catch (IllegalArgumentException e) {
+            Configuration.LOG.info("Illegal argument when instantiating plugin " 
+                + className + ":" + e.getMessage());
+        } catch (InvocationTargetException e) {
+            Configuration.LOG.info("Plugin class " + className 
+                + " cannot be instantiated (code execution problem)" 
+                + e.getMessage());
+        } catch (NoSuchMethodException e) {
+            Configuration.LOG.info("No default constructor found in " 
+                + className);
+        } catch (SecurityException e) {
+            Configuration.LOG.info("Plugin class " + className 
+                + " cannot be instantiated (security problem)");
         }
     }
 

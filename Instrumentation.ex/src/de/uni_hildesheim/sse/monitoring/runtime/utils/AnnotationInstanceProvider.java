@@ -64,7 +64,7 @@ public class AnnotationInstanceProvider implements Cleanup {
         // Not safe against data race, but doesn't matter, we can recompute and
         // get the same value
         if (clazz == null) {
-            // create the proxy class
+            // create the proxy class - we keep this for Java 8 compliance
             clazz = Proxy.getProxyClass(annotation.getClassLoader(), 
                 annotation, Serializable.class);
             cache.put(annotation, clazz);

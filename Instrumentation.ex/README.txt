@@ -4,6 +4,7 @@ Compatibility:
 - The libraries provided with this project are prepared for
   - Windows x86 32 bit and 64 bit version
   - Linux
+- Java 9
 
 SVN updating and Eclipse
 - However, Eclipse seems not always to properly consider changed classpaths which
@@ -18,10 +19,6 @@ Dependencies (in build.xml):
 
 Prerequisites:
 - Define the environment variable JAVA_HOME properly. If needed, set ANT_HOME.
-- In Eclipse create 
-  - a installed JRE for your JDK and name it "jdk".
-  - user library JRE_PLUGINS pointing to jre/lib/plugin.jar
-  - user library JRE_TOOLS pointing to jdk/lib/tools.jar
 
 How to start this:
 - See detailed description in resources/manual.docx or resources/manual.pdf, respectively.
@@ -52,3 +49,9 @@ Release history
   - version file in Jar (inspired by H. Knoche)
   - static instrumentation dependency and file name patterns (reported by M. Keunecke)
   - pattern improvement for namespace/module (reported by A. Krafczyk)
+- version 1.3 (update to JAVA 9)
+  - update of javassist library to version 3.22.00
+  - update of ASM libray to version 6.2
+  - update of checkstyle specs to checkstyle version 8.8
+  - removal of unused BCEL library
+  - removal of outdated (Java 8 style) library references to tools.jar and plugin.jar

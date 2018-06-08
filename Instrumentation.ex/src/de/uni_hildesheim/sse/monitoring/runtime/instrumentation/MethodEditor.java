@@ -16,7 +16,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.wrap.*;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.30
  */
 public class MethodEditor extends BehaviorEditor {
 
@@ -550,6 +550,12 @@ public class MethodEditor extends BehaviorEditor {
                     mod.notifyIoDatagramTransmission(cRecId, 
                         "send".equals(name));
                 }
+            }
+        } else if (!Utils.JAVA_BEFORE_9 
+            && (/*name.startsWith("read") ||*/ name.startsWith("write"))) {
+            if (mod.mcDeclaringClassInstanceOf(
+                "java.io.RandomAccessFile") && instrumentFileIo()) {
+                mod.notifyRandomIoAccess(cRecId, name.startsWith("w"));
             }
         } else {
             if (!Configuration.INSTANCE.instrumentJavaLib()) {

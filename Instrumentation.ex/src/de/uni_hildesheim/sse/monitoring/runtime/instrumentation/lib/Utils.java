@@ -5,9 +5,17 @@ package de.uni_hildesheim.sse.monitoring.runtime.instrumentation.lib;
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.30
  */
 public class Utils {
+    
+    /**
+     * Stores whether we are running a JVM before version 9.
+     * 
+     * @since 1.30
+     */
+    public static final boolean JAVA_BEFORE_9 = 
+        System.getProperty("java.version", "").startsWith("1.");
 
     /**
      * Prevents this class from being initialized from outside.
@@ -29,4 +37,5 @@ public class Utils {
     public static boolean isFinalize(String name , int paramCount) {
         return "finalize".equals(name) && paramCount == 0;
     }
+    
 }

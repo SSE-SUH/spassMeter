@@ -451,6 +451,37 @@ class AllDelegatingEditor extends ExprEditor
             throw new InstrumenterException(e);
         }
     }
+    
+    @Override
+    public void notifyRandomIoAccess(String contextId, boolean write)
+        throws InstrumenterException {
+        StringBuilder call = new StringBuilder();
+        insertContextNotificationCode(call, contextId, true);
+        call.append("long _fpos = $0.getFilePointer();");
+        if (write) {
+            call.append("$proceed($$);");
+        } else {
+            call.append("$_ = $proceed($$);");
+        }
+        call.append(CodeModifier.RECORDER);
+        call.append(".");
+        if (write) {
+            call.append("write");
+        } else {
+            call.append("read");
+        }
+        call.append("Io(null,null,(int)($0.getFilePointer()-_fpos),");
+        call.append(StreamType.class.getName());
+        call.append(".");
+        call.append(StreamType.FILE.name());
+        call.append(");");
+        insertContextNotificationCode(call, contextId, false);
+        try {
+            expression.replace(call.toString());
+        } catch (CannotCompileException e) {
+            throw new InstrumenterException(e);
+        }
+    }
 
     /**
      * Leave the underlying code as it is and just insert value context change

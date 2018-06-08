@@ -24,6 +24,14 @@ import de.uni_hildesheim.sse.system.GathererFactory;
 public class TestEnvironment {
 
     /**
+     * Stores whether we are running a JVM before version 9.
+     * 
+     * @since 1.30
+     */
+    public static final boolean JAVA_BEFORE_9 = 
+        System.getProperty("java.version", "").startsWith("1.");
+    
+    /**
      * The separator between recording and instance ids.
      */
     public static final String RECID_INSTANCEID_SEPARATOR = AbstractTestPlugin.RECID_INSTANCEID_SEPARATOR;

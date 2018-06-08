@@ -11,6 +11,9 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/testasm.jar"/>
-	<classpathentry kind="lib" path="lib/asm/asm-all-5.1.jar" sourcepath="lib/asm/src.zip"/>
+	<classpathentry kind="lib" path="lib/asm/asm-6.2.jar"/>
+	<classpathentry kind="lib" path="lib/asm/asm-commons-6.2.jar" sourcepath="lib/asm/asm-commons-6.2-sources.jar"/>
+	<classpathentry kind="lib" path="lib/asm/asm-tree-6.2.jar"/>
+	<classpathentry kind="lib" path="lib/asm/asm-util-6.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

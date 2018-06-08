@@ -24,7 +24,8 @@ import de.uni_hildesheim.sse.monitoring.runtime.boot.StreamType;
  * method. 
  * <p>
  * We need this delegating class, because due to public native methods 
- * instrumentation does not work.
+ * instrumentation does not work. Read still works with Java 9, write does not
+ * work and needs additional instrumentation.
  *
  * @author  Holger Eichelberger
  * @since   1.0

@@ -323,32 +323,74 @@ class StatementModifier extends MethodVisitor implements IStatementModifier,
      * Returns the next free local variable. This method updates the 
      * <code>maxLocals</code> variable in {@link #nodeToBeInstrumented}.
      * 
+     * @param large <code>true</code> allocate a local variable for a large 
+     *   type (boolean or double), then two consecutive local variables are
+     *   used, but only the first number is returned
      * @return the index of the next free local variable.
      * 
      * @since 1.00
      */
-    private int getFreeLocalVariable() {
+    private int getFreeLocalVariable(boolean large) {
         int free = 0;
-        // number = maxLocals + i
         for (int i = 0; 0 == free && i < usedLocals.length; i++) {
             int local = usedLocals[i];
             if (local > 0) {
-                free = usedLocals[i];
-                usedLocals[i] = -free;
+                int largeFree;
+                if (large) {
+                    largeFree = 0; // search for consecutive large, found if > 0
+                    int largeRequested = local + 1;
+                    for (int j = i + 1; 0 == largeFree && j < usedLocals.length; j++) {
+                        int localLarge = usedLocals[j];
+                        if (localLarge == largeRequested) {
+                            largeFree = usedLocals[i];
+                            usedLocals[i] = -largeFree;
+                        }
+                    }
+                } else { // not needed
+                    largeFree = -1;
+                }
+                if (largeFree != 0) { // not needed or found
+                    free = usedLocals[i];
+                    usedLocals[i] = -free;
+                }
             } else if (0 == local) {
-                free = nodeToBeInstrumented.maxLocals;
-                nodeToBeInstrumented.maxLocals++;
-                usedLocals[i] = -free;
+                int largeFreeIndex;
+                if (large) {
+                    largeFreeIndex = -2;
+                    for (int j = i + 1; -2 == largeFreeIndex 
+                        && j < usedLocals.length; j++) {
+                        int localLarge = usedLocals[j];
+                        if (localLarge == 0) {
+                            largeFreeIndex = j;        
+                        }
+                    }
+                } else {
+                    largeFreeIndex = -1;
+                }
+                if (largeFreeIndex >= -1) { // not needed or we have a position
+                    free = nodeToBeInstrumented.maxLocals;
+                    nodeToBeInstrumented.maxLocals++;
+                    usedLocals[i] = -free;
+                    if (large) {
+                        usedLocals[largeFreeIndex] = 
+                            -nodeToBeInstrumented.maxLocals;
+                        nodeToBeInstrumented.maxLocals++;
+                    }
+                }
+                
             } // local < 0 -> in use
         }
         if (0 == free) {
             // insufficient space
-            int[] tmp = new int[usedLocals.length + 1];
+            int newCount = large ? 2 : 1;
+            int[] tmp = new int[usedLocals.length + newCount];
             System.arraycopy(usedLocals, 0, tmp, 0, usedLocals.length);
             usedLocals = tmp;
-            free = nodeToBeInstrumented.maxLocals;
-            nodeToBeInstrumented.maxLocals++;
-            usedLocals[usedLocals.length - 1] = -free;
+            for (int n = newCount; n > 0; n--) {
+                free = nodeToBeInstrumented.maxLocals;
+                nodeToBeInstrumented.maxLocals++;
+                usedLocals[usedLocals.length - n] = -free;
+            }
         }
         return free;
     }
@@ -366,6 +408,20 @@ class StatementModifier extends MethodVisitor implements IStatementModifier,
                 usedLocals[i] = index;
                 break;
             }
+        }
+    }
+
+    /**
+     * Releases all local variables in <code>index</code>. Local variables must
+     * be obtained via {@link #getFreeLocalVariable()}.
+     * 
+     * @param index the indexes to release
+     * 
+     * @since 1.30
+     */
+    private void releaseLocalVariables(int[] index) {
+        for (int i = 0; i < index.length; i++) {
+            releaseLocalVariable(index[i]);
         }
     }
 
@@ -465,7 +521,7 @@ class StatementModifier extends MethodVisitor implements IStatementModifier,
                     // no astore, chained instructions
                     // store result temporarily and restore after
                     varNr = new int[1];
-                    varNr[0] = getFreeLocalVariable();
+                    varNr[0] = getFreeLocalVariable(false);
                     tempInstructions.add(new VarInsnNode(ASTORE, varNr[0]));
                 }
                 insertAfter = new VarInsnNode(ALOAD, varNr[0]);
@@ -574,7 +630,7 @@ class StatementModifier extends MethodVisitor implements IStatementModifier,
             switch (typeExpression) {
             case URL_TYPE:
                 if (input) {
-                    int urlVarNr = getFreeLocalVariable();
+                    int urlVarNr = getFreeLocalVariable(false);
                     // save implicit parameter, i.e. the URL
                     tempInstructions.add(new VarInsnNode(ASTORE, urlVarNr));
                     tempInstructions.add(new VarInsnNode(ALOAD, urlVarNr));
@@ -642,7 +698,7 @@ class StatementModifier extends MethodVisitor implements IStatementModifier,
     public void notifyThreadStarted(String contextId)
         throws InstrumenterException {
 
-        int varNr = getFreeLocalVariable();
+        int varNr = getFreeLocalVariable(false);
         // save implicit parameter
         tempInstructions.add(new VarInsnNode(ASTORE, varNr));
 
@@ -680,11 +736,12 @@ class StatementModifier extends MethodVisitor implements IStatementModifier,
         appendContextNotification(contextId, true);
 
         // save first and only parameter
-        int varNr = getFreeLocalVariable();
+        int varNr = getFreeLocalVariable(false);
         tempInstructions.add(new VarInsnNode(ASTORE, varNr));
         tempInstructions.add(new VarInsnNode(ALOAD, varNr));
         maxStack(1);
         insertBefore(instruction);
+        tempInstructions.clear();
         
         appendRecorderCallProlog(tempInstructions, false);
         tempInstructions.add(new InsnNode(ACONST_NULL));
@@ -712,6 +769,64 @@ class StatementModifier extends MethodVisitor implements IStatementModifier,
         // restore parameter
         //tempInstructions.add(new VarInsnNode(ALOAD, varNr));
         releaseLocalVariable(varNr);
+        instructions.insert(instruction, tempInstructions);
+    }
+
+    // assumption: call and instrumentation happen within same try/catch
+    // for now we just store all parameters generically. More efficient 
+    // alternative could be searching for the first parameter
+    @Override
+    public void notifyRandomIoAccess(String contextId, boolean write)
+        throws InstrumenterException {
+        int stack = 0;
+        // save all params into variables, in particular randomIoFile ref in [0]
+        int[] paramVars = saveAllParameters((MethodInsnNode) instruction);
+        // stack is now as before, but we have the ref
+        // load randomIoFile ref and call getFilePointer on ref
+        tempInstructions.add(new VarInsnNode(ALOAD, paramVars[0]));
+        tempInstructions.add(createMethodInsnNode(INVOKEVIRTUAL, 
+            "java/io/RandomAccessFile", "getFilePointer", "()J"));
+        // store result of getFilePointer into fPosVarNr
+        int fPosVarNr = getFreeLocalVariable(true);
+        tempInstructions.add(new VarInsnNode(LSTORE, fPosVarNr));
+        stack++;
+        
+        appendContextNotification(contextId, true);
+        // stack is now as original
+        maxStack(stack);
+        insertBefore(instruction);
+        tempInstructions.clear();
+
+        stack = 0;
+        appendRecorderCallProlog(tempInstructions, false);
+        tempInstructions.add(new InsnNode(ACONST_NULL));
+        stack++;
+        tempInstructions.add(new InsnNode(ACONST_NULL));
+        stack++;
+        tempInstructions.add(new VarInsnNode(ALOAD, paramVars[0]));
+        tempInstructions.add(createMethodInsnNode(INVOKEVIRTUAL, 
+            "java/io/RandomAccessFile", "getFilePointer", "()J"));
+        stack++;
+        tempInstructions.add(new VarInsnNode(LLOAD, fPosVarNr));
+        stack++;
+        tempInstructions.add(new InsnNode(LSUB));
+        tempInstructions.add(new InsnNode(L2I));
+        tempInstructions.add(new FieldInsnNode(GETSTATIC, STREAM_TYPE, 
+            "FILE", STREAM_TYPE_DESCR));
+        String method;
+        if (write) {
+            method = "writeIo";
+        } else {
+            method = "readIo";
+        }
+        appendRecorderCall(tempInstructions, method, READ_WRITE_DESCR);
+
+        // result unused
+        tempInstructions.add(new InsnNode(POP));
+        maxStack(stack);
+        appendContextNotification(contextId, false);
+        releaseLocalVariable(fPosVarNr);
+        releaseLocalVariables(paramVars);
         instructions.insert(instruction, tempInstructions);
     }
 
@@ -1019,121 +1134,148 @@ class StatementModifier extends MethodVisitor implements IStatementModifier,
             lastNew.clear();
         }
     }
+
     
-}
-
-/**
- * Creates instructions to save all parameters of the method invocation
- * <code>mNode</code> into local variables and to restore the stack 
- * immediately. The new operations are inserted into {@link #instructions}
- * before {@link #instruction}.
- * 
- * @param mNode the node representing the method cell
- * @return the numbers of the local variables; <b>null</b> if no local 
- *   variables were used, all local variables else (if <code>mNode</code> 
- *   has an implicit object reference, the variable number will be
- *   stored in the first position of the array)
- * 
- * @since 1.00
- */
-/*private int[] saveAllParameters(MethodInsnNode mNode) {
-    return saveAllParameters(mNode, 
-        hasImplicitFirstArgument(mNode.getOpcode()));
-}*/
-
-/**
- * Creates instructions to save all parameters of the method invocation
- * <code>mNode</code> into local variables and to restore the stack 
- * immediately. The new operations are inserted into {@link #instructions}
- * before {@link #instruction}.
- * 
- * @param mNode the node representing the method cell
- * @param includingObjectReference shall also the implicit object reference
- *   be saved
- * @return the numbers of the local variables; <b>null</b> if no local 
- *   variables were used, all local variables else (if 
- *   <code>includingObjectReference</code> is enabled the variable number 
- *   will be stored in the first position of the array)
- * 
- * @since 1.00
- */
-/*private int[] saveAllParameters(MethodInsnNode mNode, 
-    boolean includingObjectReference) {
-    ArrayList<String> param = ABehavior.scanParameter(
-        mNode.desc, false);
-    int pCount = param.size();
-    int[] varNr;
-    if (0 == pCount && !includingObjectReference) {
-        varNr = null;
-    } else {
-        varNr = new int[pCount + 1];
-        InsnList instr = new InsnList();
-        ArrayList<AbstractInsnNode> recreate 
-            = new ArrayList<AbstractInsnNode>();
-        int offset;
-        if (includingObjectReference) {
-            offset = 1;
-        } else {
-            offset = 0;
-        }
-        for (int v = pCount - 1; v >= 0; v--) {
-            int varIndex = v + offset;
-            varNr[varIndex] = getFreeLocalVariable();
-            String type = param.get(v);
-            char typeC;
-            
-            if (type.length() > 1) {
-                typeC = Factory.INTERNAL_OBJECT_PREFIX;
-            } else {
-                typeC = type.charAt(0);
-            }
-
-            int loadOp;
-            int storeOp;
-
-            // determine load and store operations
-            switch (typeC) {
-            case Factory.INTERNAL_BOOLEAN:
-            case Factory.INTERNAL_INT:
-            case Factory.INTERNAL_BYTE:
-            case Factory.INTERNAL_CHAR:
-            case Factory.INTERNAL_SHORT:
-                loadOp = ILOAD;
-                storeOp = ISTORE;
-                break;
-            case Factory.INTERNAL_DOUBLE:
-                loadOp = DLOAD;
-                storeOp = DSTORE;
-                break;
-            case Factory.INTERNAL_FLOAT:
-                loadOp = FLOAD;
-                storeOp = FSTORE;
-                break;
-            case Factory.INTERNAL_LONG:
-                loadOp = LLOAD;
-                storeOp = LSTORE;
-                break;
-            default:
-                loadOp = ALOAD;
-                storeOp = ASTORE;
-                break;
-            }
-            // store stack top
-            instr.add(new VarInsnNode(storeOp, varNr[varIndex]));
-            recreate.add(new VarInsnNode(loadOp, varNr[varIndex]));
-        }
-        if (includingObjectReference) {
-            varNr[0] = getFreeLocalVariable();
-            instr.add(new VarInsnNode(ASTORE, varNr[0]));
-            instr.add(new VarInsnNode(ALOAD, varNr[0]));
-        }
-        for (int r = recreate.size() - 1; r >= 0; r--) {
-            instr.add(recreate.get(r));
-        }
-        instructions.insertBefore(instruction, instr);
+    /**
+     * Creates instructions to save all parameters of the method invocation
+     * <code>mNode</code> into local variables and to restore the stack 
+     * immediately. The new operations are inserted into {@link #instructions}
+     * before {@link #instruction}.
+     * 
+     * @param mNode the node representing the method cell
+     * @return the numbers of the local variables; <b>null</b> if no local 
+     *   variables were used, all local variables else (if <code>mNode</code> 
+     *   has an implicit object reference, the variable number will be
+     *   stored in the first position of the array)
+     * 
+     * @since 1.00
+     */
+    private int[] saveAllParameters(MethodInsnNode mNode) {
+        return saveAllParameters(mNode, 
+            hasImplicitFirstArgument(mNode.getOpcode()));
     }
-    return varNr;
-}*/
+
+    /**
+     * Creates instructions to save all parameters of the method invocation
+     * <code>mNode</code> into local variables and to restore the stack 
+     * immediately. The new operations are inserted into {@link #instructions}
+     * before {@link #instruction}. If the object reference shall be saved, 
+     * it is stored in the first position of the array. The parameters are
+     * listed sequentially, except for large types for which two variables
+     * are required. Then the first consec
+     * 
+     * 
+     * @param mNode the node representing the method cell
+     * @param includingObjectReference shall also the implicit object reference
+     *   be saved
+     * @return the numbers of the local variables; <b>null</b> if no local 
+     *   variables were used, all local variables else (if 
+     *   <code>includingObjectReference</code> is enabled the variable number 
+     *   will be stored in the first position of the array)
+     * 
+     * @since 1.00
+     */
+    private int[] saveAllParameters(MethodInsnNode mNode, 
+        boolean includingObjectReference) {
+        ArrayList<String> param = ABehavior.scanParameter(
+            mNode.desc, false);
+        int pCount = param.size();
+        int[] varNr;
+        if (0 == pCount && !includingObjectReference) {
+            varNr = null;
+        } else {
+            InsnList instr = new InsnList();
+            ArrayList<AbstractInsnNode> recreate 
+                = new ArrayList<AbstractInsnNode>();
+            int offset;
+            if (includingObjectReference) {
+                offset = 1;
+            } else {
+                offset = 0;
+            }
+            int varCount = offset + pCount;
+            int varLargeIndex = varCount;
+            for (int v = pCount - 1; v >= 0; v--) {
+                String type = param.get(v);
+                char typeC;
+                
+                if (type.length() > 1) {
+                    typeC = Factory.INTERNAL_OBJECT_PREFIX;
+                } else {
+                    typeC = type.charAt(0);
+                }
+                if (Factory.INTERNAL_DOUBLE == typeC 
+                    || Factory.INTERNAL_LONG == typeC) {
+                    varCount++;
+                }
+            }
+            varNr = new int[varCount];
+            for (int v = pCount - 1; v >= 0; v--) {
+                int varIndex = v + offset;
+                String type = param.get(v);
+                char typeC;
+                
+                if (type.length() > 1) {
+                    typeC = Factory.INTERNAL_OBJECT_PREFIX;
+                } else {
+                    typeC = type.charAt(0);
+                }
+
+                int loadOp;
+                int storeOp;
+                boolean largeVar = false;
+
+                // determine load and store operations
+                switch (typeC) {
+                case Factory.INTERNAL_BOOLEAN:
+                case Factory.INTERNAL_INT:
+                case Factory.INTERNAL_BYTE:
+                case Factory.INTERNAL_CHAR:
+                case Factory.INTERNAL_SHORT:
+                    loadOp = ILOAD;
+                    storeOp = ISTORE;
+                    break;
+                case Factory.INTERNAL_DOUBLE:
+                    loadOp = DLOAD;
+                    storeOp = DSTORE;
+                    largeVar = true;
+                    break;
+                case Factory.INTERNAL_FLOAT:
+                    loadOp = FLOAD;
+                    storeOp = FSTORE;
+                    break;
+                case Factory.INTERNAL_LONG:
+                    loadOp = LLOAD;
+                    storeOp = LSTORE;
+                    largeVar = true;
+                    break;
+                default:
+                    loadOp = ALOAD;
+                    storeOp = ASTORE;
+                    break;
+                }
+                // store stack top
+                varNr[varIndex] = getFreeLocalVariable(largeVar);
+                if (largeVar) {
+                    varNr[varLargeIndex++] = varNr[varIndex]++; // by convention
+                }
+                instr.add(new VarInsnNode(storeOp, varNr[varIndex]));
+                recreate.add(new VarInsnNode(loadOp, varNr[varIndex]));
+            }
+            if (includingObjectReference) {
+                varNr[0] = getFreeLocalVariable(false);
+                instr.add(new VarInsnNode(ASTORE, varNr[0]));
+                instr.add(new VarInsnNode(ALOAD, varNr[0]));
+            }
+            for (int r = recreate.size() - 1; r >= 0; r--) {
+                instr.add(recreate.get(r));
+            }
+            instructions.insertBefore(instruction, instr);
+        }
+        return varNr;
+    }
+
+}
 
 /**
  * Copies the stack instructions to for the specified parameter. The
@@ -1284,25 +1426,6 @@ class StatementModifier extends MethodVisitor implements IStatementModifier,
     instructions.insert(instruction, new VarInsnNode(storeOp, varNr));
     tempInstructions.add(new VarInsnNode(loadOp, varNr));
     return varNr;
-}*/
-
-/**
- * Returns a textual description of <code>instruction</code> for debugging.
- * 
- * @param instruction the instruction to be turned into a String
- * @return the textual description
- * 
- * @since 1.00
- */
-/*private static String toString(AbstractInsnNode instruction) {
-    String result;
-    if (AbstractInsnNode.METHOD_INSN == instruction.getType()) {
-        MethodInsnNode mNode = (MethodInsnNode) instruction;
-        result = mNode.owner + "." + mNode.name;
-    } else {
-        result = "<unrecognized> " + instruction.getOpcode();
-    }
-    return result;
 }*/
 
 /*        

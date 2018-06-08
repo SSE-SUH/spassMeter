@@ -654,6 +654,7 @@ public class LongLongHashMap {
      * 
      * @throws Throwable any exception that may occur during finalization
      */
+    @SuppressWarnings("deprecation")
     protected void finalize() throws Throwable {
         clear();
         super.finalize();

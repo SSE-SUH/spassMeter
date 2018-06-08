@@ -18,7 +18,7 @@ import de.uni_hildesheim.sse.monitoring.runtime.configuration.
  * 
  * @author Holger Eichelberger
  * @since 1.00
- * @version 1.00
+ * @version 1.30
  */
 public interface IStatementModifier {
 
@@ -101,6 +101,18 @@ public interface IStatementModifier {
     public void notifyIoDatagramTransmission(String contextId, boolean write) 
         throws InstrumenterException;
 
+    /**
+     * Notifies about an individual random access call (Java 9 style).
+     * 
+     * @param contextId the id for value context changes (may be <b>null</b>)
+     * @param write is this a write or a read operation
+     * @throws InstrumenterException in case that the new code does not compile
+     * 
+     * @since 1.30
+     */
+    public void notifyRandomIoAccess(String contextId, boolean write)
+        throws InstrumenterException;
+    
     /**
      * Leave the underlying code as it is and just insert value context change
      * notifications if appropriate.

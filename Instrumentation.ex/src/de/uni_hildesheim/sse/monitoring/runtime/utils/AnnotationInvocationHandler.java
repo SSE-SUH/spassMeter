@@ -396,7 +396,7 @@ class AnnotationInvocationHandler implements InvocationHandler, Serializable {
      */
     private static Object invoke(Method method, Object instance) {
         try {
-            if (!method.isAccessible()) {
+            if (!method.canAccess(instance)) {
                 method.setAccessible(true);
             }
             return method.invoke(instance);
