@@ -367,7 +367,9 @@
 		
 		<mkdir dir="${meter.jars}/all"/>
 		<copy file="${meter.jars}/spass-meter-boot.jar" todir="${meter.jars}/all"/>
+		<copy file="${meter.jars}/spass-meter-boot-*.jar" todir="${meter.jars}/all"/>
 		<copy file="${meter.jars}/spass-meter-annotations.jar" todir="${meter.jars}/all"/>
+		<copy file="${meter.jars}/spass-meter-annotations-*.jar" todir="${meter.jars}/all"/>
 		<delete file="${meter.jars}/all/spass-meter.jar"/>
         <jar jarfile="${meter.jars}/all/spass-meter.jar"
 		   update="no" manifest="${meter.base}/MONITORING_MANIFEST.MF">
@@ -375,6 +377,7 @@
         	<zipgroupfileset dir="${meter.lib}" includes="javassist.jar eraser-runtime.jar locutor-instrumenter1.00.jar locutor-instrumenter1.00-linux.jar"/>
 			<zipgroupfileset dir="${meter.lib}/asm" includes="${asm.lib}"/>
 		</jar>
+		<copy file="${meter.jars}/spass-meter-*.jar" todir="${meter.jars}/all"/>
 		<delete file="${meter.jars}/all/spass-meter-ia.jar"/>
         <jar jarfile="${meter.jars}/all/spass-meter-ia.jar"
 		   update="no" manifest="${meter.base}/MONITORING_MANIFEST.MF">
@@ -382,17 +385,20 @@
         	<zipgroupfileset dir="${meter.lib}" includes="javassist.jar eraser-runtime.jar"/>
 			<zipgroupfileset dir="${meter.lib}/asm" includes="${asm.lib}"/>
 		</jar>
+		<copy file="${meter.jars}/spass-meter-rt-*.jar" todir="${meter.jars}/all"/>
 		<delete file="${meter.jars}/all/spass-meter-rt.jar"/>
         <jar jarfile="${meter.jars}/all/spass-meter-rt.jar" update="no">
         	<zipgroupfileset dir="${meter.jars}" includes="spass-meter-rt.jar"/>
         	<zipgroupfileset dir="${meter.lib}" includes="eraser-runtime.jar locutor-instrumenter1.00.jar locutor-instrumenter1.00-linux.jar"/>
 		</jar>
+		<copy file="${meter.jars}/spass-meter-ant-*.jar" todir="${meter.jars}/all"/>
 		<delete file="${meter.jars}/all/spass-meter-ant.jar"/>
         <jar jarfile="${meter.jars}/all/spass-meter-ant.jar" update="no">
         	<zipgroupfileset dir="${meter.jars}" includes="spass-meter-ant.jar"/>
         	<zipgroupfileset dir="${meter.lib}" includes="javassist.jar eraser-runtime.jar locutor-instrumenter1.00.jar locutor-instrumenter1.00-linux.jar"/>
 			<zipgroupfileset dir="${meter.lib}/asm" includes="${asm.lib}"/>
 		</jar>
+		<copy file="${meter.jars}/spass-meter-static-*.jar" todir="${meter.jars}/all"/>
 		<delete file="${meter.jars}/all/spass-meter-static.jar"/>
         <jar jarfile="${meter.jars}/all/spass-meter-static.jar" update="no">
         	<zipgroupfileset dir="${meter.jars}" includes="spass-meter-static.jar"/>

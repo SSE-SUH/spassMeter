@@ -9,13 +9,15 @@ REM run this script
 REM goto https://oss.sonatype.org/#welcome, staging repositories, deuni-hildesheim...*, close for check/deploy
 
 SET LOCALREPO=http://projects.sse.uni-hildesheim.de/qm/maven/de/uni-hildesheim/sse/spassMeter
-SET SPASS_VERSION=1.29
+SET SPASS_VERSION=1.30
 REM uncomment locutor deployment if changed significantly
 SET LOCUTOR_VERSION=1.12
-SET DIR=.
+SET DIR=.\tmp
 SET TARGET=https://oss.sonatype.org/service/local/staging/deploy/maven2
 SET REPO=ossrh
 SET DEPLOYCMD=mvn gpg:sign-and-deploy-file -Durl=%TARGET% -DrepositoryId=%REPO%
+
+mkdir %DIR%
 
 REM deploy the individual artifacts for SPASS-meter
 call :DeployArtifact spass-meter %SPASS_VERSION%
@@ -50,9 +52,9 @@ REM param2: version of the artifact to deploy
 	wget %URLPREFIX%/%SOURCES% -O %DIR%\%SOURCES%
 	wget %URLPREFIX%/%JAVADOC% -O %DIR%\%JAVADOC%
 	REM deploy jar, sources, docs via POM to central
-	call %DEPLOYCMD% -DpomFile=%DIR%\%POM% -Dfile=%DIR%\%JAR%
-	call %DEPLOYCMD% -DpomFile=%DIR%\%POM% -Dfile=%DIR%\%SOURCES% -Dclassifier=sources
-	call %DEPLOYCMD% -DpomFile=%DIR%\%POM% -Dfile=%DIR%\%JAVADOC% -Dclassifier=javadoc
+	REM call %DEPLOYCMD% -DpomFile=%DIR%\%POM% -Dfile=%DIR%\%JAR%
+	REM call %DEPLOYCMD% -DpomFile=%DIR%\%POM% -Dfile=%DIR%\%SOURCES% -Dclassifier=sources
+	REM call %DEPLOYCMD% -DpomFile=%DIR%\%POM% -Dfile=%DIR%\%JAVADOC% -Dclassifier=javadoc
 
 	endlocal
 	goto :eof
