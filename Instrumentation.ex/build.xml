@@ -26,8 +26,14 @@
 	    <pathelement location="${meter.lib}/ant/ant.jar"/>
 	    <pathelement location="${meter.lib}/eraser-runtime.jar"/>
 	    <pathelement location="${meter.lib}/javassist.jar"/>
-	    <pathelement location="${meter.lib}/asm/${asm.lib}"/>
+	    <pathelement location="${meter.lib}/asm/asm-6.2.jar"/>
+		<pathelement location="${meter.lib}/asm/asm-analysis-6.2.jar"/>
+		<pathelement location="${meter.lib}/asm/asm-analysis-commons-6.2.jar"/>
+		<pathelement location="${meter.lib}/asm/asm-tree-6.2.jar"/>
+		<pathelement location="${meter.lib}/asm/asm-util-6.2.jar"/>
 	    <pathelement location="${meter.lib}/locutor-instrumenter1.00.jar"/>
+		<!-- not nice but our jenkins currently does not have JAVA_HOME set -->
+	    <pathelement location="/usr/lib/jvm/java-8-openjdk-amd64/lib/tools.jar"/>
 	</path>
 	
     <path id="meter.test.classpath"> <!-- for monitoring test cases -->
