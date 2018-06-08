@@ -396,7 +396,10 @@ class AnnotationInvocationHandler implements InvocationHandler, Serializable {
      */
     private static Object invoke(Method method, Object instance) {
         try {
-            if (!method.canAccess(instance)) {
+            // as we still compile for Java 8 in CI, we have to accept this 
+            // for now
+            if (!method.isAccessible()) {
+            //if (!method.canAccess(instance)) {
                 method.setAccessible(true);
             }
             return method.invoke(instance);
