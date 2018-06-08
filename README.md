@@ -1,7 +1,9 @@
 SPASS-meter
 ==========
 
-SPASS-meter monitoring framework (release version 1.23, development version 1.24-SNAPSHOT)
+News: Version 1.30 will support Java 9
+
+SPASS-meter monitoring framework (release version 1.25, development version 1.30-SNAPSHOT)
 
 * CodeEraser: annotation-based manipulation and removal of byte code
 * gearsBridge: native data gatherer library (initially based on Google Gears due to other project relation, includes translation to Android NDK library)
