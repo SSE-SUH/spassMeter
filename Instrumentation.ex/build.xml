@@ -81,8 +81,7 @@
 		</javac>
 	</target>
 
-	<!-- , javadoc -->
-	<target name="jar" depends="compile" unless="lobaris.flatBuild">
+	<target name="jar" depends="compile, javadoc" unless="lobaris.flatBuild">
 	    <copy file="version" todir="${meter.bin}"/>
 		<mkdir dir="${meter.jars}"/>
 		<delete file="${meter.jars}/spass-meter-boot.jar"/>
