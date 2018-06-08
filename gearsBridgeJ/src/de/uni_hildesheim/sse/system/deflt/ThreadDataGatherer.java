@@ -25,6 +25,12 @@ public class ThreadDataGatherer implements IThreadDataGatherer {
      * Stores whether thread CPU ticks are supported by the JMX thread bean.
      */
     private static final boolean THREAD_CPU_TICKS_ENABLED;
+    
+    /**
+     * Stores whether we can probably call the JVM directly to avoid JMX 
+     * overhead. This was possible until Java 8, but not in Java 9.
+     */
+    private static final boolean THREAD_CPU_TICKS_ENABLED_JVM;
 
     /**
      * Stores whether an absent implementation of thread times should be 
@@ -62,6 +68,9 @@ public class ThreadDataGatherer implements IThreadDataGatherer {
             }
         }
         THREAD_CPU_TICKS_ENABLED = useThreadCpuTicks;
+        // somebody removed the corresponding native function from the JVM
+        THREAD_CPU_TICKS_ENABLED_JVM = useThreadCpuTicks 
+            && System.getProperty("java.version", "").startsWith("1.");
     }
     
     /**
@@ -89,8 +98,12 @@ public class ThreadDataGatherer implements IThreadDataGatherer {
     public long getCpuTime(long threadId) {
         long result;
         if (THREAD_CPU_TICKS_ENABLED) {
-            result = getCpuThreadTime0(threadId);
-            //result = THREAD_MX.getThreadCpuTime(threadId);
+            if (THREAD_CPU_TICKS_ENABLED_JVM) {
+                // introduced due to endless memory consumption in Java 7/8
+                result = getCpuThreadTime0(threadId);
+            } else {
+                result = THREAD_MX.getThreadCpuTime(threadId);
+            }
         } else {
             result = 
                 (ThisProcessDataGatherer.getCurrentProcessKernelTimeTicks0() 
@@ -131,9 +144,15 @@ public class ThreadDataGatherer implements IThreadDataGatherer {
     public long getAllCpuTime() {
         long count = 0;
         if (THREAD_CPU_TICKS_ENABLED) {
-            for (Thread t : Thread.getAllStackTraces().keySet()) {
-                count += getCpuThreadTime0(t.getId());
-                //count += THREAD_MX.getThreadCpuTime(t.getId());
+            if (THREAD_CPU_TICKS_ENABLED_JVM) {                
+                // introduced due to endless memory consumption in Java 7/8
+                for (Thread t : Thread.getAllStackTraces().keySet()) {
+                    count += getCpuThreadTime0(t.getId());
+                }
+            } else {
+                for (Thread t : Thread.getAllStackTraces().keySet()) {
+                    count += THREAD_MX.getThreadCpuTime(t.getId());
+                }
             }
         } else if (SUBSTITUTE_BY_PROCESS) {
             count = ThisProcessDataGatherer.getCurrentProcessKernelTimeTicks0() 
@@ -153,8 +172,12 @@ public class ThreadDataGatherer implements IThreadDataGatherer {
     public long getCurrentCpuTime() {
         long result = 0;
         if (THREAD_CPU_TICKS_ENABLED) {
-            result = getCpuThreadTime0(Thread.currentThread().getId());
-            //result = THREAD_MX.getCurrentThreadCpuTime();
+            if (THREAD_CPU_TICKS_ENABLED_JVM) {
+                // introduced due to endless memory consumption in Java 7/8
+                result = getCpuThreadTime0(Thread.currentThread().getId());
+            } else {
+                result = THREAD_MX.getCurrentThreadCpuTime();
+            }
         } else if (SUBSTITUTE_BY_PROCESS) {
             return (ThisProcessDataGatherer.getCurrentProcessKernelTimeTicks0() 
                 + ThisProcessDataGatherer.getCurrentProcessUserTimeTicks0()) 
