@@ -372,6 +372,8 @@
 		<copy file="${meter.jars}/spass-meter-annotations.jar" todir="${meter.jars}/all"/>
 		<copy file="${meter.jars}/spass-meter-annotations-javadoc.jar" todir="${meter.jars}/all"/>
 		<copy file="${meter.jars}/spass-meter-annotations-sources.jar" todir="${meter.jars}/all"/>
+		<copy file="${meter.jars}/spass-meter-javadoc.jar" todir="${meter.jars}/all"/>
+		<copy file="${meter.jars}/spass-meter-sources.jar" todir="${meter.jars}/all"/>
 		<delete file="${meter.jars}/all/spass-meter.jar"/>
         <jar jarfile="${meter.jars}/all/spass-meter.jar"
 		   update="no" manifest="${meter.base}/MONITORING_MANIFEST.MF">
@@ -379,8 +381,8 @@
         	<zipgroupfileset dir="${meter.lib}" includes="javassist.jar eraser-runtime.jar locutor-instrumenter1.00.jar locutor-instrumenter1.00-linux.jar"/>
 			<zipgroupfileset dir="${meter.lib}/asm" includes="${asm.lib}"/>
 		</jar>
-		<copy file="${meter.jars}/spass-meter-javadoc.jar" todir="${meter.jars}/all"/>
-		<copy file="${meter.jars}/spass-meter-sources.jar" todir="${meter.jars}/all"/>
+		<copy file="${meter.jars}/spass-meter-ia-javadoc.jar" todir="${meter.jars}/all"/>
+		<copy file="${meter.jars}/spass-meter-ia-sources.jar" todir="${meter.jars}/all"/>
 		<delete file="${meter.jars}/all/spass-meter-ia.jar"/>
         <jar jarfile="${meter.jars}/all/spass-meter-ia.jar"
 		   update="no" manifest="${meter.base}/MONITORING_MANIFEST.MF">

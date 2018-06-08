@@ -52,9 +52,9 @@ REM param2: version of the artifact to deploy
 	wget %URLPREFIX%/%SOURCES% -O %DIR%\%SOURCES%
 	wget %URLPREFIX%/%JAVADOC% -O %DIR%\%JAVADOC%
 	REM deploy jar, sources, docs via POM to central
-	REM call %DEPLOYCMD% -DpomFile=%DIR%\%POM% -Dfile=%DIR%\%JAR%
-	REM call %DEPLOYCMD% -DpomFile=%DIR%\%POM% -Dfile=%DIR%\%SOURCES% -Dclassifier=sources
-	REM call %DEPLOYCMD% -DpomFile=%DIR%\%POM% -Dfile=%DIR%\%JAVADOC% -Dclassifier=javadoc
+	call %DEPLOYCMD% -DpomFile=%DIR%\%POM% -Dfile=%DIR%\%JAR%
+	call %DEPLOYCMD% -DpomFile=%DIR%\%POM% -Dfile=%DIR%\%SOURCES% -Dclassifier=sources
+	call %DEPLOYCMD% -DpomFile=%DIR%\%POM% -Dfile=%DIR%\%JAVADOC% -Dclassifier=javadoc
 
 	endlocal
 	goto :eof
