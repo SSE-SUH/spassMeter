@@ -1,9 +1,9 @@
 SPASS-meter
 ==========
 
-News: Version 1.30 will support Java 9
+News: Version 1.30 supports Java 9
 
-SPASS-meter monitoring framework (release version 1.25, development version 1.30-SNAPSHOT)
+SPASS-meter monitoring framework (release version 1.30, development version 1.31-SNAPSHOT)
 
 * CodeEraser: annotation-based manipulation and removal of byte code
 * gearsBridge: native data gatherer library (initially based on Google Gears due to other project relation, includes translation to Android NDK library)
@@ -25,7 +25,7 @@ Spass-Meter is available as Maven artifacts (all supported operating systems)
 <dependency>
  <groupId>de.uni-hildesheim.sse.spassMeter</groupId>
  <artifactId>spass-meter</artifactId>
- <version>1.25</version>
+ <version>1.30</version>
 </dependency>
 ```
 Similarly for the other artifacts: spass-meter-annotations, spass-meter-ant, spass-meter-boot, spass-meter-ia, spass-meter-rt, spass-meter-static.

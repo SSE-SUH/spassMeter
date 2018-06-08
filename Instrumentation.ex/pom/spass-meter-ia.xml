@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.uni-hildesheim.sse.spassMeter</groupId>
   <artifactId>spass-meter-ia</artifactId>
-  <version>1.30</version>
+  <version>1.31-SNAPSHOT</version>
 
   <name>SPASS-meter (Instrumentation Agent)</name>
   <description>The Instrumentation Agent library for dynamic instrumentation with SPASS-meter.</description>
