@@ -2,9 +2,7 @@ package de.uni_hildesheim.sse.codeEraser.copy;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import javassist.CannotCompileException;
 import javassist.ClassMap;
@@ -265,18 +263,8 @@ public class CodeProcessor extends OnTheFlyJarProcessor {
         try {
             initializeClasses();
             ClassMap classMap = config.getMapping();
-            @SuppressWarnings("unchecked")
-            Set<Map.Entry<Object, Object>> allMappings 
-                = (Set<Map.Entry<Object, Object>>) classMap.entrySet();
-            Iterator<Map.Entry<Object, Object>> iter = allMappings.iterator();
-            
             Map<String, String> mapping = new HashMap<String, String>();
-            while (iter.hasNext()) {
-                Map.Entry<Object, Object> entry = iter.next();
-                mapping.put(entry.getKey().toString(), 
-                    entry.getValue().toString());
-            }
-            
+            mapping.putAll(classMap);
             while (!mapping.isEmpty()) {
                 Map<String, String> inner = new HashMap<String, String>();
                 for (Map.Entry<String, String> entry : mapping.entrySet()) {
